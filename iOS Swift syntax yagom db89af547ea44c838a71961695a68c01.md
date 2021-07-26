@@ -1,8 +1,8 @@
-# iOS/Swift syntax yagom
+# Swift syntax
 
-Created: Jan 24, 2021 1:43 PM
+Created: January 24, 2021 1:43 PM
 Created By: hyoju son
-Last Edited Time: Jun 28, 2021 7:27 PM
+Last Edited Time: July 26, 2021 11:09 PM
 Type: 언어
 
 - Contents
@@ -77,7 +77,7 @@ Type: 언어
     - 참고 - [https://developer.apple.com/library/archive/documentation/Xcode/Reference/xcode_markup_formatting_ref/index.html#//apple_ref/doc/uid/TP40016497-CH2-SW1](https://developer.apple.com/library/archive/documentation/Xcode/Reference/xcode_markup_formatting_ref/index.html#//apple_ref/doc/uid/TP40016497-CH2-SW1)
 - 표현력 풍부
 
-    ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled.png)
+    ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png)
 
 # 2. 상수/변수 선언
 
@@ -451,7 +451,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
             // 빈 Character Array 생성
             // *[] : 새로운 빈 Array
-            var chracters: [Character] = []
+            var chracters: [Character] = []  // type을 명시했다면 []으로 빈 배열 생성 가능함
 
             // let으로 Array를 선언하면 불변 Array
             let immutableArray = [1,2,3]
@@ -959,6 +959,73 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 @속성이름(매개변수)
                 ```
 
+## 5-2. Method
+
+- 기본적으로 함수와 동일하지만, Type이나 인스턴스와 연관된 함수를 Method라고 한다.
+- 다른 언어와 달리 구조체와 열거형도 메서드를 가질 수 있다.
+- 특정 메서드가 자신 Type의 인스턴스 내부의 프로퍼티 값을 변경할 때, Class는 상관 없지만 Struct 등 값 타입은 `mutating` 키워드가 필요하다.
+
+    ```swift
+    struct LevelStruct {
+        var level: Int = 0 {
+            didSet {
+                print("Now Level is \(level)")
+            }
+        }
+        
+        mutating func levelUp() { // mutating 키워드가 없으면 에러 발생 - Left side of mutating operator isn't mutable: 'self' is immutable.
+            print("Level UP!")
+            level += 1
+        }
+    } 
+
+    var levelInstance: LevelStruct = LevelStruct()
+    levelInstance.levelUp() // Level UP!, Now Level is 1
+    levelInstance.levelUp() // Level UP!, Now Level is 2
+    ```
+
+- 인스턴스를 함수처럼 호출하는 메서드 (callAsFunction)
+    - 사용자 정의 명목 타입의 호출 가능한 값 (Callable values of user-defined normal type)을 구현하기 위해 인스턴스를 함수처럼 호출 가능하게 하는 메서드 (Call-as-function method)가 있다.
+    - callAsFunction 메서드를 구현하여 사용한다. parameter type, return type만 다르면 동일한 메서드를 생성 가능하다. (mutating, throws/rethrows 사용 가능)
+
+        ```swift
+        struct Puppy {
+            var name: String = "멍멍이"
+            
+            func callAsFunction() { // 인스턴스를 함수처럼 호출 가능하게 한다.
+                print("멍멍")
+            }
+
+            func callAsFunction(destination: String) { // parameter type, return type만 다르면 동일한 메서드를 생성 가능
+                print("\(destination)으로 달려갑니다.")
+            }
+            
+            func callAsFunction(color: String) -> String {
+                return "\(color) 응가"
+            }
+            
+            mutating func callAsFunction(name: String) {
+                self.name = name
+            }
+        }
+
+        var dogInstance: Puppy = Puppy()
+
+        dogInstance.callAsFunction() // 멍멍
+        dogInstance() // 멍멍 *위 코드와 동일한 표현이다. (인스턴스를 함수처럼 사용!)
+
+        dogInstance.callAsFunction(destination: "집") // 집으로 달려갑니다.
+        dogInstance(destination: "공원") // 공원으로 달려갑니다.
+
+        print(dogInstance(color: "무지개색")) // 무지개색 응가
+
+        dogInstance(name: "Changed - 댕댕이")
+        print(dogInstance.name) // Changed - 댕댕이
+
+        // let allocate: (String) -> Void = dogInstance(destination:) // 메서드 호출 외에 일반적인 함수 표현으로는 사용 불가
+        let allocate2: (String) -> Void = dogInstance.callAsFunction(destination:) // 이렇게는 가능
+        ```
+
 # 6. 조건문 (condition)
 
 - 참고 - [https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html](https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html)
@@ -1200,12 +1267,15 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 # 8. Optional
 
-- 옵셔널 : 값이 있을수도, 없을수도 있다는 의미. 즉, nil 의 가능성을 명시적으로 표현해준다.
-(변수에 값을 할당할 때 nil이면 에러가 발생한다. 그런데 변수가 옵셔널 type인 경우는 가능하다.)
+- 옵셔널 Syntax
+    - Optional : 값이 있을수도, 없을수도 있다는 의미이다. 즉, nil 의 가능성을 명시적으로 표현해준다. (nil은 옵셔널 type에만 할당 가능하다.)
 
-    You use optionals in situations where a value may be absent. 
-    An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
+        You use optionals in situations where a value may be absent. 
+        An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
 
+    - 사용 목적 (변수에 nil이 있음을 가정하는 이유)
+    - 함수에 전달되는 argument의 값이 잘못된 값일 경우 nil을 반환한다.
+    - argument를 굳이 넘기지 않아도 되는 상황에서 parameter type을 optional로 정의한다.
     - 장점 
     - 문서화/주석 작성 시간 절약
     - 전달받은 값이 옵셔널이 아니라면 nil 체크를 하지 않더라도 안심하고 사용 -> 예외 상황을 최소화하는 안전한 코딩
@@ -1282,9 +1352,9 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - 코드가 길어져서 오류 발생한 듯. 다시 돌리면 아님
     - [ ]  print(flightCompany2)  // 가능. 단, Optional("아시아나") 출력 
     printName(name: flightCompany2)  // 아시아나 출력 -> print(flightCompany2)와 다른 이유인 듯. 왜 다르지?
-- Optional Syntax
-    - 옵셔널 = enum (열거형) + general ??
-    - 옵셔널 선언
+- Optional 정의 / 암시적 추출 옵셔널
+    - 옵셔널 = genericd이 적용된 enum (열거형) ??
+    - 옵셔널 정의
 
         ```swift
         enum Optional<Wrapped>: ExpressibleByNiliteral {   // 옵셔널 기본형은 enum (열거형)
@@ -1297,70 +1367,70 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         let optionalValue: Int? = nil
         ```
 
-- Optional 종류 (! & ?)
-    - ! 
-    - Implicitly unwrapped optional (암시적 추출 옵셔널)
+    - 암시적 추출 옵셔널 (Implicitly unwrapped optional)
+        - nil 할당이 가능한, optional이 아닌 변수를 선언할 때 사용한다. (nil을 할당하고 싶지만 optional binding으로 값을 추출하기 귀찮거나, 로직상 nil로 인한 런타임 오류 발생 가능성이 없을 때 사용한다.)
+        - 일반적인 값처럼 연산이 가능하다.
 
-        ```swift
-        var implicitlyUnwrappedOptionalValue: Int! = 100   // 암시적 추출 옵셔널인 Int type의 변수를 선언하고
+            ```swift
+            var implicitlyUnwrappedOptionalValue: Int! = 100   // 암시적 추출 옵셔널인 Int type의 변수를 선언하고
 
-        switch implicitlyUnwrappedOptionalValue {   // Optional의 값이 nil 인지 (첫번째 .none case), 값이 있는지 (두번째 .some case) 확인하는 switch문
-        case .none:
-            print("This Optional variable is nil")
-        case .some(let value):
-            print("Value is \(value)")
-        }
+            switch implicitlyUnwrappedOptionalValue {   // Optional의 값이 nil 인지 (첫번째 .none case), 값이 있는지 (두번째 .some case) 확인하는 switch문
+            case .none:
+                print("This Optional variable is nil")
+            case .some(let value):
+                print("Value is \(value)")
+            }
 
-        // 1. 기존 변수처럼 사용 가능  
-        implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1
+            // 1. 기존 변수처럼 사용 가능  
+            implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1
 
-        // 2. nil 할당 가능
-        implicitlyUnwrappedOptionalValue = nil
-        //implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1  // 참고 - 잘못된 접근으로 인한 런타임 오류 발생 (nil에는 연산을 할 수 없다)
+            // 2. nil 할당 가능
+            implicitlyUnwrappedOptionalValue = nil
+            //implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1  // 참고 - 잘못된 접근으로 인한 런타임 오류 발생 (nil에는 연산을 할 수 없다)
 
-        ```
+            ```
 
-    - ?
-    - 일반적인 옵셔널
+            ```swift
+            // 일반적인 옵셔널과 비교
 
-        ```swift
-        var optionalValue: Int? = 100
+            var optionalValue: Int? = 100
 
-        switch optionalValue {   // 위의 암시적 추출 옵셔널과 동일함
-        case .none:
-            print("This Optional variable is nil")
-        case .some(let value):
-            print("Value is \(value)")
-        }
+            switch optionalValue {   // 위의 암시적 추출 옵셔널과 동일함
+            case .none:
+                print("This Optional variable is nil")
+            case .some(let value):
+                print("Value is \(value)")
+            }
 
-        // 1. 기존 변수처럼 사용 불가 - 옵셔널과 일반 값 (Int type 등)은 다른 타입이므로 연산불가함
-        //optionalValue = optionalValue + 1
+            // 1. 기존 변수처럼 사용 불가 - 옵셔널과 일반 값 (Int type 등)은 다른 타입이므로 연산불가함
+            //optionalValue = optionalValue + 1
 
-        // 2. nil 할당 가능
-        optionalValue = nil
-        ```
+            // 2. nil 할당 가능
+            optionalValue = nil
+            ```
 
 - Optional Unwrapping (옵셔널 값 추출)
+    - 옵셔널 값을 옵셔널이 아닌 변수/parameter 등에 할당할 때 Unwrapping이 필요하다.
 
-    1) Optional binding : nil 체크 후에 값이 있으면 안전하게 추출
+        1) Optional binding : nil 체크 후에 값이 있으면 안전하게 추출
 
-    2) Force unwarpping (강제 추출) : nil 값이 없으면 오류 발생하므로 비추함
+        2) Force unwarpping (강제 추출) : nil 값이 없으면 오류 발생하므로 비추함
 
     - 설명
         - Optional binding 설명 (if-let을 통한 unwrapping)
 
             ```swift
-            func printName(name: String) {   // _ name : 함수 호출 시 인자 레이블 (name)을 생략하겠다는 의미
+            func printName(name: String) {  
                 print(name)
             }
 
             var myName: String? = nil
             myName = "kevin"
-            // printName(name: myName)   // 오류 발생 - 일반적인 Optional String은 일반적인 String이 아니므로 (다른 type으로 인식) 다른 함수로 전달 불가
-                                   // => Value of optional type 'String?' must be unwrapped to a value of type 'String'
+            // printName(name: myName) // 오류 발생 - Optional String은 String이 아니므로 (다른 type으로 인식) 다른 함수로 전달 불가
+                                       // => Value of optional type 'String?' must be unwrapped to a value of type 'String'
 
             * 참고
-            var myName2: String! = nil
+            var myName2: String! = nil // 암시적 추출 옵셔널
             myname2 = "kevin"
             printName(name: myName2)   // kevin 출력
             // ! (Implicitly unwarpped optional) type의 변수는 출력 가능 (이유는 아래에서 설명 - 강제 추출을 위한 변수!가 자동으로 입력되는 효과)
@@ -1386,7 +1456,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             // printName(name: name)  // 컴파일 오류 발생- name 상수는 if-let 구문 내에서만 사용 가능
             -
 
-            // ,를 사용해 한 번에 여러 옵셔널을 바인딩 할 수 있음. 단, 모든 옵셔널에 값이 있을 때만 동작함
+            // ,를 사용해 한 번에 여러 옵셔널을 바인딩 할 수 있음. 단, 하나라도 nil이면 실행되지 않음
             myName = "yagom"
             var yourName: String! = nil 
 
@@ -1400,18 +1470,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 print("\(name) and \(friend)")
             } // yagom and hana 출력
             ```
-
-            - [x]  왜지?
-                - _ 기호를 사용해 인자 레이블 (name)을 생략할 수 있습니다.
-
-                ```swift
-                func printName(_ name: String){
-                    print(name)
-                }
-
-                // printName(name: "A")   // 오류 발생. 필수적으로 생략해야 함
-                printName("B")  // B 출력
-                ```
 
             - [x]  여러 개
                 - 위 아래 동일함
@@ -1449,7 +1507,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
             -
 
-            var yourName: String! = "kevin"
+            var yourName: String! = "kevin" // 암시적 추출 옵셔널
             printName(name: yourName)  // kevin 출력 - !을 안 붙여도 되는 이유는 String"!" 즉, 선언할 때부터 이미 type 자체에 !가 붙어있는 Implicitly unwrapped optional이기 때문이다.
             printName(name: yourName!) // kevin 출력 (이것도 가능)
 
@@ -1602,10 +1660,12 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     class Name {
     	/* statements */
     }
+    ```
 
-    -
+- 클래스 사용
 
-    class Sample {
+    ```swift
+    class Sample { // 클래스 정의
         var mutableProperty: Int = 100  // 가변 인스턴스 프로퍼티
         let immutableProperty: Int = 100 // 불변 인스턴스 프로퍼티
         
@@ -1624,11 +1684,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             print("type method - class")
         }
     }
-    ```
 
-- 클래스 사용
-
-    ```swift
     // 인스턴스 생성 - 참조정보 수정 가능 (가변 인스턴스 X -> var선언 인스턴스)
     var mutableReference: Sample = Sample()
 
@@ -1789,7 +1845,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     Swift enumeration cases don’t have an integer value set by default, unlike languages like C and Objective-C. In the CompassPoint example above, north, south, east and west don’t implicitly equal 0, 1, 2 and 3. Instead, the different enumeration cases are values in their own right (north, south, east and west).
     - rawValue는 case별로 각각 다른 값을 가져야합니다.
     - case 마다 자동으로 1이 증가된 값이 할당됩니다. when integers are used for raw values, the implicit value for each case is one more than the previous case.
-    - rawValue를 반드시 지닐 필요가 없다면 굳이 만들지 않아도 됩니다.
+    - rawValue를 반드시 지닐 필요가 없다면 굳이 만들지 않아도 된다.
+    - rawValue를 지정한 경우 nil 가능성이 있으므로 Enum의 인스턴스는 항상 optional type이다. (실패가능한 이니셜라이저 참고)
 
     ```swift
     // *Int type 원시값
@@ -1804,7 +1861,11 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     // raw value 값을 꺼낼 때는 enum명.case명.rawValue를 쓴다.
     print(Fruit.peach.rawValue)  // 2 출력
 
-    -
+    // 참고 - rawValue를 지정한 경우 nil 가능성이 있으므로 Enum의 인스턴스는 항상 optional type이다. (실패가능한 이니셜라이저 참고)
+    var fruitInstance: Fruit? = Fruit(rawValue: 0)
+    print(fruitInstance) // optional(apple)
+    var fruitInstanceImpossible: Fruit? = Fruit(rawValue: 10)
+    print(fruitInstanceImpossible) // nil
 
     // *Int type 뿐만 아니라, Hashable 프로토콜을 따르는 모든 type을 원시값의 type으로 지정 가능하다.
 
@@ -2001,79 +2062,61 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 ## 11-2. Class & Stucture & Enum 의 차이
 
 - 값 & 참조 차이
-    - 데이터를 전달할 때, 값 (value)은 데이터를 복사하여 전달하고, 참조 (reference)는 값의 메모리 위치를 전달한다.
+    - 데이터를 전달할 때, 값 (value) 타입은 데이터를 복사하여 전달하고, 참조 (reference) 타입은 데이터의 참조, 즉 메모리 위치 (C의 포인터처럼)를 전달한다.
+    * struct 또는 class를 전달하는 경우 : 1) 변수에 할당, 2) 함수의 argument로 전달
+        - [ ]  info.age = 1 // 에러 발생 - Cannot assign to property: 'info' is a 'let' constant ??? 왜 불가? (parameter인데 let constant라고 취급하나?)
+            - Swift의 argument는 모두 상수로 취급되어 전달된다. → 어디서 확인?
 
-    ```swift
-    struct ValueType {
-        var property = 1
-    }
+        ```java
+        // 데이터 전달 - 1) 변수에 할당
+        struct BasicInfo {
+            let name: String
+            var age: Int
+        }
 
-    class ReferenceType {
-        var property = 1
-    }
+        var yagomInfo: BasicInfo = BasicInfo(name: "yagom", age: 20)
 
-    let firstStructInstance = ValueType()  // 첫 번째 구조체 인스턴스 생성
-    var secondStructInstance = firstStructInstance  // 두 번째 구조체 인스턴스에 첫 번째 인스턴스 값 복사
-    secondStructInstance.property = 2  // 두 번째 구조체 인스턴스 프로퍼티의 값 수정
+        var friendInfo: BasicInfo = yagomInfo // *변수에 할당하여 데이터 전달 (값 전달) - friendInfo 인스턴스에 yagomInfo 인스턴스의 값을 복사하여 할당한다.
+        friendInfo.age = 100 // yagomdInfo.age에 영향 없음
 
-    print(firstStructInstance.property)   // 1
-    print(secondStructInstance.property)  // 2
-    // 두 번째 구조체 인스턴스는 첫 번째 구조체를 똑같이 복사했으므로 두 번째 구조체 인스턴스의 프로퍼티 값을 변경해도 첫 번째 구조체 인스턴스의 프로퍼티 값에는 영향이 없음
+        print(yagomInfo.age) // 20
+        print(friendInfo.age) // 100
 
-    -
+        class Person {
+            var height: Int = 0
+            var weight: Int = 0
+        }
+        var yagom: Person = Person()
 
-    let firstClassReference = ReferenceType()  // 첫 번째 클래스 인스턴스 생성 = 첫 번째 참조 생성 (인스턴트가 참조정보를 가진다!)
-    var secondClassReference = firstClassReference  // 두 번째 클래스 인스턴스에 첫 번째 인스턴스 참조 할당 (두번째 참조 변수에 첫 번째 참조정보 할당)
-    secondClassReference.property = 2  // 두 번째 클래스 인스턴스 프로퍼티의 참조정보 수정 => 따라서 첫 번째 인스턴스 프로퍼티 참조정보 수정???
+        var friend: Person = yagom // *변수에 할당하여 데이터 전달 (참조 전달) - friendInfo 인스턴스에 yagomInfo 인스턴스의 참조 (메모리 주소)를 할당한다.
+        friend.height = 180 // yagom.height에 영향 있음
 
-    print(firstClassReference.property)   // 2
-    print(secondClassReference.property)  // 2
+        print(yagom.height) // 180 (friend 인스턴스가 yagom 인스턴스를 참조하므로 값이 변경됨)
+        print(friend.height) // 180
 
-    // 두 번째 클래스 참조는 첫 번째 클래스 인스턴스를 참조하기 때문에
-    // 두 번째 참조를 통해 인스턴스의 프로퍼티 값을 변경하면 => 첫 번째 인스턴스의 프로퍼티 값을 변경하게 됨
+        // 데이터 전달 - 2) 함수의 argument로 전달 (parameter가 struct & class type인 경우)
+        func changeBasicInfo (_ info: BasicInfo) { // parameter인데 let constant라고 취급하나 ???
+        //    info.age = 1 // 에러 발생 - Cannot assign to property: 'info' is a 'let' constant ???
+            var copiedInfo: BasicInfo = info
+            copiedInfo.age = 1 // parameter가 값 타입이므로 yagomInfo에 영향 없음 (argument의 값을 복사하여 전달됨)
+        }
 
-    * 첫 번째, 두 번째 참조정보 모두 동일한 클래스 인스턴스 ReferenceType()를 가르키기 때문???
-    ```
+        func changePersonInfo(_ info: Person) {
+            info.height = 150 // parameter가 참조 타입이므로 yagomInfo에 영향 있음 (argument인 yagom Class의 참조가 전달되어 값이 변경됨)
+        }
 
-    - [ ]  secondClassReference.property = 2  // 두 번째 클래스 인스턴스 프로퍼티의 참조정보 수정?? => 따라서 첫 번째 인스턴스 프로퍼티 참조정보 수정??
-    - [ ]  * 첫 번째, 두 번째 참조정보 모두 동일한 클래스 인스턴스 ReferenceType()를 가르키기 때문???
-        - 그래서 structure Student, class Student도 같은 결과가 나온다
-            - [ ]  print(yagom.name)  // 왜 이건 jina가 아니라 여전히 "yagom"이지?
+        changeBasicInfo(yagomInfo)
+        print(yagomInfo.age) // 20 (함수의 1이 할당되지 않음)
 
-            ```swift
-            class Student {
-                var name: String = "unknown"
-                var `class`: String = "Swift"
-                
-                class func selfIntro() {
-                    print("Student type의 class이다")
-                }
-                
-                func selfIntro() {
-                    print("저는 \(self.class)반의 \(name)입니다")
-                }
-            }
+        changePersonInfo(yagom)
+        print(yagom.height) // 150 (함수의 150이 할당됨)
 
-            Student.selfIntro()
+        // 참고 - 인스턴스 참조가 동일한지 확인하려면 식별 연산자 ===를 사용한다.
+        print(yagom === friend) // true
 
-            var yagom: Student = Student()
-            yagom.name = "yagom"
-            yagom.class = "스위프트"
-            yagom.selfIntro()
-
-            let jina: Student = Student()
-            jina.name = "jina"
-            jina.selfIntro()
-
-            let firstClassReference = Student()
-            var secondClassReference = firstClassReference
-            secondClassReference.name = "new"
-
-            print(firstClassReference.name)  // new 출력
-            print(secondClassReference.name) // new 출력
-
-            print(yagom.name)  // 왜 이건 jina가 아니라 여전히 "yagom"이지?
-            ```
+        var anotherFriend: Person = Person()
+        print(yagom === anotherFriend) // false
+        ```
 
 - Quiz - 조금 어려움
     - 문제
@@ -2154,11 +2197,12 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 - Class & Stucture & Enum 차이
     - Class
-        - 단일 상속 (Subclassing), 참조 타입
         - Apple Framework 대부분 큰 뼈대를 클래스로 구성함
+        - 단일 상속 (Subclassing), 참조 타입
+        - 인스턴스 : type casting 가능, deinit (디이니셜라이저) 사용 가능, reference counting (참조 횟수 계산) 가능
     - Structure
+        - Swift의 대부분 큰 뼈대는 구조체로 구성함 (스위프트의 기본 데이터 타입은 모두 구조체로 구현됨)
         - 상속 불가, 값 타입
-        - Swift의 대부분 큰 뼈대는 구조체로 구성함 (스위프트의 기본 데이터 타입은 모두 구조체로 구현되어있음)
         - 다른 객체나 함수로 전달될 때 참조가 아닌 복사를 원할 때, 상속을 주고받을 필요가 없을 때 사용
     - Enum
         - 상속 불가, 값 타입, 열거형 자체가 하나의 데이터 타입 (동시에 case 하나하나를 유의미한 값으로 취급)
@@ -2171,20 +2215,20 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     B) 부모 클래스가 가진 기능을 수정할 수 있다. (재정의/덮어쓰기, Overriding) - ex. minus
     - 장점 : 가독성, 유지보수, 코드 재사용, 중복 최소화
 
-        ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%201.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%201.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png)
 
     - 참고 - overriding vs overloading
         - overloading : 기존의 함수 (sum)과 동일한 함수명을 사용하면서 형태를 변형한 경우 - ex. parameter 1개를 추가
 
-            ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%202.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%202.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png)
 
     - this vs super
         - this : 자기 자신
         - super : 부모 클래스
 
-            ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%203.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%203.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png)
 
-            ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%204.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%204.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png)
 
     - 생성자 (constructor) : 부모 클래스에서 정의한 생성자들을 자식 클래스에서 그대로 사용할 수 있는 기능
     - Polymorphism (다형성)
@@ -2192,40 +2236,66 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 # 12. Closure
 
 - 특징
-    - 클로저는 실행가능한 코드 블럭입니다.
-    - 함수는 클로저의 일종으로, 이름이 있는 클로저입니다.
-    - 함수와 다르게 이름정의는 필요하지는 않지만, 매개변수 전달과 반환 값이 존재할 수 있다는 점이 동일합니다.
-    - 일급객체/일급시민 (first-citizen)으로 변수, 상수 등에 저장하거나 전달인자로 전달이 가능합니다.
+    - 클로저는 실행가능한 코드 블럭이다.
+    - 함수는 클로저의 일종으로, 이름이 있는 클로저이다.
+    - 함수와 다르게 이름정의는 필요하지는 않지만, 매개변수 전달과 반환 값이 존재할 수 있다는 점이 동일하다.
+    - 일급객체/일급시민 (first-citizen)으로 변수에 저장하거나 함수의 전달인자로 전달이 가능하다.
         - [x]  일급객체 ?
             - [https://ko.wikipedia.org/wiki/일급_객체](https://ko.wikipedia.org/wiki/%EC%9D%BC%EA%B8%89_%EA%B0%9D%EC%B2%B4)
             - 다른 객체들에 일반적으로 적용 가능한 연산을 모두 지원하는 객체를 가리킨다. 보통 함수에 매개변수로 넘기기, 수정하기, 변수에 대입하기와 같은 연산을 지원할 때 일급 객체라고 한다.
+    - 함수 및 클로저는 참조 type이다.
+
 - Syntax
-    - 클로저는 중괄호 { }로 감싸져 있고, 괄호를 이용해 (parameter)를 정의합니다.
-    - -> 을 이용해 반환 타입을 명시합니다.
-    - "in" 키워드를 이용해 실행 코드와 분리합니다.
+    - 클로저는 중괄호 { }로 감싸져 있고, 괄호를 이용해 (parameter)를 정의한다.
+    - -> 을 이용해 반환 타입을 명시한다. in 키워드로 실행 코드와 분리한다.
+    - 클로저는 주로 함수의 전달인자로 많이 사용된다. 함수 내부에서 원하는 코드블럭을 실행 가능하다.
 
     ```swift
     { (parameter 목록) -> 반환타입 in  
         실행 코드
     }
 
-    -
-
     // 1. 함수를 변수에 할당
     func sumFunction (a: Int, b: Int) -> Int {
         return a+b
     }
 
-    var resultSum1: Int = sumFunction(a: 1, b: 2)
-    print(resultSum1) // 3
+    var resultSum: Int = sumFunction(a: 1, b: 2)
+    print(resultSum) // 3
 
     // 2. closure을 변수에 다시 할당
-    var sum: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in   // 변수 sum에 closure/함수를 할당할거야. 반환값이 Int 이고, 매개변수가 Int 타입인! 
+    var sumClosure: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in   // 변수 sum에 closure/함수를 할당할거야. 매개변수가 Int type이고, 반환값이 Int type인! 
         return a+b
     }
 
-    resultSum2 = sum(3,4)  // 변수 자체가 closure/함수이기 때문에 a:b: 없이 바로 실행시킬 수 있음
-    print(resultSum2) // 7
+    resultSum = sumClosure(3,4)  // 변수 자체가 closure/함수이기 때문에 a:b: 없이 바로 실행시킬 수 있음
+    print(resultSum) // 7
+    ```
+
+    ```swift
+    let add: (Int, Int) -> Int          // 1. add라는 상수의 data type을 closure/함수로 선언한다.
+    add = { (a: Int, b: Int) -> Int in  // 2. 상수 add의 초기값으로 closure/함수를 할당한다.
+        return a + b
+    }
+
+    func calculate(a: Int, b: Int, method: (Int, Int) -> Int) -> Int {   // 3. method라는 parameter의 타입을 closure/함수로 선언하고, 
+        return method(a, b)   // 4. 함수 내부에서 method를 호출한다. (즉, parametor로서 전달받은 closure/함수를 호출해준다.)
+    }
+
+    var calculatedA: Int
+    calculatedA = calculate(a: 50, b: 10, method: add)  // 5. parametor method에 add라는 closure를 호출한다.
+    print(calculatedA) // 60 
+
+    print(calculate(a: 50, b: 10, method: add)  // 60
+    print(calculate(a: 50, b: 10, method: sumFunction)  // 60 - method parameter에 closure 외에 동일한 data type을 가진 함수도 넣을 수 있다.
+
+    // 따로 클로저를 변수에 넣어 전달하지 않고, 
+    // 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있다.
+
+    calculatedA = calculate(a: 50, b: 10, method: { (left: Int, right: Int) -> Int in
+        return left + right
+    })
+    print(calculatedA) // 60
     ```
 
     - 참고 - data type으로서의 함수 (변수에 함수를 할당)
@@ -2242,215 +2312,564 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         someFunction("eric", "yagom") // Hello eric! I'm yagom (변수 자체가 함수이기 때문에 바로 실행시킬 수 있음) *즉, someFunction(매개변수1:어쩌구, 매개변수2:저쩌구) 안써도 됨!
         ```
 
-- 함수의 전달인자로서의 클로저
-    - 클로저는 주로 함수의 전달인자로 많이 사용됩니다.
-    - 함수 내부에서 원하는 코드블럭을 실행 할 수 있습니다.
+- 클로저 표현 간소화
+    - 클로저 표현방법
+        1. 후행 클로저 : 함수의 마지막 매개변수에 전달되는 클로저는 `후행클로저(trailing closure)`로 함수 외부에 구현 가능하다.
+        2. 반환타입 생략 : 컴파일러가 클로저의 타입을 유추할 수 있는 경우 매개변수, 반환 타입을 생략 가능하다.
+        3. 단축 인자이름 : 전달인자의 이름이 굳이 필요없고, 컴파일러가 타입을 유추할 수 있는 경우 축약된 전달인자 이름(`$0`, `$1`, `$2`...)을 사용 가능하다. 이때 in 키워드 생략 가능하다.
+        4. 암시적 반환 표현 : 반환 값이 있는 경우, 암시적으로 클로저의 맨 마지막 줄은 return 키워드를 생략해도 반환 값으로 취급한다.
 
-    ```swift
-    let add: (Int, Int) -> Int          // 1. add라는 상수의 data type은 closure/함수로 정의한다.
-    add = { (a: Int, b: Int) -> Int in  // 2. 상수 add의 초기값으로 closure/함수를 할당한다.
-        return a + b
-    }
+        ```swift
+        *축약 전
+        result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in
+            return left + right
+        })
 
-    func calculate(a: Int, b: Int, method: (Int, Int) -> Int) -> Int {   // 3. method라는 parametor의 타입을 closure/함수로 정의하고, 
-        return method(a, b)   // 4. 함수 내부에서 method를 호출한다. (즉, parametor로서 전달받은 closure/함수를 호출해준다.)
-    }
+        -
 
-    var calculatedA: Int
-    calculatedA = calculate(a: 50, b: 10, method: add)  // 5. parametor method에 add라는 closure를 호출한다.
-    print(calculatedA) // 60 
+        *축약 후
+        result = calculate(a: 10, b: 10, method: { $0 + $1 })
+        or
+        result = calculate(a: 10, b: 10) { $0 + $1 }
+        ```
 
-    print(calculate(a: 50, b: 10, method: add)  // 60
-    print(calculate(a: 50, b: 10, method: sumFunction)  // 60 - method parameter에 closure 외에 동일한 data type을 가진 함수도 넣을 수 있다.
+        - 설명
+            - 기본 클로저 표현
+                - [ ]  // or 따로 클로저를 변수 (여기서는 method)에 넣어 전달하지 않고, 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있습니다. ?? method: 넣으라고 나오는데?
 
-    // 따로 클로저를 변수에 넣어 전달하지 않고, 
-    // 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있습니다.
+                ```swift
+                let add: (Int, Int) -> Int  // closure/함수 type을 변수에 할당 (매개변수 type이 Int, Int 이고, return값이 Int인)        
+                add = { (a: Int, b: Int) -> Int in  
+                    return a + b
+                }
 
-    calculatedA = calculate(a: 50, b: 10, method: { (left: Int, right: Int) -> Int in
-        return left + right
-    })
-    print(calculatedA) // 60
-    ```
+                // 클로저를 매개변수로 갖는 함수 calculate(a:b:method:)와 결과값을 저장할 변수 result 선언
+                func calculate(a: Int, b: Int, method: (Int, Int) -> Int) -> Int {
+                    return method(a, b)
+                }
 
-- 클로저 표현방법
-    1. 후행 클로저 : 함수의 매개변수 마지막으로 전달되는 클로저는 `후행클로저(trailing closure)`로 함수 외부에 구현할 수 있습니다.
-    2. 반환타입 생략 : 컴파일러가 클로저의 타입을 유추할 수 있는 경우 매개변수, 반환 타입을 생략할 수 있습니다.
-    3. 단축 인자이름 : 전달인자의 이름이 굳이 필요없고, 컴파일러가 타입을 유추할 수 있는 경우 축약된 전달인자 이름(`$0`, `$1`, `$2`...)을 사용 할 수 있습니다.
-    4. 암시적 반환 표현 : 반환 값이 있는 경우, 암시적으로 클로저의 맨 마지막 줄은 return 키워드를 생략해도 반환 값으로 취급합니다.
+                var result: Int
+                result = calculate(a: 1, b: 2, method: add)
+                print(result)  // 3
 
-    ```swift
-    *축약 전
-    result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in
-        return left + right
-    })
+                // or 따로 클로저를 변수 (여기서는 method)에 넣어 전달하지 않고, 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있습니다. ?? method: 넣으라고 나오는데?
 
-    -
+                var result: Int = calculate(a: 1, b: 2, { (a: Int, b: Int) -> Int in  
+                    return a + b
+                })
+                print(result)  // 3
+                ```
 
-    *축약 후
-    result = calculate(a: 10, b: 10, method: { $0 + $1 })
-    or
-    result = calculate(a: 10, b: 10) { $0 + $1 }
-    ```
+            - 1. 후행 클로저
+                - 클로저가 함수의 마지막 전달인자일 때, 마지막 매개변수 이름을 생략한 후 함수 소괄호 () 외부에 클로저 {}를 구현할 수 있다.
+                - 또한 해당 함수의 parameter가 클로저 1개 뿐인 경우, 소괄호를 생략 가능하다. (추가 예시 참고)
 
-    - 설명
-        - 기본 클로저 표현
-            - [ ]  // or 따로 클로저를 변수 (여기서는 method)에 넣어 전달하지 않고, 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있습니다. ?? method: 넣으라고 나오는데?
+                ```swift
+                result = calculate(a: 10, b: 10) { (left: Int, right: Int) -> Int in
+                    return left + right
+                }
+                print(result) // 20
+                ```
+
+            - 2. 반환타입 생략
+                - 함수를 정의할 때, calculate(a: Int, b: Int, method: (Int, Int) -> Int)
+                method 매개변수는 Int 타입을 반환할 것이라는 사실을 컴파일러가 이미 알기 때문에 굳이 클로저에서 반환타입을 명시해 주지 않아도 된다. 
+                (단, in 키워드는 생략 불가하다. 단축 인자이름을 사용하는 경우에만 in을 생략한다.)
+                - 1) return 값의 type 생략, 2) 매개변수의 type 생략, 3) 둘 다 생략 - 모두 가능하다.
+
+                ```swift
+                result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in  // 1) -> Int 생략 (return값 type)
+                    return left + right
+                })
+
+                result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in  // 2) :Int, :Int 생략 (매개변수 type) // 3) 매개변수, return값 type 모두 생략 가능
+                    return left + right
+                })
+
+                -
+
+                result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) in
+                    return left + right
+                })
+
+                // 당연히 후행클로저와 함께 사용 가능하다.
+                result = calculate(a: 10, b: 10) { (left: Int, right: Int) in
+                    return left + right
+                }
+                ```
+
+            - 3. 단축 인자이름
+                - 마찬가지로 컴파일러가 이미 method의 매개변수 (전달인자?)의 타입을 알고 있고, 굳이 매개변수 이름을 설정할 필요가 없기 때문에 
+                method의 매개변수는 생략 가능하고, 단축 인자이름을 활용할 수 있다. 
+                (단, 단축 인자이름을 사용하는 경우 in 키워드는 항상 생략한다.)
+                - 단축 인자이름은 클로저의 매개변수의 순서대로 `$0, $1, $2`... 형태로 표현한다.
+
+                ```swift
+                result = calculate(a: 10, b: 10, method: { (left, right) in   // 단축 인자이름을 사용하면, 항상 (left, right) in 을 생략한다.
+                    return left + right
+                })
+
+                -
+
+                result = calculate(a: 10, b: 10, method: {
+                    return $0 + $1    // $0 는 첫 번째 매개변수, $1 은 두 번째 매개변수를 의미함
+                })
+
+                // 당연히 후행 클로저와 함께 사용할 수 있다.
+                result = calculate(a: 10, b: 10) {
+                    return $0 + $1
+                }
+                ```
+
+            - 4. 암시적 반환 표현
+                - 클로저가 반환하는 값이 있다면 클로저의 마지막 줄의 결과값은 암시적으로 반환값으로 취급한다. 따라서 return 키워드는 생략 가능하다.
+
+                ```swift
+                result = calculate(a: 10, b: 10) {
+                    $0 + $1   // return 키워드 생략
+                }
+
+                -
+
+                result = calculate(a: 10, b: 10, method: { (left, right) in   
+                    left + right   // return 키워드 생략 (이렇게도 가능)
+                }
+                })
+                ```
+
+        - Quiz
+            - [ ]  plus는 매개변수가 있어야하는데 어떻게 가능한거지?
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png)
+
+    - 추가 예시 (교재)
+
+        ```swift
+        // 구현 - 알파벳 큰 순서로 정렬하는 Array
+
+        func backwards(first: String, second: String) -> Bool {
+            return first > second // z가 a보다 크다 = z가 a보다 뒷쪽에 있다
+        }
+        print(backwards(first: "a", second: "z")) // false
+
+        var names: [String] = ["a", "c", "z"]
+
+        // 방법-1 sorted 메서드의 argument로 함수를 전달
+        var reversed: [String] = names.sorted(by: backwards) // sorted 메서드에 의해 값이 정렬되고 Array type으로 return 된다.
+        print(reversed) // ["z", "c", "a"]
+
+        // 방법-2 sorted 메서드의 argument로 Closure를 전달
+        reversed = names.sorted(by: {(first: String, second: String) -> Bool in
+            return first > second
+        })
+        print(reversed) // ["z", "c", "a"]
+        ```
+
+        - 후행 클로저
 
             ```swift
-            let add: (Int, Int) -> Int  // closure/함수 type을 변수에 할당 (매개변수 type이 Int, Int 이고, return값이 Int인)        
-            add = { (a: Int, b: Int) -> Int in  
-                return a + b
+            // 2-2. 후행 클로저 표현 (Trailing Closure)
+            reversed = names.sorted() {(first: String, second: String) -> Bool in // 마지막 argument로 클로저가 전달되는 경우, () 밖에 {클로저} 구현 가능
+                return first > second
             }
+            print(reversed) // ["z", "c", "a"]
 
-            // 클로저를 매개변수로 갖는 함수 calculate(a:b:method:)와 결과값을 저장할 변수 result 선언
-            func calculate(a: Int, b: Int, method: (Int, Int) -> Int) -> Int {
-                return method(a, b)
+            reversed = names.sorted(by:) {(first: String, second: String) -> Bool in // *sorted(by:) 메서드의 argument label 생략 가능
+                return first > second
             }
+            print(reversed) // ["z", "c", "a"]
 
-            var result: Int
-            result = calculate(a: 1, b: 2, method: add)
-            print(result)  // 3
-
-            // or 따로 클로저를 변수 (여기서는 method)에 넣어 전달하지 않고, 함수를 호출할 때 클로저 전체를 작성하여 전달할 수도 있습니다. ?? method: 넣으라고 나오는데?
-
-            var result: Int = calculate(a: 1, b: 2, { (a: Int, b: Int) -> Int in  
-                return a + b
-            })
-            print(result)  // 3
+            reversed = names.sorted {(first: String, second: String) -> Bool in // *sorted(by:) 메서드의 소괄호도 생략 가능
+                return first > second
+            }
+            print(reversed) // ["z", "c", "a"]
             ```
-
-        - 1. 후행 클로저
-            - 클로저가 함수의 마지막 전달인자일 때, 마지막 매개변수 이름을 생략한 후 함수 소괄호 () 외부에 클로저 {}를 구현할 수 있다.
-                - [ ]  어떤 상황에 활용하는거지...? 이미 함수 정의할 때 구현이 된 내용인데?
 
             ```swift
-            result = calculate(a: 10, b: 10) { (left: Int, right: Int) -> Int in
-                return left + right
+            // 다중 후행 클로저
+
+            func doSth(paraA: (String) -> Void,  // 함수의 parameter에 클로저가 여러 개 있는 경우
+                       paraB: (String) -> Void,
+                       paraC: (String) -> Void) {
+                // statements
             }
-            print(result) // 20
+
+            doSth { (first: String) in  // *첫번째 클로저의 argument label은 생략해야 한다. paraA: 넣으면 오류 발생
+                // A Closure
+            } paraB: { (first: String) in
+                // B Closure
+            } paraC: { (first: String) in
+                // C Closure
+            }
             ```
 
-        - 2. 반환타입 생략
-            - 함수를 정의할 때, calculate(a: Int, b: Int, method: (Int, Int) -> Int)
-            method 매개변수는 Int 타입을 반환할 것이라는 사실을 컴파일러가 이미 알기 때문에 굳이 클로저에서 반환타입을 명시해 주지 않아도 된다. 
-            (단, in 키워드는 생략할 수 없다.)
-            - 1) return 값의 type 생략, 2) 매개변수의 type 생략, 3) 둘 다 생략 - 모두 가능하다.
+        - 클로저 표현 간소화
+            - 타입 유추
+            - 단축 인자 이름
+            - 암시적 반환
+            - 연산자 함수
 
             ```swift
-            result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in  // 1) -> Int 생략 (return값 type)
-                return left + right
-            })
-
-            result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in  // 2) :Int, :Int 생략 (매개변수 type) // 3) 매개변수, return값 type 모두 생략 가능
-                return left + right
-            })
-
-            -
-
-            result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) in
-                return left + right
-            })
-
-            // 당연히 후행클로저와 함께 사용 가능하다.
-            result = calculate(a: 10, b: 10) { (left: Int, right: Int) in
-                return left + right
+            // 3-1. 타입 유추
+            reversed = names.sorted {(first, second) in // parameter type, 개수, return type이 일치하는 클로저만 변수에 할당 가능하다. 즉, 컴파일러는 이미 타입을 유추 가능하다. 따라서 생략 가능하다.
+                return first > second
             }
+            print(reversed) // ["z", "c", "a"]
+
+            // 3-2. 단축 인자 이름
+            reversed = names.sorted { // 클로저의 parameter는 단축 인자이름으로 대체 가능하다. 첫번째 parameter부터 차례로 $0, $1, $2... 순서로 표현하며, 이때 in 키워드는 항상 생략한다.
+                return $0 > $1
+            }
+            print(reversed) // ["z", "c", "a"]
+
+            // 3-3. 암시적 반환 표현
+            reversed = names.sorted { $0 > $1 } // 클로저가 반환값을 가지며, 실행문이 1줄이라면 return을 생략 가능하다.
+            print(reversed) // ["z", "c", "a"]
+
+            // 3-4. 연산자 함수
+            reversed = names.sorted(by: >) // 연산자 함수 '>'를 클로저의 역할로 사용했다.
+            print(reversed) // ["z", "c", "a"]
+
+            // 비교연산자는 2개의 피연산자를 통해 Bool type 반환을 한다. (reversed 변수에 전달한 클로저와 동일한 조건이다.)
+            // 클로저는 parameter type과 return type이 연산자를 구현한 함수의 형태와 동일하면, 연산자만 표기 가능하다. (연산자는 함수의 일종이다.)
             ```
 
-        - 3. 단축 인자이름
-            - 마찬가지로 컴파일러가 이미 method의 매개변수 (전달인자?)의 타입을 알고 있고, 굳이 매개변수 이름을 설정할 필요가 없기 때문에 
-            method의 매개변수는 생략 가능하고, 단축 인자이름을 활용할 수 있다. 
-            (단, 매개변수를 생략하는 경우 in 키워드를 항상 생략해야 한다.)
-            - 단축 인자이름은 클로저의 매개변수의 순서대로 `$0, $1, $2`... 형태로 표현한다.
+    - 참고 - DoItSwift Alert
+
+        ```swift
+        // Closure 기본 형태 
+        { (parameter) -> 반환타입 in 
+           return ... }
+
+        // 예시 - 함수 및 Closure 비교
+        		func completeWork (a: Int) -> void {
+        				print("completed : \(a)")
+        		} 
+        		
+        		// 위 함수를 Closure 형태로 바꾸면
+        		{		(a: Int) -> void in
+        				print("completed : \(a)")
+        		}
+        		
+        		// 컴파일러가 반환 타입, 매개변수 타입을 미리 알고 있어서 생략 가능하면
+        		{		(a) in 
+        				print("completed : \(a)")
+        		}
+
+        		{		a in  // (a) -> a로 가능 (매개변수 타입 생략 시 () 소괄호 생략 가능)
+        				print("completed : \(a)")
+        		}
+
+        // UIAlertAction의 handler: { in } 이 Closure 임
+        let offAction = UIAlertAction(title: "네", style: .default, handler: {
+        									                                            ACTION in self.lampImg.image = self.imgOff
+        									                                            self.isLampOn = false
+        })
+        ```
+
+- 값 획득 (Capture)
+    - [ ]  ?
+    - 클로저는 자신이 정의된 위치의 주변 문맥을 통해 변수를 획득 (Capture) 가능하다.
+    값 획득을 통해 클로저는 주변에 정의한 변수가 더 이상 존재하지 않더라도 (메모리에서 free 되었더라도???) 해당 변수 값을 자신 내부에서 참조 또는 수정 가능하다. (클로저 및 함수는 참조 type이므로 ???)
+        - 클로저는 비동기 작업에 많이 사용된다. 비동기 Call-back을 작성하는 경우, 현재 상태를 미리 획득해두지 않으면 실제로 클로저 기능을 실행하는 순간에는 주변 변수가 이미 메모리에 존재하지 않는 경우가 발생한다.
+        - 이를 대비하기 위해 클로저의 일종인 중첩함수는 주변의 변수를 미리 획득해 놓을 수 있다. 즉, 자신을 포함하는 지역변수를 획득해 놓을 수 있다.
+
+        ```swift
+        func makeIncrementer(amount: Int) -> (() -> Int) {  // return type : Closure - 함수객체를 반환한다는 의미 ???
+        		var total = 0
+
+        		func incrementer() -> Int { // 중첩함수 incrementer는 자신 주변의 total 및 amount 변수 값을 획득한다. (직접 incrementer 함수에서 선언하지 않은 변수이지만, 획득하여 변수 값을 참조해둔다.)
+        				total += amount
+        				return total
+        		} // incrementer 함수가 호출될 때마다 parameter amount 값만큼 total 값이 증가한다.
+
+        		return incrementer  // makeIncrementer 함수는 클로저 incrementer를 return 한다. - 왜 클로저??? 함수 타입이라서???
+        }
+
+        // incrementer 함수는 자신 주변의 total 및 amount 변수의 참조를 획득한다. (값 획득??? 참조 획득???) 
+        // 참조를 획득하면 total 및 amount는 makeIncrementer 함수의 실행이 끝나도 사라지지 않고, incrementer가 호출될 때마다 계속 사용 가능하다.
+        ```
+
+        ```swift
+        let incrementByTwo: (() -> Int) = makeIncrementer(amount: 2)  // 상수에 함수를 할당한다. (=함수의 값이 아니라 참조를 할당했다. =상수에 함수의 참조를 설정했다.)
+
+        let first: Int = incrementByTwo()   // 2 - incrementer 함수가 호출될 때마다 2 만큼 total 변수 값이 증가하고 return 된다.
+        let second: Int = incrementByTwo()  // 4
+        let third: Int = incrementByTwo()   // 6
+
+        let incrementByTwo2: (() -> Int) = makeIncrementer(amount: 2) // 상수 incrementByTwo2는 상수 incrementByTwo와 별개의 참조를 갖는 total 변수 값을 획득했다.
+        let incrementByTen: (() -> Int) = makeIncrementer(amount: 10)
+
+        let first2: Int = incrementByTwo2()   // 2 
+        let second2: Int = incrementByTwo2()  // 4
+        let third2: Int = incrementByTwo2()   // 6
+
+        let ten: Int = incrementByTen()      // 10 
+        let twenty: Int = incrementByTen()   // 20 
+        let thirty: Int = incrementByTen()   // 30 
+
+        let sameWithIncrementByTwo: (() -> Int) = incrementByTwo // 참조변수 지정 - 상수에 함수의 참조를 할당했으므로 두 상수가 동일한 클로저를 가르킨다.
+        let continuedFourth: Int = sameWithIncrementByTwo()  // 8
+        let continuedFifth: Int = incrementByTwo()  // 10
+        ```
+
+- 탈출 (Escape)
+    - 함수의 argument로 전달한 클로저가 함수 종료 이후에 호출될 때, "클로저가 함수를 탈출한다"고 표현한다.
+    parameter로 클로저를 갖는 함수를 선언할 때, parameter type 부분에 `: @escaping` 키워드를 사용하여 클로저 탈출을 허용한다고 명시한다. (탈출 조건인데 명시하지 않으면 컴파일 오류 발생)
+    - 비동기 작업을 실행하는 함수는 Completion handler 전달인자로 클로저를 받아온다. 비동기 작업으로 함수가 종료된 이후 (함수 return 이후) 호출할 필요가 있는 클로저를 사용해야 할 때 탈출 클로저가 필요하다.
+    클로저가 함수를 탈출한 상태여야 호출될 수 있다.
+        - 함수 외부에 정의된 변수에 저정된 함수가 종료된 이후에 사용하는 경우???
+        - [ ]  returnedClosure()  // Closure A 출력 - 상수인데 실행 가능해서 ()를 쓰나?
+
+        ```swift
+        var handlers: [() -> Void] = [] // Closure type Array
+
+        func aFuncWithEscapingClosure(completionHandler: @escaping () -> Void) {  // parameter type : Closure (escape 허용)
+            handlers.append(completionHandler)
+        }
+        ```
+
+        ```swift
+        typealias VoidVoidClosure = () -> Void
+
+        let firstClosure: VoidVoidClosure = {
+            print("Closure A")
+        }
+        let secondClosure: VoidVoidClosure = {
+            print("Closure B")
+        }
+
+        func returnOneClosure(first: @escaping VoidVoidClosure, second: @escaping VoidVoidClosure, shouldReturnClosure: Bool) -> VoidVoidClosure { 
+            return shouldReturnClosure ? first : second // *argument로 받은 클로저를 함수 외부로 return 하므로 함수를 탈출하는 클로저이다.
+        }
+
+        let returnedClosure: VoidVoidClosure = returnOneClosure(first: firstClosure, second: secondClosure, shouldReturnClosure: true)
+        // return한 클로저 (firstClosure)를 함수 외부의 상수에 저장한다.
+        returnedClosure()  // Closure A 출력 - 상수인데 실행 가능해서 ()를 쓰나?
+
+        var closures: [VoidVoidClosure] = [] // Closure type Array
+
+        func appendClosure(parameterClosure: @escaping VoidVoidClosure) {
+            closures.append(parameterClosure) // *argument로 전달받은 클로저가 함수 외부의 변수에 저장되므로 함수를 탈출하는 클로저이다.
+        }
+        ```
+
+    - 타입 내부 메서드의 parameter로 탈출 클로저를 명시한 경우, 클로저 내부에서 해당 타입의 프로퍼티/메서드/서브스크립트 등에 접근하려면 `self` 키워드를 명시해야 한다. (비탈출 클로저는 명시 필요 없음)
+
+        ```swift
+        typealias VoidVoidClosure = () -> Void
+
+        func funcWithNoEscapeClosure(parameterClosure: VoidVoidClosure) {
+            parameterClosure()  // Closure 실행
+        }
+
+        func funcWithEscapingClosure(completionHandler: @escaping VoidVoidClosure) -> VoidVoidClosure {
+            return completionHandler  // 함수 외부로 탈출 클로저를 return
+        }
+
+        class SomeClass {
+            var x = 10
+            
+            func runNoEscapeClosure() {
+                funcWithNoEscapeClosure { x = 200 }  // 비탈출 클로저에서 self 사용은 선택 사항이다. *아래 참고-원래 형태는 funcWithNoEscapeClosure(parameterClosure: { x = 200 })
+            }
+            
+            func runEscapingClosure() -> VoidVoidClosure {
+                return funcWithEscapingClosure { self.x = 100 }  // 탈출 클로저에서 명시적으로 self를 사용해야 한다.
+            }
+        }
+
+        let aInstance: SomeClass = SomeClass()
+
+        aInstance.runNoEscapeClosure() // funcWithNoEscapeClosure 함수는 자체 실행 기능이 있다. 그래서 바로 출력 가능하다.
+        print(aInstance.x) // 200 출력
+
+        let returnClosure: VoidVoidClosure = aInstance.runEscapingClosure() // funcWithEscapingClosure 함수는 자체 실행 기능이 없고, return만 하므로 선언 이후 별도로 실행해줘야 한다.
+        print(aInstance.x) // 200 출력
+        returnClosure() // 실행해야 프로퍼티 x 값이 변경된다.
+        print(aInstance.x) // 100 출력
+        ```
+
+        - [x]  funcWithNoEscapeClosure { a = 200 } ?
+            - 후행 클로져 기능
+
+                ```swift
+                funcWithNoEscapeClosure(parameterClosure: VoidVoidClosure) { // 함수 정의
+                		// ...
+                }
+
+                funcWithNoEscapeClosure(parameterClosure: {someClosure}) // 함수 실행 (argument로 {...} 형태의 someClosure가 전달됨) -> 이때 후행 클로저 기능을 사용 가능하다.
+
+                // 후행 클로저 기능 - 1) 함수의 마지막 argument로 클로저가 전달되는 경우, 2) argument가 클로저 1개 뿐인 경우에 해당하므로 () 밖에 {클로저} 구현 가능하며, ()를 생략 가능하다.
+                funcWithNoEscapeClosure {someClosure}
+
+                // 즉, 아래 두 표현은 동일하다.
+                funcWithNoEscapeClosure(parameterClosure: { x = 200 }) 
+                funcWithNoEscapeClosure { x = 200 } 
+                ```
+
+    - withoutActuallyEscaping 함수 - 비탈출 클로저로 전달한 클로저가 탈출 클로저인 척 해야하는 경우가 있다. 실제로는 탈출하지 않는데, 다른 함수에서 탈출 클로저를 요구하는 상황에 해당한다. 
+    이때, withoutActuallyEscaping 함수를 통해 해당 비탈출 클로저를 탈출 클로저인 것처럼 사용 가능하다.
+        - [ ]  lazy 컬렉션은 비동기 작업을 할 때 사용하므로 filter 메서드는 탈출 클로저를 요구한다.
+        - [ ]  lazy 컬렉션
+            - 엄밀하게, 필요한 경우에만 해당 요소에 메소드 오퍼레이션을 적용하므로, 무한하거나 매우 큰 컬렉션을 다루는 데 효율적이다.
+        - [ ]  do 전달인자는 비탈출 클로저 escapablePredicate를 전달받아 실제로 작업을 실행할 탈출 클로저를 전달한다.
+
+        ```swift
+        func hasElements(in array: [Int], match predicate: (Int) -> Bool) -> Bool { // 비탈출 클로저 predicate를 parameter로 전달
+            return (array.lazy.filter { predicate($0) }.isEmpty == false) // 그런데 lazy 컬렉션은 비동기 작업을 할 때 사용하므로 filter 메서드는 탈출 클로저를 요구한다.
+        } // 컴파일 에러 발생 - Escaping closure captures non-escaping parameter 'predicate'
+        ```
+
+        ```swift
+        let numbers: [Int] = [2,4,6,8]
+
+        let evenNumberPredicate = { (number: Int) -> Bool in // Closure 할당
+            return number % 2 == 0
+        }
+
+        let oddNumberPredicate = { $0 % 2 == 1 } // Closure 할당 - 가능
+
+        // withoutActuallyEscaping 함수를 통해 비탈출 클로저를 탈출 클로저처럼 사용 가능하다.
+        func hasElements(in array: [Int], match predicate: (Int) -> Bool) -> Bool { // withoutActuallyEscaping 함수의 첫번째 argument로 비탈출 클로저 predicate를 전달 
+            return withoutActuallyEscaping(predicate, do: { escapablePredicate in // withoutActuallyEscaping 함수의 두번째 argument로 비탈출 클로저 escapablePredicate를 전달 (lazy 때문에 탈출 클로저인 척 해야한다.)
+                return (array.lazy.filter { escapablePredicate($0) }.isEmpty == false) // do 전달인자는 비탈출 클로저 escapablePredicate를 전달받아 실제로 작업을 실행할 탈출 클로저를 전달한다. ???
+            })
+        }
+
+        let hasEvenNumber = hasElements(in: numbers, match: evenNumberPredicate)
+        let hasOddNumber = hasElements(in: numbers, match: oddNumberPredicate)
+
+        print(hasEvenNumber) // true 출력
+        print(hasOddNumber) // false 출력
+        ```
+
+- 자동 클로저
+    - 자동클로저 (Auto Closure) : 함수의 argument로 전달하는 표현을 자동으로 변환해주는 클로저이다.
+    - `@autoclosure`로 명시한다. (`@noescape` 속성이 암시적으로 부여된다. 따라서 자동클로저를 탈출 클로저로 사용한다면, `@autoclosure @noescape` 으로 명시한다.)
+    - 자동클로저는 argument를 갖지 않는다. 자동클로저는 호출되었을 때 자신이 감싸고 있는 코드의 결과값을 반환한다.
+    - 함수로 전달하는 클로저인 경우, 어려운 문법을 사용하지 않도록 문법적 편의를 제공한다. (원래 () {}로 복잡하게 써야함)
+    - Swift 표준 라이브러리의 assert (condition:message:file:line) 함수는 condition 및 message parameter가 자동클로저이다. (condition parameter는 디버그용 빌드에서만 실행되고, message parameter는 condition이 false일 때만 실행된다.)
+    - 자동클로저는 클로저가 호출되기 전까지 클로저 내부의 코드가 동작하지 않는다. 따라서 연산 지연이 가능하다. (연산에 자원 소모가 크거나, 부작용이 우려될 때 유용하게 사용한다.)
+
+        ```swift
+        // 상수에 클로저를 할당하고, 상수를 실행
+        var customersInLine: [String] = ["kevin","mike","john"] // 대기 중인 손님들
+        print(customersInLine.count) // 3
+
+        let customerProvider: () -> String = { 
+            return customersInLine.removeFirst() // 첫번째 element를 제거하고, 해당 값을 return한다.
+        }
+        print(customersInLine.count) // 3 - 클로저 선언만 한 상태에는 클로저 내부의 코드가 실행되지 않는다. (연산 지연)
+
+        print("Now serving \(customerProvider())!!!") // 클로저 실행 - Now serving kevin!!!
+        print(customersInLine.count) // 2
+
+        print("Now serving \(customerProvider())!!!") // Now serving mike!!!
+        print(customersInLine.count) // 1
+
+        print("Now serving \(customerProvider())!!!") // Now serving john!!!
+        print(customersInLine.count) // 0
+        ```
+
+        ```swift
+        // 함수의 parameter로 클로저를 전달
+        var customersInLine: [String] = ["kevin","mike","john"]
+        print(customersInLine.count) // 3
+
+        func serveCustomer(_ customerProvider: () -> String) { 
+            print("Now serving \(customerProvider())!!!")
+        }
+
+        serveCustomer( {customersInLine.removeFirst()} ) // Now serving kevin!!! - // 위와 동일한 클로저를 함수의 argument로 전달하는 경우
+        print(customersInLine.count) // 2
+
+        serveCustomer( {customersInLine.removeFirst()} ) // Now serving mike!!!
+        print(customersInLine.count) // 1
+
+        serveCustomer( {customersInLine.removeFirst()} ) // Now serving john!!!
+        print(customersInLine.count) // 0
+        ```
+
+        ```swift
+        // 자동클로저 사용
+        var customersInLine: [String] = ["kevin","mike","john"]
+        print(customersInLine.count) // 3
+
+        func serveCustomer(_ customerProvider: @autoclosure () -> String) { // 자동클로저 명시. 2. String값(kevin)을 매개변수가 없는 String 값을 반환하는 클로저로 변환한다. 
+            print("Now serving \(customerProvider())!!!")
+        }
+
+        serveCustomer(customersInLine.removeFirst()) // Now serving kevin!!! - 자동클로저 호출, {} 필요 없음. 1. 실행결과인 String(kevin)을 argument로 전달한다.
+        print(customersInLine.count) // 2
+
+        serveCustomer(customersInLine.removeFirst()) // Now serving mike!!!
+        print(customersInLine.count) // 1
+
+        serveCustomer(customersInLine.removeFirst()) // Now serving john!!!
+        print(customersInLine.count) // 0
+
+        // 1. 자동클로저 parameter customerProvider는 
+        // 클로저 {}를 argument로 넘겨주는 것이 아니라 
+        // customersInLine.removeFirst()의 실행 결과 (String type)를 argument로 넘겨준다. 🐠🐠🐠
+
+        // 2. String값(kevin)을 매개변수가 없는 String 값을 반환하는 클로저로 변환한다. 
+        // 자동클로저는 argument를 갖지 않기 때문에 반환 타입의 값(String)이 자동클로저의 parameter로 전달되면, 이것을 클로저로 바뀌주는 것이다. (자동으로 클로저로 바뀌주기 때문에 이름이 자동클로저)
+        // 자동클로저를 사용하면 기존처럼 클로저를 argument로 전달 불가하다.
+        ```
+
+        - 자동클로저를 탈출 클로저로 사용
 
             ```swift
-            result = calculate(a: 10, b: 10, method: { (left, right) in   // (left, right) in 생략
-                return left + right
-            })
+            var customersInLine: [String] = ["kevin","mike","john"]
+            print(customersInLine.count) // 3
 
-            -
-
-            result = calculate(a: 10, b: 10, method: {
-                return $0 + $1    // $0 는 첫 번째 매개변수, $1 은 두 번째 매개변수를 의미함
-            })
-
-            // 당연히 후행 클로저와 함께 사용할 수 있다.
-            result = calculate(a: 10, b: 10) {
-                return $0 + $1
+            func serveCustomer(_ customerProvider: @autoclosure @escaping () -> String) -> (() -> String) { // return type도 클로저
+                return customerProvider // 함수 반환값으로 return 되므로 클로저가 함수를 escape 한다.
             }
+
+            let customerProvider: () -> String = serveCustomer(customersInLine.removeFirst()) // String값이 자동클로저의 argument로 전달되고, 클로저로 변환된다.
+            print("Now serving \(customerProvider())!!!") // Now serving kevin!!!
             ```
-
-        - 4. 암시적 반환 표현
-            - 클로저가 반환하는 값이 있다면 클로저의 마지막 줄의 결과값은 암시적으로 반환값으로 취급한다. 따라서 return 키워드는 생략 가능하다.
-
-            ```swift
-            result = calculate(a: 10, b: 10) {
-                $0 + $1   // return 키워드 생략
-            }
-
-            -
-
-            result = calculate(a: 10, b: 10, method: { (left, right) in   
-                left + right   // return 키워드 생략 (이렇게도 가능)
-            }
-            })
-            ```
-
-- Quiz
-    - [ ]  plus는 매개변수가 있어야하는데 어떻게 가능한거지?
-
-    ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%205.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%205.png)
-
-- 참고 - DoItSwift Alert
-
-    ```swift
-    // Closure 기본 형태 
-    { (parameter) -> 반환타입 in 
-       return ... }
-
-    // 예시 - 함수 및 Closure 비교
-    		func completeWork (a: Int) -> void {
-    				print("completed : \(a)")
-    		} 
-    		
-    		// 위 함수를 Closure 형태로 바꾸면
-    		{		(a: Int) -> void in
-    				print("completed : \(a)")
-    		}
-    		
-    		// 컴파일러가 반환 타입, 매개변수 타입을 미리 알고 있어서 생략 가능하면
-    		{		(a) in 
-    				print("completed : \(a)")
-    		}
-
-    		{		a in  // (a) -> a로 가능 (매개변수 타입 생략 시 () 소괄호 생략 가능)
-    				print("completed : \(a)")
-    		}
-
-    // UIAlertAction의 handler: { in } 이 Closure 임
-    let offAction = UIAlertAction(title: "네", style: .default, handler: {
-    									                                            ACTION in self.lampImg.image = self.imgOff
-    									                                            self.isLampOn = false
-    })
-    ```
 
 # 13. Property
 
-- 종류
+- 종류 (저장/연산/타입)
     - 인스턴스/타입 **저장** 프로퍼티
     - 인스턴스/타입 **연산** 프로퍼티
     - 지연 저장 프로퍼티
 - Language Guide - properties
     - [x]  provided? : 사용 가능함, 선언 가능함
     - Stored properties (저장 프로퍼티) : a constant/variable that is stored as part of an instance of a particular class or structure. 
-    Stored properties are provided only by classes and structures. (class, structure 에서만 사용 가능함. enumerations 불가)
-        - Lazy Stored Properties (지연 저장 프로퍼티) : a property whose initial value is not calculated until the first time it is used. 
+    Stored properties are provided only by classes and structures. (class, structure 에서만 사용 가능하다. enumerations 불가)
+        - Lazy Stored Properties (지연 저장 프로퍼티) : 호출될 때까지 값의 할당을 지연한다. a property whose initial value is not calculated until the first time it is used. 
         You must always declare a lazy property as a variable (with the var keyword), because its initial value might not be retrieved until after instance initialization completes.
             - Lazy properties are useful when the initial value for a property is dependent on outside factors whose values are not known until after an instance’s initialization is complete. Lazy properties are also useful when the initial value for a property requires complex or computationally expensive setup that should not be performed unless or until it is needed.
             지연 프로퍼티는 프로퍼티가 특정 요소에 의존적이어서 그 요소가 끝나기 전에 적절한 값을 알지 못하는 경우에 유용합니다. 또 복잡한 계산이나 부하가 많이 걸리는 작업을 지연 프로퍼티로 선언해 사용하면 실제 사용되기 전에는 실행되지 않아서 인스턴스의 초기화 시점에 복잡한 계산을 피할 수 있습니다.
+            (class 인스턴스의 저장 프로퍼티로 다른 class 인스턴트 또는 struct 인스턴스를 할당할 때, 인스턴스를 초기화하면서 저장 프로퍼티로 사용되는 인스턴스들이 한 번에 생성되어야 하는데, 이때 굳이 모든 저장 프로퍼티를 사용할 필요가 없는 경우)
+
+                ```java
+                struct CoordinatePoint {
+                    var x: Int = 0
+                    var y: Int = 0
+                }
+
+                class Position {
+                    lazy var point: CoordinatePoint = CoordinatePoint() // 저장 프로퍼티에 struct 인스턴스를 할당하는 경우. 의도 - point 변수에 CoordinatePoint가 바로 할당되지 않음
+                    let name: String
+                    
+                    init(name: String) {
+                        self.name = name
+                    }
+                }
+
+                let yagomPosition: Position = Position(name: "yagom")
+                print(yagomPosition.point) // CoordinatePoint(x: 0, y: 0) - point 프로퍼티에 처음 접근할 때 Coordinate가 초기화되어 할당됨
+                ```
+
     - Computed properties (연산 프로퍼티) : calculate (rather than store) a value. provide a `getter` and an `optional setter` to retrieve and set other properties and values indirectly.
-    getter와 optional한 setter를 제공해 값을 탐색하고 간접적으로 다른 프로퍼티 값을 설정할 수 있는 방법을 제공합니다.
-    Computed properties are provided by classes, structures, and enumerations.
+    메서드보다 간편하고 직관적이다.
+    getter (접근자)는 값을 연산하여 반환하고, optional한 setter (설정자)는 값을 변경한다.
         - ex. 사각형의 Point, Size, Rect 구조체 👍
             - The Rect structure also provides a computed property called center. The current center position of a Rect can always be determined from its origin and size, and so you don’t need to store the center point as an explicit Point value. Instead, Rect defines a custom getter and setter for a computed variable called center, to enable you to work with the rectangle’s center as if it were a real stored property.
             - The square variable (a new Rect variable) is initialized with an origin point of (0, 0), and a width and height of 10. This square is represented by the blue square in the diagram below.
@@ -2495,20 +2914,21 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             square.origin = Point(x: 0.0, y: 0.0)  // origin 프로퍼티 할당 (즉, 구조체 Point의 저장 프로퍼티 값을 할당)
             square.size = Size(width: 10.0, height: 10.0)  // size 프로퍼티 할당 (즉, 구조체 Size의 저장 프로퍼티 값을 할당)
 
-            print(square.center)  // Point(x: 5.0, y: 5.0) - 출력 (0 + 10/2 = 5)
+            print(square.center)  // **Point(x: 5.0, y: 5.0) - 출력 (0 + 10/2 = 5) 
 
             //var square = Rect(origin: Point(x: 0.0, y: 0.0),   // 한꺼번에 이렇게도 가능 (위와 동일한 결과)
             //                  size: Size(width: 10.0, height: 10.0))
 
-            let initialSquareCenter = square.center
+            let initialSquareCenter = square.center // **새로운 Point 값 (newCenter)이 입력됨
             square.center = Point(x: 15.0, y: 15.0)  // 구조체 Rect의 center 프로퍼티 - *set(newCenter) 부분에 들어가는 새로운 Point 값!! (15-5=10, 이로 인해 origin 값이 변경됨)
-            print("square.origin is now at (\(square.origin.x), \(square.origin.y))")
+
+            print("square.origin is now at (\(square.origin.x), \(square.origin.y))") // square.origin is now at (10.0, 10.0) 출력
             ```
 
             - [x]  var center의 type이 왜 Point? 단지 좌표 형태라서?
               print(square.center)  // Point(x: 5.0, y: 5.0) - 출력
 
-                ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%206.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
+                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
 
         - Read-only computed properties (읽기전용 연산 프로퍼티) : with a getter but no setter. 
         A read-only computed property always returns a value, and can be accessed through dot syntax, but cannot be set to a different value.
@@ -2528,30 +2948,30 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 print("the volume of fourByFiveByTwo is \(fourByFiveByTwo.volume)")
                 ```
 
-    - property observers : you can define property observers to monitor changes in a property’s value, which you can respond to with custom actions. 
-    Property observers can be added to stored properties you define yourself, and also to properties that a subclass inherits from its superclass.
-    - property wrapper : You can also use a property wrapper to reuse code in the getter and setter of multiple properties.
+    - Type properties (연산 프로퍼티) : 인스턴스 소속이 아니라 타입 소속의 프로퍼티이다.
+    인스턴스 생성 여부와 상관 없이 타입 프로퍼티의 값은 하나이며, 모든 인스턴스에 공통적으로 적용할 값을 정의할 때 사용한다. (C의 static과 유사함)
 
 - 특징
-    - 프로퍼티는 구조체, 클래스, 열거형 내부에 구현할 수 있다. (함수, 메서드, 클로저, 타입 등의 외부에 위치한 지역/전역 변수에도 모두 사용 가능)
+    - 프로퍼티는 구조체, 클래스, 열거형 내부에 구현할 수 있다. (함수, 메서드, 클로저, 타입 등의 외부에 위치한 지역/전역 변수에도 사용 가능)
     - 다만 열거형 내부에는 연산 프로퍼티만 구현할 수 있다. (저장 프로퍼티 불가)
 
     - 저장 프로퍼티 : 값을 저장한다.
-    - 연산 프로퍼티 { get{} set{} } : 값을 저장하는 것이 아니라 get을 통해 값을 연산하여 return 해주거나, set을 통해 값을 연산하여 할당해준다.
+    - 연산 프로퍼티 { get{} set{} } : 값을 저장하는 것이 아니라 특정 연산의 결과값을 의미한다. get을 통해 값을 연산하여 return 해주거나, set을 통해 값을 연산하여 할당해준다.
         - 연산 프로퍼티는 `var`로만 선언할 수 있다. (값이 가변적이므로)
         - 연산프로퍼티를 읽기전용으로는 구현할 수 있지만, 쓰기전용으로는 구현할 수 없다. (setter is optional)
         - 읽기전용으로 구현하려면 `get` 블럭만 작성한다. 읽기전용은 `get{}`을 생략 가능하다.
         - `set` 블럭에서 암시적 매개변수 `newValue`를 사용 가능하다. (즉, set(parameter)에서 parameter를 따로 지정하지 않은 경우)
+    - 연산 프로퍼티 및 프로퍼티 감시자는 전역변수, 지역변수 모두에 사용 가능하다. (단, 전역변수는 지연 저장 프로퍼티처럼 처음 접근할 때 최초 연산이 실행되므로 lazy 키워드가 필요 없다.)
 
     ```swift
     struct Student {
-        var name: String = "unkown"   // 인스턴스 저장 프로퍼티 (구조체 내부의 변수: 프로퍼티, 구조체 내부의 함수: 메소드)
+        var name: String = "unkown"   // 인스턴스 저장 프로퍼티 
         var `class`: String = "Swift"
         var koreanAge: Int = 0
         
-        var westernAge: Int {   // *인스턴스 연산 프로퍼티 
+        var westernAge: Int {   // 인스턴스 연산 프로퍼티 
             get {  // *koreanAge에서 -1 연산한 값을 westernAge에 return 해준다.
-                return koreanAge - 1
+                return koreanAge - 1 // getter의 코드가 한 줄이고, return type이 프로퍼티의 type과 동일하면 return 키워드 생략 가능
             }
             
             set(inputValue) {  // *westernAge의 새로운 값인 inputValue를 저장하는 것이 아니라, 해당 값을 +1 연산해서 koreanAge에 할당해준다.
@@ -2653,17 +3073,19 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 ## 13-2. Property Observers (프로퍼티 감시자)
 
 - 특징
-    - 프로퍼티 감시자를 사용하면 프로퍼티의 값이 변경될 때 원하는 동작을 수행할 수 있습니다.
-    - 값이 변경되기 직전에 `willSet`블럭이, 값이 변경된 직후에 `didSet`블럭이 호출됩니다.
-    - 둘 중 필요한 하나만 구현해 주어도 무관합니다.
-    - 변경되려는 값이 기존 값과 동일하더라도 프로퍼티 감시자는 항상 동작합니다.
-    - 프로퍼티 감시자는 연산 프로퍼티에는 사용할 수 없습니다. 
-    (Property observer는 "저장된 값"이 변경될 때 호출되므로 저장 프로퍼티에만 사용됨) ???
-    연산 프로퍼티는 setter에서 값의 변화를 감지 할 수 있기 때문에 따로 옵저버를 정의할 필요가 없습니다.
-    - 프로퍼티 감시자는 함수, 메서드, 클로저, 타입 등의 지역/전역 변수에 모두 사용 가능합니다.
+    - property observers : you can define property observers to monitor changes in a property’s value, which you can respond to with custom actions. 
+    Property observers can be added to stored properties you define yourself, and also to properties that a subclass inherits from its superclass.
+        - property wrapper : You can also use a property wrapper to reuse code in the getter and setter of multiple properties.
+    - 프로퍼티의 값이 변경될 때 원하는 동작을 수행한다. 값이 변경되기 직전에 `willSet`블럭이, 변경된 직후에 `didSet`블럭이 호출된다. (둘 중 하나만 구현해도 무관)
+    - 변경되려는 값이 기존 값과 동일하더라도 프로퍼티 감시자는 항상 동작한다.
+    - "저장된 값"이 변경될 때 호출되므로 저장 프로퍼티에만 사용된다. (연산 프로퍼티에 사용 불가. 연산 프로퍼티는 setter에서 값의 변화를 감지 할 수 있으므로 옵저버가 필요 없다.)
+    프로퍼티를 재정의하여 상속받은 저장/연산 프로퍼티에도 사용 가능하다.
+    - 프로퍼티 감시자는 함수, 메서드, 클로저, 타입 등의 지역/전역 변수에 모두 사용 가능하다.
 - Syntax
+    - [ ]  myAccount.dollarValue = 2 // 잔액을 2.0달러로 변경 중입니다. *감시자가 있는 프로퍼티가 함수의 argument로 전달되면, 감시자를 호출한다. (이 설명이 이 경우에 맞나???)
 
     ```swift
+    // 1) 저장 프로퍼티에 적용
     struct Money {
         var currencyRate: Double = 1100 {   // 프로퍼티 감시자 사용
             willSet(newRate) {   // willSet : 변경 직전에 호출됨
@@ -2697,15 +3119,65 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     var moneyInMyPocket = Money()
 
+    // 직전) 환율이 1100.0에서 1150.0으로 변경될 예정입니다 <- 동일한 currencyRate 이지만 다른 값이 나옴 (willSet은 변경 직전 값)
     moneyInMyPocket.currencyRate = 1150
-    // 환율이 1100.0에서 1150.0으로 변경될 예정입니다 <- 동일한 currencyRate 이지만 다른 값이 나옴 (willSet은 변경 직전 값)
-    // 환율이 1100.0에서 1150.0으로 변경되었습니다   <- 동일한 currencyRate 이지만 다른 값이 나옴  (didSet은 변경 직후 값)
+    // 직후) 환율이 1100.0에서 1150.0으로 변경되었습니다   <- 동일한 currencyRate 이지만 다른 값이 나옴  (didSet은 변경 직후 값)
 
+    // 직전) 0.0달러에서 10.0달러로 변경될 예정입니다
     moneyInMyPocket.dollar = 10
-    // 0.0달러에서 10.0달러로 변경될 예정입니다
-    // 0.0달러에서 10.0달러로 변경되었습니다
+    // 직후) 0.0달러에서 10.0달러로 변경되었습니다
 
     print(moneyInMyPocket.won)  // 11500.0
+    ```
+
+    ```swift
+    // 2) 상속받은 연산 프로퍼티에 적용
+
+    class Account {
+        var credit: Int = 0 {
+        
+            willSet {
+                print("잔액이 \(credit)원에서 \(newValue)원으로 변경될 예정입니다.")
+            }
+            didSet {
+                print("잔액이 \(oldValue)원에서 \(credit)원으로 변경되었습니다.")
+            }
+        }
+        
+        var dollarValue: Double {
+            get {
+                return Double(credit) / 1000.0
+            }
+            set {
+                credit = Int(newValue * 1000)
+                print("잔액을 \(newValue)달러로 변경 중입니다.")
+            }
+        }
+    }
+
+    class ForeignAccount: Account {
+        override var dollarValue: Double { // override를 통해 감시자를 추가함
+            
+            willSet {
+                print("잔액이 \(dollarValue)달러에서 \(newValue)달러로 변경될 예정입니다.")
+            }
+            didSet {
+                print("잔액이 \(oldValue)달러에서 \(dollarValue)달러로 변경되었습니다.")
+            }
+        }
+    }
+
+    let myAccount: ForeignAccount = ForeignAccount()
+
+    // 직전) 잔액이 0원에서 1000원으로 변경될 예정입니다.
+    myAccount.credit = 1000
+    // 직후) 잔액이 0원에서 1000원으로 변경되었습니다.
+
+    // 잔액이 1.0달러에서 2.0달러로 변경될 예정입니다.
+    // 잔액이 1000원에서 2000원으로 변경될 예정입니다.
+    // 잔액이 1000원에서 2000원으로 변경되었습니다.
+    myAccount.dollarValue = 2 // 잔액을 2.0달러로 변경 중입니다. *감시자가 있는 프로퍼티가 함수의 argument로 전달되면, 감시자를 호출한다. (이 설명이 이 경우에 맞나???)
+    // 잔액이 1.0달러에서 2.0달러로 변경되었습니다.
     ```
 
 - Example - Language Guide
@@ -2731,6 +3203,132 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     stepCounter.totalSteps = 360
     // About to set totalSteps to 360
     // Added 160 steps
+    ```
+
+## 13-3. Key Path
+
+- 프로퍼티의 값을 바로 가져오는 게 아니라 프로퍼티의 위치만 참조하는 것이 가능하다.
+- Key Path type은 AnyKeyPath 클래스로부터 파생된다. 가장 확장된 ??? key path type은 WritableKeyPath<Root, Value> (값 타입에 대해), ReferenceWritableKeyPath<Root, Value> (참조 타입, 즉 Class 타입에 대해) 타입 (제네릭 type)이다.
+- 장점 : Type 간 의존성을 낮출 수 있다.
+- Syntax
+
+    ```swift
+    \TypeName.path.path.path // path : property name
+
+    // Key Path의 type 확인
+    class Person {
+        var name: String
+        
+        init(name: String) {
+            self.name = name
+        }
+    }
+
+    struct Stuff {
+        var name: String
+        var owner: Person
+    }
+
+    print(type(of: \Person.name)) // ReferenceWritableKeyPath<Person, String> 출력
+    print(type(of: \Stuff.name)) // WritableKeyPath<Stuff, String> 출력
+
+    // Key Path type의 경로 연결
+    let keyPath = \Stuff.owner // Key Path를 상수에 할당한다.
+    let nameKeyPath = keyPath.appending(path: \.name) // appending 메서드로 하위 경로를 덧붙였다. Stuff.Person.name
+
+    // KeyPath 서브스크립트와 Key Path 활용
+    let yagom = Person(name: "Yagom kim") // let 선언 인스턴스
+    let hana = Person(name: "Hana Son")
+
+    let macbook = Stuff(name: "MacBook Pro", owner: yagom)
+    var iMac = Stuff(name: "iMac", owner: yagom) // var 선언 인스턴스
+    let iPhone = Stuff(name: "iPhone", owner: hana)
+
+    let stuffNameKeyPath = \Stuff.name // Key Path 할당
+    let ownerKeyPath = \Stuff.owner
+    let ownerNameKeyPath = ownerKeyPath.appending(path: \.name) // Stuff.owner 보다 구체적인 이름을 지정
+
+    print(macbook[keyPath: stuffNameKeyPath]) // MacBook Pro
+    print(iMac[keyPath: stuffNameKeyPath]) // iMac
+    print(iPhone[keyPath: stuffNameKeyPath]) // iPhone
+
+    print(macbook[keyPath: ownerNameKeyPath]) // Yagom kim
+    print(iMac[keyPath: ownerNameKeyPath]) // Yagom kim
+    print(iPhone[keyPath: ownerNameKeyPath]) // Hana Son
+
+    iMac[keyPath: stuffNameKeyPath] = "Changed - iMac Pro" // Key Path를 통해 프로퍼티 값 변경이 가능하다. - Struct의 var 선언 인스턴스
+    iMac[keyPath: ownerKeyPath] = hana
+
+    print(iMac[keyPath: stuffNameKeyPath]) // Changed - iMac Pro
+    print(iMac[keyPath: ownerNameKeyPath]) // Hana Son
+
+    // macbook[keyPath: stuffNameKeyPath] = "Change - macBook M1" // Struct의 let 선언 인스턴스, 불변 프로퍼티는 프로퍼티 값 변경이 불가하다.
+    // yagom[keyPath: \Person.name] = "bear"
+    ```
+
+## 13-4. *self 프로퍼티
+
+- 모든 인스턴스는 암시적으로 생성된 self 프로퍼티를 가진다.
+- 인스턴스 자기 자신을 가르킨다.
+- 단, 타입 메서드의 self는 타입 자기 자신을 가르킨다. (인스턴스가 아니라 타입)
+- 목적
+1) 인스턴스를 더 명확히 지칭하고 싶을 때, 2) 값 타입 인스턴스 자체의 값을 치환할 때 사용한다. (Class 인스턴스는 참조 타칩이므로 self 프로퍼티에 다른 참조를 할당 불가함)
+
+    ```swift
+    // 1) 인스턴스를 더 명확히 지칭하고 싶을 때
+    class LevelClass {
+        var level: Int = 0
+        
+        func jumpLevel(to level: Int) {
+            print("Jump to Level \(level)")
+            self.level = level // self.level : Class 인스턴스의 프로퍼티, level : argument
+        }
+    }
+
+    // 2) 값 타입 인스턴스 자체의 값을 치환할 때 
+    // struct
+    struct LevelStruct {
+        var level: Int = 0
+        
+        mutating func levelUp() {
+            print("Level Up!")
+            level += 1
+        }
+        
+        mutating func reset() {
+            print("Reset!")
+            self = LevelStruct() // *level = 0으로 프로퍼티 값을 초기화한다. (self : Stract 인스턴스)
+        }
+    }
+
+    var levelInstance: LevelStruct = LevelStruct()
+    levelInstance.levelUp() // Level Up!
+    levelInstance.levelUp() // Level Up!
+    print(levelInstance.level) // 2
+
+    levelInstance.reset() // Reset!
+    print(levelInstance.level) // 0
+
+    // enum
+    enum OnOffSwitch {
+        case on, off
+        mutating func changeState() {
+            self = self == .on ? .off : .on // *인스턴트 자신의 현재 값을 판단하여 반전시킨다. (self : enum 인스턴스)
+        }
+    }
+
+    var toggle: OnOffSwitch = OnOffSwitch.off
+    toggle.changeState()
+    print(toggle) // on
+
+    // *타입 메서드의 self는 예외 - 인스턴스가 아니라 타입을 가르킴
+    struct SystemVolume {
+        static var volume: Int = 5 // 인스턴스 프로퍼티이면, 아래 메소드 정의에서 오류 발생 - instance member 'volume' cannot be used on type 'SystemVolume'
+        
+        static func mute() {
+            self.volume = 0 // SystemVolume.volume = 0 과 동일한 표현 (self : Struct SystemVolume 타입)
+        }
+    }
     ```
 
 # 14. 상속
@@ -3052,319 +3650,392 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         yagom.selfIntroduce()  // 저는 yagom입니다
         ```
 
-1. 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
-    - L/G - initializer
-        - Initializers 상속 2가지 방법
-            - Designated initializers (지정 초기자) : the primary initializers for a class. A designated initializer fully initializes all properties introduced by that class and calls an appropriate superclass initializer to continue the initialization process up the superclass chain.
-            Every class must have at least one designated initializer. ???
-            - Convenience Initializers (편리한 초기자) : convenience init. You can define a convenience initializer to call a designated initializer from the same class as the convenience initializer with some of the designated initializer’s parameters set to default values.
-        - 필수 초기자 (Required Initializers)
-            - 모든 subclass에서 반드시 구현해야 하는 Initializers에는 required 키워드를 붙여 줍니다. (required init())
-        - subclass에서 superclass로 이니셜라이저를 default로 상속하지 않습니다. 이유는 superclass의 이니셜라이저가 무분별하게 상속되면 복잡해져서 subclass에서 이것들이 잘못 초기화 되는 것을 막기 위함입니다. (override는 가능함)
-        하지만 특정 상황에서 자동으로 상속 받습니다. ??? 사실 많은 상황에서 직접 초기자를 오버라이드 할 필요가 없습니다. subclass에서 새로 추가한 모든 프로퍼티에 기본 값을 제공하면 다음 두가지 규칙이 적용됩니다. 
-        - 규칙1. subclass가 지정초기자를 정의하지 않으면 자동으로 수퍼클래스의 모든 지정초기자를 상속합니다. 
-        - 규칙2. subclass가 superclass의 지정초기자를 모두 구현한 경우 (규칙 1의 경우 혹은 모든 지정초기자를 구현한 경우) 자동으로 superclass의 편리한 초기자를 추가합니다.
-            - [ ]  // Every class must have at least one designated initializer. ??? -> 여기는 init이 없는데??
-            - [ ]  // var jam = Hoverboard()  // 오류 발생 왜지? superclass init 형태 암시적으로 상속해서 가능한거 아니었나?
+# 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
 
-            ```swift
-            class Vehicle {
-                var numberOfWheels = 0   // Every class must have at least one designated initializer. ? 여기는 init이 없는데?? (numberOfWheels을 하나의 designated initializer으로 보는건가??)
-                var description: String {
-                    return "\(numberOfWheels) wheel(s)"
-                }
-            }
-
-            let vehicle = Vehicle()
-            print("Vehicle: \(vehicle.description)") // Vehicle: 0 wheel(s)
-
-            class Bicycle: Vehicle {  // subclass에서 superclass의 initializer 전체에 대해 override 하므로 override 키워드를 사용함 (superclass에서 init을 정의하지 않았더라도)
-                override init() {
-                    super.init()  // subclass의 전체 프로퍼티에 대한 초기값
-                    numberOfWheels = 2
-                }
-            }
-
-            let bicycle = Bicycle()  // override init의 parameter가 없으므로 가능
-            print("Bicycle: \(bicycle.description)") // Bicycle: 2 wheel(s)
-
-            -
-            class Hoverboard: Vehicle {
-                var color: String
-                init(color: String) {
-                    self.color = color  // super.init() implicitly called here
-                }
-                override var description: String {
-                    return "\(super.description) in a beautiful \(color)"
-                }
-            }
-
-            // var jam = Hoverboard()  // 오류 발생 ???
-            var jamjam = Hoverboard(color: "red")
-            ```
-
-            - [x]  super.init()  // subclass의 전체 프로퍼티에 대한 초기값을 말하는 건가?
-                - The Bicycle subclass defines a custom designated initializer, init(). This designated initializer matches (일치함???) a designated initializer from the superclass of Bicycle, and so the Bicycle version of this initializer is marked with the override modifier.
-                - The init() initializer for Bicycle starts by calling super.init(), which calls the default initializer for superclass, Vehicle. This ensures that the numberOfWheels inherited property is initialized by Vehicle before Bicycle has the opportunity to modify the property. 
-                After calling super.init(), the original value of numberOfWheels is replaced with a new value of 2.
-        - example - init 상속
-            - [x]  init(name: String, quantity: Int) {  // init 정의 (override init이 아니라?)
-                - superclass init의 parameter (name)과 subclass init의 parameter (name, quantity)가 달라서 가능. 즉, 덮어쓰기가 아님
-            - [ ]  let oneMysteryItem = RecipeIngredient()  // 왜지? subclass에는 init 모두 parameter가 있는데...? superclass의 convenience init이 자동으로 상속된 건가?-override 했는데?
-            - [ ]  convenience init() {   // 왜 convenience init(name: String) 이 아니지?
-                    self.init(name: "[Unnamed]") // 보통 self.init(name: name)
-                }
-
-            ```swift
-            class Food {
-                var name: String
-                init(name: String) {
-                    self.name = name
-                }
-                convenience init() {   // 왜 convenience init(name: String) 이 아니지?
-                    self.init(name: "[Unnamed]") // 보통 self.init(name: name)
-                }
-            }
-            let namedMeat = Food(name: "Bacon")  // namedMeat's name is "Bacon"
-
-            let mysteryMeat = Food()  // mysteryMeat's name is "[Unnamed]"  // 가능 (convenience init의 parameter가 없으므로)
-
-            class RecipeIngredient: Food {
-                var quantity: Int
-                init(name: String, quantity: Int) {  // init 정의 (override init이 아닌 이유 - parameter가 달라서 다른 초기화 방식임)
-                    self.quantity = quantity
-                    super.init(name: name)
-                }
-                override convenience init(name: String) {  // superclass의 convenience init을 override 했음
-                    self.init(name: name, quantity: 1)
-                }
-            }
-
-            -
-            // RecipeIngredient 클래스는 다음 3가지 형태의 initializer를 이용해 인스턴스를 생성할 수 있습니다.
-            let oneMysteryItem = RecipeIngredient()  // 왜지? subclass에는 init 모두 parameter가 있는데...? superclass의 convenience init이 자동으로 상속된 건가?-override 했는데?
-            let oneBacon = RecipeIngredient(name: "Bacon")
-            let sixEggs = RecipeIngredient(name: "Eggs", quantity: 6)
-            ```
-
-            - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
-            RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
-
-                ![iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%207.png](iOS%20Swift%20syntax%20yagom%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
-
-    - 프로퍼티 초기값 (Default Initializers)
-        - 모든 인스턴스는 초기화와 동시에 모든 프로퍼티에 유효한 값이 할당되어 있어야 합니다.
-        - 프로퍼티에 미리 기본값을 할당해두면 (ex. 클래스를 선언할 때) 인스턴스가 생성됨과 동시에 초기값을 지니게 됩니다.
-            - [ ]  roomNumber = ho2  // 왜 self.roomNumber이 아니지?
-
-            ```swift
-            class PersonA {   // 클래스 선언 시 모든 저장 프로퍼티에 기본값 (Default) 할당 (할당하지 않으면 오류 발생)
-                var name: String = "unknown"
-                var age: Int = 0
-                var nickName: String = "nick"
-            }
-
-            let jason: PersonA = PersonA()  // 인스턴스 생성 - 초기값이 할당된 상태임 (초기화 단계)
-            jason.name = "jason"  // 초기화 이후 프로퍼티 값을 수정
-            jason.age = 30
-            jason.nickName = "j"
-            ```
-
-            ```swift
-            class Apartment {
-                var buildingNumber: String
-                var roomNumber: String
-                var `guard`: Person?
-                var owner: Person?
-                
-                init(dong2 : String, ho2 : String) {  // *dong, ho : argument label임
-                    buildingNumber = dong2  // 인스턴스 초기화 단계에서의 할당값 (dong, ho의 입력값)이 변수 buildingNumber로 들어간다!!!
-                    roomNumber = ho2  // 왜 self.roomNumber이 아니지?
-                }
-            }
-
-            let apart: Apartment? = Apartment(dong2: "101", ho2: "202")
-            ```
-
-    - 이니셜라이저 init
-        - 🎃🎃🎃 인스턴스 생성 후 프로퍼티 값을 수정하기 어려운 경우에는 이니셜라이저 init을 통해 인스턴스가 가져야 할 초기값을 전달할 수 있습니다.
-
-            ```swift
-            class PersonB {
-                var name: String
-                var age: Int
-                var nickName: String
-                
-                init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 이니셜라이저
-                    self.name = nameKeyIn  // 인스턴스 초기화 단계에서 할당값 (오른쪽)이 각 변수/프로퍼티 (왼쪽)로 들어간다.
-                    self.age = ageKeyIn
-                    self.nickName = nickNameKeyIn
-                }
-            }
-
-            let hana: PersonB = PersonB(nameKeyIn: "hana", ageKeyIn: 20, nickNameKeyIn: "하나")  // 인스턴스 생성 시 init의 parameter 대로 초기값을 지정할 수 있다.
-            // let hana: PersonB = PersonB() 로 입력하면 parameter 없다고 오류 발생
-
-            print(hana.name) // hana
-            print(hana.age) // 20
-            print(hana.nickName) // 하나
-            ```
-
-        - 일부 프로퍼티가 필수 항목이 아닐 때는 옵셔널을 사용하고, 이니셜라이저 init을 2개 생성할 수 있다.
-        → 초기화 하는 방법이 2가지인 것임
-
-            ```swift
-            // nickname이 없는 경우가 있다면
-
-            class PersonC {
-                var name: String
-                var age: Int
-                var nickName: String?
-                
-                init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {
-                    self.name = nameKeyIn
-                    self.age = ageKeyIn
-                    self.nickName = nickNameKeyIn
-                }
-                
-                init(nameKeyIn: String, ageKeyIn: Int) {
-                    self.name = nameKeyIn
-                    self.age = ageKeyIn
-                }
-            }
-
-            let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10)  
-            let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
-            ```
-
-            ```swift
-            // convenience init을 통해 중복 최소화 
-
-            class PersonC {
-                var name: String
-                var age: Int
-                var nickName: String?
-                
-                ~~init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {
-                    self.name = nameKeyIn
-                    self.age = ageKeyIn
-                    self.nickName = nickNameKeyIn
-                }~~
-
-            		convenience init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 위와 동일한 기능 수행
-                   self.init(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // type이 아니라 내용 (변수)가 들어감 ???
-                   self.nickName = nickNameKeyIn
-              }
-                
-                init(nameKeyIn: String, ageKeyIn: Int) {
-                    self.name = nameKeyIn
-                    self.age = ageKeyIn
-                }
-            }
-
-            let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10)
-            let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
-            ```
-
-            - [ ]  아직 헷갈림
-                   self.init(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // type이 아니라 내용 (변수)가 들어감 ??? → 이 부분
-
-            - [ ]  // 이렇게 입력하면 아래의 print(mike.name)에서 random이 출력됨... 왜 수정 안되지?
-
-                ```swift
-                class PersonC {
-                    var name: String
-                    var age: Int
-                    var nickname: String?
-                    
-                    init(name: String, age: Int, nickname: String){
-                        self.name = "random"  // 이렇게 입력하면 아래의 print(mike.name)에서 random이 출력됨... 왜 수정 안되지?
-                        self.age = age
-                        self.nickname = nickname
-                    }
-                    
-                    init(name: String, age: Int){
-                        self.name = name
-                        self.age = age
-                    }
-                }
-
-                let kevin = PersonC(name: "kevin", age: 30)
-                print(kevin.name)
-                print(kevin.age)
-                print(kevin.nickname)  // nil 출력
-
-                let mike = PersonC(name: "mike", age: 20, nickname: "momo")
-                print(mike.name)  // random 출력
-                mike.name = "mike"
-                print(mike.name)  // mike 출력
-                print(mike.age)
-                print(mike.nickname) // Optional("momo") 출력
-                ```
-
-            - 암시적 추출 옵셔널! 은 인스턴스 사용에 꼭 필요하지만 초기값을 할당하지 않고자 할 때 사용
-
-                ```swift
-                class Puppy {
-                    var name: String
-                    var owner: PersonC!  // String! 이 아니라 *owner의 data type이 PersonC 라는 뜻
-                    
-                    init(name: String) {
-                        self.name = name
-                    }
-                    
-                    func goOut() {
-                        print("\(name)가 주인 \(owner.name)와 산책을 합니다")  // owner가 nil인 경우 오류 발생함 (암시적 추출 옵셔널!을 사용했기 때문..!)
-                    }
-                }
-
-                // 설정 - 강아지는 주인없이 산책하면 안돼요!
-
-                let happy: Puppy = Puppy(name: "happy")
-                //happy.goOut()   // 주인이 없는 상태라 오류 발생 
-                happy.owner = kevin   // "kevin"이 아님 (위에서 선언했던 class PersonC의 인스턴스 kevin 이므로)
-                happy.goOut()  // happy가 주인 kevin와 산책을 합니다 - 출력
-                ```
-
-    - 실패가능한 이니셜라이저 (Failable Initializers)
-        - 실패가능한 이니셜라이저의 반환타입은 옵셔널 타입입니다. init? 을 사용합니다.
-        - 이니셜라이저 매개변수로 전달되는 초기값이 잘못된 경우 인스턴스 생성에 실패할 수 있습니다. 인스턴스 생성에 실패하면 nil을 반환합니다.
+- L/G - initializer
+    - Initializers 상속 2가지 방법
+        - Designated initializers (지정 초기자) : the primary initializers for a class. A designated initializer fully initializes all properties introduced by that class and calls an appropriate superclass initializer to continue the initialization process up the superclass chain.
+        Every class must have at least one designated initializer. ???
+        - Convenience Initializers (편리한 초기자) : convenience init. You can define a convenience initializer to call a designated initializer from the same class as the convenience initializer with some of the designated initializer’s parameters set to default values.
+    - 필수 초기자 (Required Initializers)
+        - 모든 subclass에서 반드시 구현해야 하는 Initializers에는 required 키워드를 붙여 줍니다. (required init())
+    - subclass에서 superclass로 이니셜라이저를 default로 상속하지 않습니다. 이유는 superclass의 이니셜라이저가 무분별하게 상속되면 복잡해져서 subclass에서 이것들이 잘못 초기화 되는 것을 막기 위함입니다. (override는 가능함)
+    하지만 특정 상황에서 자동으로 상속 받습니다. ??? 사실 많은 상황에서 직접 초기자를 오버라이드 할 필요가 없습니다. subclass에서 새로 추가한 모든 프로퍼티에 기본 값을 제공하면 다음 두가지 규칙이 적용됩니다. 
+    - 규칙1. subclass가 지정초기자를 정의하지 않으면 자동으로 수퍼클래스의 모든 지정초기자를 상속합니다. 
+    - 규칙2. subclass가 superclass의 지정초기자를 모두 구현한 경우 (규칙 1의 경우 혹은 모든 지정초기자를 구현한 경우) 자동으로 superclass의 편리한 초기자를 추가합니다.
+        - [ ]  // Every class must have at least one designated initializer. ??? -> 여기는 init이 없는데??
+        - [ ]  // var jam = Hoverboard()  // 오류 발생 왜지? superclass init 형태 암시적으로 상속해서 가능한거 아니었나?
 
         ```swift
-        class PersonD {
+        class Vehicle {
+            var numberOfWheels = 0   // Every class must have at least one designated initializer. ? 여기는 init이 없는데?? (numberOfWheels = 0을 하나의 designated initializer으로 보는건가??)
+            var description: String {
+                return "\(numberOfWheels) wheel(s)"
+            }
+        }
+
+        let vehicle = Vehicle()
+        print("Vehicle: \(vehicle.description)") // Vehicle: 0 wheel(s)
+
+        class Bicycle: Vehicle {  // subclass에서 superclass의 initializer 전체에 대해 override 하므로 override 키워드를 사용함 (superclass에서 init을 정의하지 않았더라도)
+            override init() {
+                super.init()  // subclass의 전체 프로퍼티에 대한 초기값
+                numberOfWheels = 2
+            }
+        }
+
+        let bicycle = Bicycle()  // override init의 parameter가 없으므로 가능
+        print("Bicycle: \(bicycle.description)") // Bicycle: 2 wheel(s)
+
+        -
+        class Hoverboard: Vehicle {
+            var color: String
+            init(color: String) {
+                self.color = color  // super.init() implicitly called here
+            }
+            override var description: String {
+                return "\(super.description) in a beautiful \(color)"
+            }
+        }
+
+        // var jam = Hoverboard()  // 오류 발생 ???
+        var jamjam = Hoverboard(color: "red")
+        ```
+
+        - [x]  super.init()  // subclass의 전체 프로퍼티에 대한 초기값을 말하는 건가?
+            - The Bicycle subclass defines a custom designated initializer, init(). This designated initializer matches (일치함???) a designated initializer from the superclass of Bicycle, and so the Bicycle version of this initializer is marked with the override modifier.
+            - The init() initializer for Bicycle starts by calling super.init(), which calls the default initializer for superclass, Vehicle. This ensures that the numberOfWheels inherited property is initialized by Vehicle before Bicycle has the opportunity to modify the property. 
+            After calling super.init(), the original value of numberOfWheels is replaced with a new value of 2.
+    - example - init 상속
+        - [x]  init(name: String, quantity: Int) {  // init 정의 (override init이 아니라?)
+            - superclass init의 parameter (name)과 subclass init의 parameter (name, quantity)가 달라서 가능. 즉, 덮어쓰기가 아님
+        - [ ]  let oneMysteryItem = RecipeIngredient()  // 왜지? subclass에는 init 모두 parameter가 있는데...? superclass의 convenience init이 자동으로 상속된 건가?-override 했는데?
+        - [ ]  convenience init() {   // 왜 convenience init(name: String) 이 아니지?
+                self.init(name: "[Unnamed]") // 보통 self.init(name: name)
+            }
+
+        ```swift
+        class Food {
+            var name: String
+            init(name: String) {
+                self.name = name
+            }
+            convenience init() {   // 왜 convenience init(name: String) 이 아니지?
+                self.init(name: "[Unnamed]") // 보통 self.init(name: name)
+            }
+        }
+        let namedMeat = Food(name: "Bacon")  // namedMeat's name is "Bacon"
+
+        let mysteryMeat = Food()  // mysteryMeat's name is "[Unnamed]"  // 가능 (convenience init의 parameter가 없으므로)
+
+        class RecipeIngredient: Food {
+            var quantity: Int
+            init(name: String, quantity: Int) {  // init 정의 (override init이 아닌 이유 - parameter가 달라서 다른 초기화 방식임)
+                self.quantity = quantity
+                super.init(name: name)
+            }
+            override convenience init(name: String) {  // superclass의 convenience init을 override 했음
+                self.init(name: name, quantity: 1)
+            }
+        }
+
+        -
+        // RecipeIngredient 클래스는 다음 3가지 형태의 initializer를 이용해 인스턴스를 생성할 수 있습니다.
+        let oneMysteryItem = RecipeIngredient()  // 왜지? subclass에는 init 모두 parameter가 있는데...? superclass의 convenience init이 자동으로 상속된 건가?-override 했는데?
+        let oneBacon = RecipeIngredient(name: "Bacon")
+        let sixEggs = RecipeIngredient(name: "Eggs", quantity: 6)
+        ```
+
+        - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
+        RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
+
+- 기본 이니셜라이저 (Default Initializers)
+    - 모든 인스턴스는 초기화와 동시에 모든 저장 프로퍼티에 유효한 값이 할당되어 있어야 한다. (Class는 Class 선언 시 기본값이나 초기값을 할당하지 않으면 오류 발생)
+    방법-1 저장 프로퍼티 선언 시, 프로퍼티 기본값을 할당하거나
+    방법-2 이니셜라이저 (init)에서 초기값을 할당해야 한다.
+        - 저장 프로퍼티의 기본값이 모두 지정되어 있고, 사용자 정의 이니셜라이저가 없으면 자동으로 기본 이니셜라이저를 사용한다.
+        이때, Struct는 멤버와이즈 이니셜라이저를 제공하고, Class는 제공하지 않는다. (멤버와이즈 이니셜라이저 : 인스턴스 생성 시, () 내부에다가 저장 프로퍼티명을 parameter로 자동 지정한다.)
+    - 프로퍼티에 미리 기본값을 할당해두면 (ex. 클래스를 선언할 때) 인스턴스가 생성됨과 동시에 초기값을 갖게 된다.
+    - 이니셜라이저 메서드도 다양한 매개변수를 가질 수 있다. (argument label, 와일드카드 식별자 등)
+
+        ```swift
+        class Person {   // 클래스 선언 시 모든 저장 프로퍼티에 기본값 (Default) 할당 
+            var name: String = "unknown" // 방법-1 저장 프로퍼티 선언 시, 프로퍼티 기본값을 할당하거나
+            var age: Int = 0
+            var nickName: String = "nick"
+        }
+
+        let jason: Person = Person()  // 인스턴스 생성 - 초기값이 할당된 상태임 (초기화 단계)
+        jason.name = "jason"  // 초기화 이후 프로퍼티 값을 수정
+        jason.age = 30
+        jason.nickName = "j"
+
+        class Apartment {
+            var buildingNumber: String // 원래 변수 선언 시 기본값을 할당 (var buildingNumber: String = dong2) 해야하지만, 대신 init을 통해 초기값을 할당 가능하다.
+            var roomNumber: String
+            var `guard`: Person?
+            var owner: Person?
+            
+            init(dong2 : String, ho2 : String) {  // *dong, ho : argument label임 // 방법-2 이니셜라이저 (init)에서 초기값을 할당해야 한다.
+                buildingNumber = dong2  // 인스턴스 초기화 단계에서의 할당값 (dong, ho의 argument)이 buildingNumber 프로퍼티로 들어간다!!!
+                roomNumber = ho2  // self.roomNumber도 가능 (더 명확하게 표현하기 위해)
+            }
+        }
+
+        let apart: Apartment? = Apartment(dong2: "101", ho2: "202")
+        ```
+
+        - [ ]  이렇게 입력하면 아래의 print(mike.name)에서 random이 출력됨... 왜 수정 안되지?
+
+            ```swift
+            class PersonC {
+                var name: String
+                
+                init(name: String){
+                    self.name = "random" // 이렇게 입력하면 아래의 print(mike.name)에서 random이 출력됨... 왜 수정 안되지?
+                }
+            }
+
+            let mike = PersonC(name: "mike")
+            print(mike.name)  // random 출력
+            mike.name = "mike"
+            print(mike.name)  // mike 출력
+            ```
+
+- 이니셜라이저 (init / convenience init)
+    - 🎃🎃🎃 인스턴스 생성 후 프로퍼티 값을 수정하기 어려운 경우에는 이니셜라이저 init을 통해 인스턴스가 가져야 할 초기값을 전달 가능하다.
+
+        ```swift
+        class PersonB {
+            var name: String
+            var age: Int
+            var nickName: String
+            
+            init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 이니셜라이저
+                self.name = nameKeyIn  // 인스턴스 초기화 단계에서 argument (오른쪽)가 각 프로퍼티 (왼쪽)로 들어간다.
+                self.age = ageKeyIn
+                self.nickName = nickNameKeyIn
+            }
+        }
+
+        let hana: PersonB = PersonB(nameKeyIn: "hana", ageKeyIn: 20, nickNameKeyIn: "하나")  // 인스턴스 생성 시 init의 parameter에 따라 초기값을 지정할 수 있다.
+        // let hana: PersonB = PersonB() 로 입력하면 parameter 없다고 오류 발생
+
+        print(hana.name) // hana
+        print(hana.age) // 20
+        print(hana.nickName) // 하나
+        ```
+
+    - 일부 프로퍼티가 필수 항목이 아닐 때는 옵셔널을 사용하고, 이니셜라이저 init을 2개 생성할 수 있다.
+    → 초기화 하는 방법이 2가지인 것임
+
+        ```swift
+        // nickname이 선택 사항인 경우
+
+        class PersonC {
             var name: String
             var age: Int
             var nickName: String?
             
-            init?(name: String, age: Int) {   // 인스턴트 이니셜라이즈 단계에서 반환이 실패 가능하므로 init?을 사용함
-                if (0...120).contains(age) == false {   // age가 0 이상 120 이하가 아니라면 return nil 해라
-                    return nil
-                }
-                
-                self.name = name
-                self.age = age
+            init(nameKeyIn: String, ageKeyIn: Int) {
+                self.name = nameKeyIn
+                self.age = ageKeyIn
+            }
+            
+            init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) { // init parameter는 프로퍼티명과 꼭 동일할 필요 없음
+                self.name = nameKeyIn
+                self.age = ageKeyIn
+                self.nickName = nickNameKeyIn
             }
         }
 
-        //let john: PersonD = PersonD(name: "john", age: 23)  // 오류 발생
-        let john: PersonD? = PersonD(name: "john", age: 23)   // 인스턴스 초기화 단계 - 반환이 실패 가능하므로 (nil을 반환) 옵셔널 타입인 personD?를 사용함
-        let joker: PersonD? = PersonD(name: "joker", age: 123)
+        let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10) // 초기화 방법이 2가지
+        let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
 
-        print(john)  // Optional(__lldb_expr_52.PersonD) ???
-        print(jocker)  // nil 출력
+        print(kevin.nickname)  // nil 출력
         ```
 
-    - 열거형에서 사용하는 실패가능한 이니셜라이저 (Failable Initializers for Enumerations)
-        - [ ]  init?(symbol: Character) {   // symbol을 왜 따로 선언을 안해주지?
-        - [ ]  self = .kelvin   // 여기서 self는 enum TemperatureUnit?
+        ```swift
+        // convenience init을 통해 중복 최소화 
+
+        class PersonC {
+            var name: String
+            var age: Int
+            var nickName: String?
+            
+            **init**(nameKeyIn: String, ageKeyIn: Int) {
+                self.name = nameKeyIn
+                self.age = ageKeyIn
+            }
+            
+        /*     ~~init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {
+                self.name = nameKeyIn
+                self.age = ageKeyIn
+                self.nickName = nickNameKeyIn
+            } */~~
+
+        		convenience init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 위와 동일한 기능
+               self**.init**(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
+               self.nickName = nickNameKeyIn
+          }
+        }
+
+        let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10)
+        let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
+        ```
+
+        - [x]  self.init(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // 왜 type을 명시하지 않지?
+            - type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
+
+        - 암시적 추출 옵셔널! 은 인스턴스 사용에 꼭 필요하지만 초기값을 할당하지 않고자 할 때 사용
+
+            ```swift
+            // 구현 - 강아지는 주인없이 산책하면 안돼요!
+            class Puppy {
+                var name: String
+                var owner: PersonC!  // String! 이 아니라 프로퍼티 owner의 data type이 PersonC Class라는 뜻
+                
+                init(name: String) {
+                    self.name = name
+                }
+                
+                func goOut() {
+                    print("\(name)가 주인 \(owner.name)와 산책을 합니다")  // owner가 nil인 경우 오류 발생함 (암시적 추출 옵셔널!을 사용했기 때문)
+                }
+            }
+
+            let happy: Puppy = Puppy(name: "happy")
+            //happy.goOut()   // 주인이 없는 상태라서 오류 발생 
+            happy.owner = kevin   // "kevin"이 아님 (PersonC Class type의 인스턴스 kevin 이므로)
+            happy.goOut()  // happy가 주인 kevin와 산책을 합니다 - 출력
+            ```
+
+- 초기화 위임 (Initialization Delegation)
+    - 값 type인 Struct, Enum은 코드 중복을 줄이기 위해 초기화 위임을 구현 가능하다. (Class는 상속이 있으므로 위임 불가)
+    - 최소 2개 이상의 '사용자 정의 이니셜라이저'가 있을 때, 이니셜라이저가 `self.init` 키워드로 다른 이니셜라이저에게 일부 초기화 내용을 위임하는 것이다.
+    - 단, 사용자 정의 이니셜라이저가 있는 동시에 기본 이니셜라이저 또는 멤버와이즈 이니셜라이즈를 사용하고 싶다면, Extension을 사용하여 사용자 정의 이니셜라이저를 구현하면 된다.
+
+        ```swift
+        enum Student {
+            case elementary, middle, high
+            case none
+            
+            init(koreanAge: Int) { // 사용자 정의 이니셜라이저-1
+                switch koreanAge {
+                case 8...13:
+                    self = .elementary // self : enum 인스턴스 자기 자신
+                case 14...16:
+                    self = .middle
+                case 17...19:
+                    self = .high
+                default:
+                    self = .none
+                }
+            }
+            
+            init(bornAt: Int, currentYear: Int) { // 사용자 정의 이니셜라이저-2
+                self.init(koreanAge: currentYear - bornAt + 1) // self.init : 사용자 정의 이니셜라이저-1 을 가르킴
+            }
+            
+            init() { // 사용자 정의 이니셜라이저가 있는 경우, init() 메서드를 구현해야 기본 이니셜라이저를 사용 가능하다.
+                self = .none 
+            }
+        }
+
+        var kevin: Student = Student(koreanAge: 16)
+        print(kevin) // middle
+
+        kevin = Student(bornAt: 2011, currentYear: 2021)
+        print(kevin) // elementary
+
+        var yagom: Student = Student() // 기본 이니셜라이저
+        print(yagom) // none
+        ```
+
+- 실패가능한 이니셜라이저 (Failable Initializers)
+    - 실패가능한 이니셜라이저의 반환타입은 옵셔널 타입이다. init? 을 사용한다.
+    - 이니셜라이저 매개변수로 전달되는 초기값이 잘못된 경우 인스턴스 생성에 실패할 수 있다. 인스턴스 생성에 실패하면 nil을 반환한다.
+
+    ```swift
+    class PersonD {
+        var name: String
+        var age: Int
+        var nickName: String?
+        
+        init?(name: String, age: Int) {   // 인스턴트 초기화 단계에서 전달이 실패 가능하므로 init?을 사용함
+            if (0...120).contains(age) == false {   // age가 0 이상 120 이하가 아니라면 return nil 해라
+                return nil
+            }
+            
+            self.name = name
+            self.age = age
+        }
+    }
+
+    //let john: PersonD = PersonD(name: "john", age: 23)  // 오류 발생 - Value of optional type 'PersonD?' must be unwrapped to a value of type 'PersonD'
+
+    let john: PersonD? = PersonD(name: "john", age: 23)   // 인스턴스 초기화 단계 - 반환이 실패 가능하므로 (nil을 반환) 옵셔널 타입인 personD?를 사용함
+    let joker: PersonD? = PersonD(name: "joker", age: 123)
+
+    print(john)  // Optional(__lldb_expr_52.PersonD) ???
+    print(jocker)  // nil 출력
+
+    print(john?.name) // Optional("john")
+    print(john?.age)  // Optional(23)
+    print(joker?.name) // nil
+    print(joker?.age)  // nil
+    ```
+
+- Enum에서 사용하는 실패가능한 이니셜라이저 (Failable Initializers for Enumerations)
+    - 1) 특정 case에 해당하지 않는 값이 전달되거나, 2) rawValue로 초기화할 때 잘못된 rawValue 값이 전달된 경우, 이니셜라이저 생성에 실패할 수 있다.
+    - rawValue를 통한 이니셜라이저는 기본적으로 실패가능한 이니셜라이저로 제공된다.
+
+        ```swift
+        enum Student: String {
+            case elementary = "초등학생", middle = "중학생", high = "고등학생" // raw Value 지정 (지정 삭제하더라도 switch문 return nil 있으므로 init? 필수, 인스턴스는 optional type이어야 함)
+            case none
+            
+            init?(koreanAge: Int) { 
+                switch koreanAge {
+                case 8...13:
+                    self = .elementary
+                case 14...16:
+                    self = .middle
+                case 17...19:
+                    self = .high
+                default:
+                    return nil // 앞의 예제에서는 self = .none 이었음 (nil 가능성 없으므로 init)
+                }
+            }
+            
+            init?(bornAt: Int, currentYear: Int) { 
+                self.init(koreanAge: currentYear - bornAt + 1)
+            }
+        }
+
+        var younger: Student? = Student(koreanAge: 20) // switch문 return nil 대신 .none이면, init 가능하지만, rawValue를 지정했으므로 인스턴스는 optional type이어야 함
+        print(younger) // nil
+
+        younger = Student(bornAt: 2020, currentYear: 2016)
+        print(younger) // nil
+
+        younger = Student(rawValue: "만학도")
+        print(younger) // nil
+
+        younger = Student(rawValue: "고등학생")
+        print(younger) // Optional(__lldb_expr_63.Student.high)
+        ```
 
         ```swift
         enum TemperatureUnit {
             case kelvin, celsius, fahrenheit
-            init?(symbol: Character) {   // symbol을 왜 따로 선언을 안해주지?
+
+            init?(symbol: Character) { // symbol을 왜 따로 선언을 안해주지? - init 메서드의 parameter 이므로
                 switch symbol {
                 case "K":
-                    self = .kelvin   // 여기서 self는 enum TemperatureUnit?
+                    self = .kelvin   
                 case "C":
                     self = .celsius
                 case "F":
@@ -3389,1629 +4060,1958 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         // Prints "This is not a defined temperature unit, so initialization failed."
         ```
 
-        - Raw Values를 활용하면 더 간단히 나타낼 수 있다. (init 없이 가능)
-            - [ ]  optional 안 써줘도 되나?
+    - Raw Values를 활용하면 더 간단히 나타낼 수 있다. (init 없이 가능)
 
-            ```swift
-            enum TemperatureUnit: Character {
-                case kelvin = "K", celsius = "C", fahrenheit = "F"
-            }
+        ```swift
+        enum TemperatureUnit: Character {
+            case kelvin = "K", celsius = "C", fahrenheit = "F"
+        }
 
-            let fahrenheitUnit = TemperatureUnit(rawValue: "F")
-            if fahrenheitUnit != nil {
-                print("This is a defined temperature unit, so initialization succeeded.")
-            }
-            // Prints "This is a defined temperature unit, so initialization succeeded."
+        let fahrenheitUnit = TemperatureUnit(rawValue: "F")
+        if fahrenheitUnit != nil {
+            print("This is a defined temperature unit, so initialization succeeded.")
+        }
+        // Prints "This is a defined temperature unit, so initialization succeeded."
 
-            let unknownUnit = TemperatureUnit(rawValue: "X")
-            if unknownUnit == nil {
-                print("This is not a defined temperature unit, so initialization failed.")
-            }
-            // Prints "This is not a defined temperature unit, so initialization failed."
-            ```
+        let unknownUnit = TemperatureUnit(rawValue: "X")
+        if unknownUnit == nil {
+            print("This is not a defined temperature unit, so initialization failed.")
+        }
+        // Prints "This is not a defined temperature unit, so initialization failed."
+        ```
 
-    - 클래스의 인스턴스가 소멸될 때 호출되는 디이니셜라이저 deinit
-        - 디이니셜라이저는 클래스에만 구현 가능합니다.
-        - 인스턴스가 해제되는 시점에 해야할 일을 구현할 수 있습니다.
-        - `deinit`은 클래스의 인스턴스가 메모리에서 해제되는 시점에 호출됩니다. 자동으로 호출되므로 직접 호출할 수 없습니다.
-        - 인스턴스가 메모리에서 해제되는 시점은 ARC(Automatic Reference Counting) 의 규칙에 따라 결정됩니다.
+- 클로저/함수를 사용한 프로퍼티 기본값 설정
+    - 사용자 정의 연산을 통해 저장 프로퍼티의 기본값을 설정할 경우, 클로저나 함수를 사용 가능하다.
+    - 인스턴스를 생성하여 초기화할 때, 클로저/함수가 호출되면서 연산 결과값을 프로퍼티 기본값으로 제공한다. (따라서 클로저/함수의 return type은 프로퍼티 type과 동일해야 한다.)
+    - 단, 클로저 내부에서 인스턴스의 다른 프로퍼티를 사용하여 연산하는 것은 불가하다. (클로저 실행시점은 초기화 단계에서 다른 프로퍼티 값이 설정되기 이전이다. 다른 프로퍼티에 기본값이 있어도 불가하다.)
+    또한 클로저 내부에서 self 프로퍼티 사용, 인스턴스 메서드 호출은 불가하다.
 
-            ```swift
-            class PersonE {
-                var name: String
-                var pet: Puppy?
-                var child: PersonC
+        ```swift
+        // Syntax
+        class SomeClass {
+
+        		var someProperty: someType = { // 기본값을 설정할 프로퍼티 
+        				// 사용자 정의 연산을 거치고, 결과값 someValue를 프로퍼티에 return 함
+        				return someValue 
+        		}() // 클로저 실행
+        }
+        ```
+
+        ```swift
+        class GreyClass {
+
+            var christinaInterns: [Int] = {  // 기본값을 설정할 프로퍼티 
+
+                var internsNameArray: [Int] = []
                 
-                init(name: String, child: PersonC) {
-                    self.name = name
-                    self.child = child
+                for number in 1...5 {
+                    internsNameArray.append(number)
+                }
+
+        				print(internsNameArray[0]) // 확인용 - 1 출력
+                return internsNameArray // return type은 프로퍼티 type과 동일
+            }() // 클로저 실행
+        }
+
+        var interns2021: GreyClass = GreyClass() // Class의 인스턴스가 초기화할 때, 클로저가 호출되고 프로퍼티 기본값이 제공된다.
+        print(interns2021.christinaInterns) // [1, 2, 3, 4, 5]
+        print(interns2021.christinaInterns.count) // 5
+        ```
+
+        ```swift
+        struct StudentInfo {
+            var name: String?
+            var number: Int?
+        }
+
+        class SchoolClass {
+            
+            var students: [StudentInfo] = { // 기본값을 설정할 프로퍼티 - Struct StudentInfo의 인스턴스를 요소로 갖는 Array type
+
+                var arr: [StudentInfo] = [StudentInfo]()
+                
+                for num in 1...15 {
+                    var person: StudentInfo = StudentInfo(name: nil, number: num)
+                    arr.append(person)
                 }
                 
-                deinit {   // 인스턴스가 메모리에서 해제되는 시점에 자동 호출 (매개변수 없음)  // 일반적인 optional을 unwrapping 해주는 Optional binding (if let 구문)
-                    if let petName = pet?.name { // 만약 pet이 있다면 실행 // *pet? : value of optional type 'Puppy?' must be unwrapped to refer to member 'name' of wrapped base type 'Puppy'
-                        print("\(name)가 \(child.name)에게 \(petName)를 인도합니다")
-                        self.pet?.owner = child
+        //      arr 프로퍼티 관련 확인용
+        //   // print(arr.[0]) // Array index0의 요소 - StudentInfo(name: nil, number: Optional(1))
+        //      arr.insert(StudentInfo(name: "insert", number: 100), at: 0)
+        //      print(arr) // 이런 식으로 들어있다. [__lldb_expr_90.StudentInfo(name: Optional("insert"), number: Optional(100)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(1)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(2)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(3)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(4)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(5)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(6)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(7)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(8)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(9)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(10)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(11)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(12)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(13)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(14)), __lldb_expr_90.StudentInfo(name: nil, number: Optional(15))]
+                
+                return arr // return type은 students 프로퍼티와 동일한 [StudentInfo] Array type
+            }() 
+        }
+
+        let myClass: SchoolClass = SchoolClass() // Class의 인스턴스가 초기화할 때, 클로저가 호출되고 프로퍼티 기본값이 제공된다.
+        print(myClass.students.count) // 15 출력 
+        ```
+
+- 디이니셜라이저 deinit
+    - 인스턴스가 해제되는 시점에 실행할 부가작업을 구현한다. (deinit은 Class당 1개만 구현 가능하고, 인스턴스의 모든 프로퍼티에 접근 가능하다.)
+    - 부가작업이 필요한 경우 : 인스턴스 내부에서 파일을 open/modify하는 등 외부 자원을 사용한 경우 (파일을 wrtie/close 하는 등 파일을 닫아야 메모리에서 해당 파일이 해제되므로) 
+       또는 인스턴스에 저장된 데이터를 디스크에 파일로 저장하는 경우
+    - 클래스에만 구현 가능하다. (클래스 인스턴트는 참조 타입이므로 더 이상 참조가 필요 없을 때 메모리에서 해제된다. - 인스턴스의 소멸)
+    - 인스턴스의 소멸 직전에 호출된다. (자동으로 호출되므로 직접 호출할 수 없다.)
+    - 인스턴스가 메모리에서 해제되는 시점은 ARC(Automatic Reference Counting) 의 규칙에 따라 결정된다.
+
+        ```swift
+        class someClass {
+        		deinit {
+        				print("Instance will be deallocated immediately!")
+        		}
+        }
+
+        var someInstance: someClass? = someClass() // nil 할당을 위해 optional type으로 선언함
+        someInstance = nil // 메모리 해제 - 인스턴스 소멸 직전에 Instance will be deallocated immediately! 출력
+        ```
+
+        ```swift
+        class PersonE {
+            var name: String
+            var pet: Puppy?
+            var child: PersonC
+            
+            init(name: String, child: PersonC) {
+                self.name = name
+                self.child = child
+            }
+            
+            deinit {   // 인스턴스가 메모리에서 해제되는 시점에 자동 호출 (매개변수 없음)  // optional을 unwrapping 해주는 Optional binding (if let 구문)
+                if let petName = pet?.name { // 만약 pet이 있다면 실행. *pet? : value of optional type 'Puppy?' must be unwrapped to refer to member 'name' of wrapped base type 'Puppy'
+                    print("\(name)가 \(child.name)에게 \(petName)를 인도합니다")
+                    self.pet?.owner = child
+                }
+            }
+        }
+
+        var donald: PersonE? = PersonE(name: "donald", child: kevin)
+        donald?.pet = happy  // *donald? : value of optional type 'PersonE?' must be unwrapped to refer to member 'pet' of wrapped base type 'PersonE'
+
+        donald = nil   // 1. [사용자 입력] donald 인스턴스가 더 이상 필요없으므로 메모리에서 해제시킴 -> 2. deinit 자동 호출
+        donald가 kevin에게 happy를 인도합니다 // 3. 출력됨
+        ```
+
+# 16. 옵셔널 체이닝과 nil 병합
+
+- 옵셔널 체이닝
+    - 옵셔널의 내부의 내부의 내부로 옵셔널이 연결되어 있을 때 유용하게 활용할 수 있습니다. 
+    (struct나 class 등 덩어리 안에 다른 덩어리의 인스턴스를 생성하는 경우가 반복될 때, 그 data type이 optional 이라서 nil check를 매번 해주기 번거로울 때 활용한다.)
+    - 매번 nil 확인을 하지 않고 최종적으로 원하는 값이 있는지 없는지 확인할 수 있습니다.
+
+        ```swift
+        class Person {
+            var name: String
+            var job: String?  // optional type의 default값은 nil 이다.
+            var home: Apartment?  // optional type의 default값은 nil 이다.
+            
+            init(name: String) {
+                self.name = name
+            }
+        }
+
+        class Apartment {
+            var buildingNumber: String
+            var roomNumber: String
+            var `guard`: Person?
+            var owner: Person?
+            
+            init(dong: String, ho: String) {  // dong, ho : *argument label (변수 선언 X)
+                buildingNumber = dong  // 인스턴스 초기화 단계에서의 할당값 (dong, ho의 입력값)이 변수 buildingNumber로 들어간다
+                roomNumber = ho
+            }
+        }
+        // *함수 선언시 사용하는 argument label처럼 init(dong buildingNumber: String, ho roomNumber: String) 형태로 하면 오류 발생 -> 왜지?
+
+        // 옵셔널 체이닝 사용
+        let yagom: Person? = Person(name: "yagom")
+        let apart: Apartment? = Apartment(dong: "101", ho: "202")
+        let superman: Person? = Person(name: "superman")
+        // (의도) 옵셔널 체이닝이 실행 후 결과값이 nil일 수 있으므로 결과 타입도 옵셔널입니다
+
+        // Quiz - 만약 우리집의 경비원의 직업이 궁금하다면?
+        // 방법-1) 옵셔널 체이닝을 사용하지 않는 경우
+        func guardJob(owner: Person?) { // 여러 번 optional binding으로 unwrapping 해야 해서 번거로움
+            if let owner = owner {  // owner라는 프로퍼티 (optional type)를 unwrapping 해서 값을 다시 owner에 할당하겠다? (nil이면 할당 안하고)
+                if let home = owner.home {
+                    if let `guard` = home.guard {
+                        if let guardJob = `guard`.job {
+                            print("우리집 경비원의 직업은 \(guardJob)입니다")
+                        } else {
+                            print("우리집 경비원은 직업이 없어요")
+                        }
                     }
+                    else { print("owner, home, guard, job 중에 nil이 있어요") } // nil 일 때 statements도 따로 지정해야 해서 번거로움
                 }
+                else { print("owner, home, guard, job 중에 nil이 있어요") }
             }
+            else { print("owner, home, guard, job 중에 nil이 있어요") }
+        }
+        guardJob(owner: yagom) // owner, home, guard, job 중에 nil이 있어요 - 출력
 
-            var donald: PersonE? = PersonE(name: "donald", child: kevin)
-            donald?.pet = happy  // *donald? : value of optional type 'PersonE?' must be unwrapped to refer to member 'pet' of wrapped base type 'PersonE'
-            donald = nil   // 1. [사용자 입력] donald 인스턴스가 더 이상 필요없으므로 메모리에서 해제시킴 -> 2. deinit 자동 호출
-            donald가 kevin에게 happy를 인도합니다 // 3. 출력됨
-            ```
+        // 방법-2) 옵셔널 체이닝을 사용하는 경우
+        func guardJobWithOptionalChaining(owner: Person?) {
+            if let guardJob = owner?.home?.guard?.job { // owner가 있나? -> home이 있나? -> guard가 있나? -> (if let) job이 있나? 차례로 nil check
+                print("우리집 경비원의 직업은 \(guardJob)입니다")
+            } else {
+                print("우리집 경비원은 직업이 없어요") // 하나만 nil 이어도 else block이 출력됨
+            }
+        }
+        guardJob(owner: yagom) // 출력 안됨
+        guardJobWithOptionalChaining(owner: yagom) // 우리집 경비원은 직업이 없어요 - 출력
 
-            - [x]  if let petName = pet?.name {   // pet? → 이것도 옵셔널?
-                - value of optional type 'Puppy?' must be unwrapped to refer to member 'name' of wrapped base type 'Puppy'
+        if yagom?.home == nil {
+            print("yagom은 home이 없다")  // (확인용) yagom은 home이 없다 - 출력
+        } 
 
-2. 16. 옵셔널 체이닝과 nil 병합
-    - 옵셔널 체이닝
-        - 옵셔널의 내부의 내부의 내부로 옵셔널이 연결되어 있을 때 유용하게 활용할 수 있습니다. 
-        (struct나 class 등 덩어리 안에 다른 덩어리의 인스턴스를 생성하는 경우가 반복될 때, 그 data type이 optional 이라서 nil check를 매번 해주기 번거로울 때 활용한다.)
-        - 매번 nil 확인을 하지 않고 최종적으로 원하는 값이 있는지 없는지 확인할 수 있습니다.
+        yagom?.home?.guard?.job // nil (yagom은 home이 없는 상태이므로)
+        yagom?.home = apart  // *apart 인스턴스를 할당해줌
+        yagom?.home // Optional(Apartment)
+
+        yagom?.home?.guard // nil (guard가 없는 상태이므로)
+        yagom?.home?.guard = superman // *superman 인스턴스를 할당해줌
+        yagom?.home?.guard // Optional(Person)
+        yagom?.home?.guard?.name // superman (superman 인스턴스의 초기값이 이미 들어가있음)
+        yagom?.home?.guard?.job // nil
+        yagom?.home?.guard?.job = "경비원2" // superman 직업을 할당해줌
+
+        guardJob(owner: yagom) // 우리집 경비원의 직업은 경비원2입니다 - 출력
+        guardJobWithOptionalChaining(owner: yagom) // 우리집 경비원의 직업은 경비원2입니다 - 출력
+        ```
+
+- nil 병합 연산자
+    - 중위 연산자입니다. **`??` (**Optional **??** Value)
+    - 옵셔널 값이 nil 인 경우, 우측의 값을 반환합니다.
+
+        ```swift
+        var guardJob: String
+            
+        guardJob = yagom?.home?.guard?.job ?? "슈퍼맨" // "yagom?.home?.guard?.job" 이 중에서 nil이 하나라도 있으면 변수 guardJob에 "슈퍼맨"을 할당해라.
+        print(guardJob) // 경비원2 (nil이 아니므로 본래 값 출력)
+
+        yagom?.home?.guard?.job = nil // job에 nil을 할당
+        guardJob = yagom?.home?.guard?.job ?? "슈퍼맨"
+        print(guardJob) // 슈퍼맨 (nil이므로 ??가 작동함)
+        ```
+
+# 17. 타입 캐스팅 (타입 확인-is, 업캐스팅-as, 다운캐스팅-as?, as!)
+
+- L/G
+    - Type casting is a way to check the type of an instance, or to treat that instance as a different superclass or subclass from somewhere else in its own class hierarchy.
+    - simple way to check the type of a value or cast a value to a different type. (지정해준 다른 타입으로 취급)
+    to cast that instance to another class within the same hierarchy.
+    - 1) Defining a Class Hierarchy for Type Casting
+        - library가 갖고 있는 Movie,Song 인스턴스의 공통 부모는 MediaItem이기 때문에 library는 타입 추론에 의해 [MediaItem] 배열의 형을 갖게 됩니다. 
+        library를 순회(iterate)하면 배열의 아이템은 Movie, Song 타입이 아니라 MediaItem 타입이라는 것을 확인할 수 있습니다.
+        - 타입 지정을 위해서는 downcasting을 이용해야 합니다.
+            - [x]  개개별의 type (Movie or Song)이 확인이 되는데 왜 downcasting이 필요하지 ???
+
+            🎃🎃🎃 The items stored in library are still Movie and Song instances behind the scenes. However, if you iterate over the contents of this array, the items you receive back are typed as MediaItem, and not as Movie or Song. In order to work with them as their native type, you need to check their type, or downcast them to a different type.
 
             ```swift
-            class Person {
+            class MediaItem {
                 var name: String
-                var job: String?  // optional type의 default값은 nil 이다.
-                var home: Apartment?  // optional type의 default값은 nil 이다.
-                
                 init(name: String) {
                     self.name = name
                 }
             }
-
-            class Apartment {
-                var buildingNumber: String
-                var roomNumber: String
-                var `guard`: Person?
-                var owner: Person?
-                
-                init(dong: String, ho: String) {  // dong, ho : *argument label (변수 선언 X)
-                    buildingNumber = dong  // 인스턴스 초기화 단계에서의 할당값 (dong, ho의 입력값)이 변수 buildingNumber로 들어간다
-                    roomNumber = ho
+            class Movie: MediaItem {
+                var director: String
+                init(name: String, director: String) {
+                    self.director = director
+                    super.init(name: name)
                 }
             }
-            // *함수 선언시 사용하는 argument label처럼 init(dong buildingNumber: String, ho roomNumber: String) 형태로 하면 오류 발생 -> 왜지?
 
-            // 옵셔널 체이닝 사용
-            let yagom: Person? = Person(name: "yagom")
-            let apart: Apartment? = Apartment(dong: "101", ho: "202")
-            let superman: Person? = Person(name: "superman")
-            // (의도) 옵셔널 체이닝이 실행 후 결과값이 nil일 수 있으므로 결과 타입도 옵셔널입니다
-
-            // Quiz - 만약 우리집의 경비원의 직업이 궁금하다면?
-            // 방법-1) 옵셔널 체이닝을 사용하지 않는 경우
-            func guardJob(owner: Person?) { // 여러 번 optional binding으로 unwrapping 해야 해서 번거로움
-                if let owner = owner {  // owner라는 프로퍼티 (optional type)를 unwrapping 해서 값을 다시 owner에 할당하겠다? (nil이면 할당 안하고)
-                    if let home = owner.home {
-                        if let `guard` = home.guard {
-                            if let guardJob = `guard`.job {
-                                print("우리집 경비원의 직업은 \(guardJob)입니다")
-                            } else {
-                                print("우리집 경비원은 직업이 없어요")
-                            }
-                        }
-                        else { print("owner, home, guard, job 중에 nil이 있어요") } // nil 일 때 statements도 따로 지정해야 해서 번거로움
-                    }
-                    else { print("owner, home, guard, job 중에 nil이 있어요") }
-                }
-                else { print("owner, home, guard, job 중에 nil이 있어요") }
-            }
-            guardJob(owner: yagom) // owner, home, guard, job 중에 nil이 있어요 - 출력
-
-            // 방법-2) 옵셔널 체이닝을 사용하는 경우
-            func guardJobWithOptionalChaining(owner: Person?) {
-                if let guardJob = owner?.home?.guard?.job { // owner가 있나? -> home이 있나? -> guard가 있나? -> (if let) job이 있나? 차례로 nil check
-                    print("우리집 경비원의 직업은 \(guardJob)입니다")
-                } else {
-                    print("우리집 경비원은 직업이 없어요") // 하나만 nil 이어도 else block이 출력됨
+            class Song: MediaItem {
+                var artist: String
+                init(name: String, artist: String) {
+                    self.artist = artist
+                    super.init(name: name)
                 }
             }
-            guardJob(owner: yagom) // 출력 안됨
-            guardJobWithOptionalChaining(owner: yagom) // 우리집 경비원은 직업이 없어요 - 출력
 
-            if yagom?.home == nil {
-                print("yagom은 home이 없다")  // (확인용) yagom은 home이 없다 - 출력
-            } 
-
-            yagom?.home?.guard?.job // nil (yagom은 home이 없는 상태이므로)
-            yagom?.home = apart  // *apart 인스턴스를 할당해줌
-            yagom?.home // Optional(Apartment)
-
-            yagom?.home?.guard // nil (guard가 없는 상태이므로)
-            yagom?.home?.guard = superman // *superman 인스턴스를 할당해줌
-            yagom?.home?.guard // Optional(Person)
-            yagom?.home?.guard?.name // superman (superman 인스턴스의 초기값이 이미 들어가있음)
-            yagom?.home?.guard?.job // nil
-            yagom?.home?.guard?.job = "경비원2" // superman 직업을 할당해줌
-
-            guardJob(owner: yagom) // 우리집 경비원의 직업은 경비원2입니다 - 출력
-            guardJobWithOptionalChaining(owner: yagom) // 우리집 경비원의 직업은 경비원2입니다 - 출력
+            let library = [
+                Movie(name: "Casablanca", director: "Michael Curtiz"),
+                Song(name: "Blue Suede Shoes", artist: "Elvis Presley"),
+                Movie(name: "Citizen Kane", director: "Orson Welles"),
+                Song(name: "The One And Only", artist: "Chesney Hawkes"),
+                Song(name: "Never Gonna Give You Up", artist: "Rick Astley")
+            ] // the type of "library" is inferred to be [MediaItem]
             ```
 
-    - nil 병합 연산자
-        - 중위 연산자입니다. **`??` (**Optional **??** Value)
-        - 옵셔널 값이 nil 인 경우, 우측의 값을 반환합니다.
+    - 2) Checking Type
+        - is 연산자를 이용해 특정 인스턴스의 타입을 확인할 수 있습니다.
+        - 아래 코드는 library 배열을 iterate하고 아이템이 특정 타입 (Movie or Song) 일 때마다 그 숫자를 증가하는 예제 코드입니다.
+
+            This example iterates through all items in the library array. On each pass, the for-in loop sets the item constant to the next MediaItem in the array.
 
             ```swift
-            var guardJob: String
-                
-            guardJob = yagom?.home?.guard?.job ?? "슈퍼맨" // "yagom?.home?.guard?.job" 이 중에서 nil이 하나라도 있으면 변수 guardJob에 "슈퍼맨"을 할당해라.
-            print(guardJob) // 경비원2 (nil이 아니므로 본래 값 출력)
+            var movieCount = 0
+            var songCount = 0
 
-            yagom?.home?.guard?.job = nil // job에 nil을 할당
-            guardJob = yagom?.home?.guard?.job ?? "슈퍼맨"
-            print(guardJob) // 슈퍼맨 (nil이므로 ??가 작동함)
+            for item in library {
+                if item is Movie {
+                    movieCount += 1
+                } else if item is Song {
+                    songCount += 1
+                }
+            }
+            print("Media library contains \(movieCount) movies and \(songCount) songs")
+            // "Media library contains 2 movies and 3 songs" 출력
             ```
 
-3. 17. 타입 캐스팅 (타입 확인-is, 업캐스팅-as, 다운캐스팅-as?, as!)
-    - L/G
-        - Type casting is a way to check the type of an instance, or to treat that instance as a different superclass or subclass from somewhere else in its own class hierarchy.
-        - simple way to check the type of a value or cast a value to a different type. (지정해준 다른 타입으로 취급)
-        to cast that instance to another class within the same hierarchy.
-        - 1) Defining a Class Hierarchy for Type Casting
-            - library가 갖고 있는 Movie,Song 인스턴스의 공통 부모는 MediaItem이기 때문에 library는 타입 추론에 의해 [MediaItem] 배열의 형을 갖게 됩니다. 
-            library를 순회(iterate)하면 배열의 아이템은 Movie, Song 타입이 아니라 MediaItem 타입이라는 것을 확인할 수 있습니다.
-            - 타입 지정을 위해서는 downcasting을 이용해야 합니다.
-                - [x]  개개별의 type (Movie or Song)이 확인이 되는데 왜 downcasting이 필요하지 ???
-
-                🎃🎃🎃 The items stored in library are still Movie and Song instances behind the scenes. However, if you iterate over the contents of this array, the items you receive back are typed as MediaItem, and not as Movie or Song. In order to work with them as their native type, you need to check their type, or downcast them to a different type.
-
-                ```swift
-                class MediaItem {
-                    var name: String
-                    init(name: String) {
-                        self.name = name
-                    }
-                }
-                class Movie: MediaItem {
-                    var director: String
-                    init(name: String, director: String) {
-                        self.director = director
-                        super.init(name: name)
-                    }
-                }
-
-                class Song: MediaItem {
-                    var artist: String
-                    init(name: String, artist: String) {
-                        self.artist = artist
-                        super.init(name: name)
-                    }
-                }
-
-                let library = [
-                    Movie(name: "Casablanca", director: "Michael Curtiz"),
-                    Song(name: "Blue Suede Shoes", artist: "Elvis Presley"),
-                    Movie(name: "Citizen Kane", director: "Orson Welles"),
-                    Song(name: "The One And Only", artist: "Chesney Hawkes"),
-                    Song(name: "Never Gonna Give You Up", artist: "Rick Astley")
-                ] // the type of "library" is inferred to be [MediaItem]
-                ```
-
-        - 2) Checking Type
-            - is 연산자를 이용해 특정 인스턴스의 타입을 확인할 수 있습니다.
-            - 아래 코드는 library 배열을 iterate하고 아이템이 특정 타입 (Movie or Song) 일 때마다 그 숫자를 증가하는 예제 코드입니다.
-
-                This example iterates through all items in the library array. On each pass, the for-in loop sets the item constant to the next MediaItem in the array.
-
-                ```swift
-                var movieCount = 0
-                var songCount = 0
-
-                for item in library {
-                    if item is Movie {
-                        movieCount += 1
-                    } else if item is Song {
-                        songCount += 1
-                    }
-                }
-                print("Media library contains \(movieCount) movies and \(songCount) songs")
-                // "Media library contains 2 movies and 3 songs" 출력
-                ```
-
-        - 3) Downcasting
-            - 특정 클래스 타입의 상수나 변수는 특정 서브클래스의 인스턴스를 참조하고 있을 수 있습니다. 
-            A constant or variable of a certain class type may actually refer to an instance of a subclass behind the scenes.
-            - 어떤 타입의 인스턴스인지 확인할 수 있습니다.
-                - as?는 특정 타입이 맞는지 확신할 수 없을때 사용하고, as!는 특정 타입이라는 것이 확실한 경우에 사용합니다.
-                - 단 as!으로 다운캐스팅을 했는데 지정한 타입이 아니라면 런타임 에러가 발생합니다.
-            - 캐스팅은 실제 인스턴스나 값을 바꾸는 것이 아니라 지정한 타입으로 취급하는 것 뿐입니다.
-            - 다음 예제는 library 배열의 mediaItem이 Movie 인스턴스 일수도 있고 Song 인스턴스일 수도 있기 때문에 as?연산자를 사용했습니다.
-            Because item is a MediaItem instance, it’s possible that it might be a Movie; equally, it’s also possible that it might be a Song, or even just a base MediaItem. 
-            Because of this uncertainty, the as? form of the type cast operator returns an optional value.
-                - if let movie = item as? Movie → can be read as:
-                1. Try to access item as a Movie. (Movie type 맞는지 확인) 
-                2. If this is successful, set a new temporary constant called movie to the value stored in the returned optional Movie.
-
-                ```swift
-                for item in library { 
-                    if let movie = item as? Movie {  // downcasting and unwrapping  // The result of <item as? Movie> is of type Movie? (optional Movie)
-                        print("Movie: \(movie.name), dir. \(movie.director)")
-                    } else if let song = item as? Song {
-                        print("Song: \(song.name), by \(song.artist)")
-                    }
-                }
-                // Movie: Casablanca, dir. Michael Curtiz
-                // Song: Blue Suede Shoes, by Elvis Presley
-                // Movie: Citizen Kane, dir. Orson Welles
-                // Song: The One And Only, by Chesney Hawkes
-                // Song: Never Gonna Give You Up, by Rick Astley
-                ```
-
-        - Type Casting for Any and AnyObject
-            - Use Any and AnyObject only when you explicitly need the behavior and capabilities they provide.
-            - Any : 함수를 포함한 모든 타입의 인스턴스
-            - AnyObject : 클래스 타입의 모든 인스턴스
-                - example of using Any to work with a mix of different types.
-
-                ```swift
-                var things = [Any]()  // Any 타입 배열을 선언해 여러 타입의 값을 저장합니다. 여기에는 Int, String, 함수, 클로저까지 포함됩니다.
-
-                things.append(0)
-                things.append(0.0)
-                things.append(42)
-                things.append(3.14159)
-                things.append("hello")
-                things.append((3.0, 5.0))
-                things.append(Movie(name: "Ghostbusters", director: "Ivan Reitman"))  // function
-                things.append({ (name: String) -> String in "Hello, \(name)" })  // closure
-                ```
-
-                - things를 iterate 하며 타입캐스팅이 되는지 switch case문에 as 연산자로 확인해 타입캐스팅 되는 배열의 원소의 값을 적절히 출력합니다.
-                - [ ]  any 타입 등 여러 type이 섞여있는 변수/인스턴스가 있을 때, 각 요소들의 type 별로 다른 실행을 연결시키기 위해 down casting을 하는 것이 맞나?
-                as?! 안하고 그냥 for...in if 구문으로 해결하면 되지 않나?
-
-                ```swift
-                for thing in things {
-                    switch thing {
-                    case 0 as Int:
-                        print("zero as an Int")
-                    case 0 as Double:
-                        print("zero as a Double")
-                    case let someInt as Int:
-                        print("an integer value of \(someInt)")
-                    case let someDouble as Double where someDouble > 0:
-                        print("a positive double value of \(someDouble)")
-                    case is Double:
-                        print("some other double value that I don't want to print")
-                    case let someString as String:
-                        print("a string value of \"\(someString)\"")  // a string value of "hello" 출력
-                    case let (x, y) as (Double, Double):
-                        print("an (x, y) point at \(x), \(y)") // an (x, y) point at 3.0, 5.0
-                    case let movie as Movie:
-                        print("a movie called \(movie.name), dir. \(movie.director)") // a movie called Ghostbusters, dir. Ivan Reitman
-                    case let stringConverter as (String) -> String:
-                        print(stringConverter("Michael")) // closure - Hello, Michael
-                    default:
-                        print("something else")
-                    }
-                }
-                // Int, Double뿐만 아니라 튜플, 함수도 Any 타입에 포함될 수 있다는 것을 확인할 수 있습니다.
-                ```
-
-    - 특징
-        - 인스턴스의 타입을 확인 하는 용도
-        - 클래스의 인스턴스를 superclass/subclass의 타입으로 사용할 수 있는지 확인 하는 용도
+    - 3) Downcasting
+        - 특정 클래스 타입의 상수나 변수는 특정 서브클래스의 인스턴스를 참조하고 있을 수 있습니다. 
+        A constant or variable of a certain class type may actually refer to an instance of a subclass behind the scenes.
+        - 어떤 타입의 인스턴스인지 확인할 수 있습니다.
+            - as?는 특정 타입이 맞는지 확신할 수 없을때 사용하고, as!는 특정 타입이라는 것이 확실한 경우에 사용합니다.
+            - 단 as!으로 다운캐스팅을 했는데 지정한 타입이 아니라면 런타임 에러가 발생합니다.
+        - 캐스팅은 실제 인스턴스나 값을 바꾸는 것이 아니라 지정한 타입으로 취급하는 것 뿐입니다.
+        - 다음 예제는 library 배열의 mediaItem이 Movie 인스턴스 일수도 있고 Song 인스턴스일 수도 있기 때문에 as?연산자를 사용했습니다.
+        Because item is a MediaItem instance, it’s possible that it might be a Movie; equally, it’s also possible that it might be a Song, or even just a base MediaItem. 
+        Because of this uncertainty, the as? form of the type cast operator returns an optional value.
+            - if let movie = item as? Movie → can be read as:
+            1. Try to access item as a Movie. (Movie type 맞는지 확인) 
+            2. If this is successful, set a new temporary constant called movie to the value stored in the returned optional Movie.
 
             ```swift
-            var result: Bool  // true or false로 결과값을 보여주는 용도
-
-            result = yagom is Person // true  // 인스턴스 yagom이 Person type인가? 맞으면 true
-            result = yagom is Student // false
-            result = yagom is UniversityStudent // false
+            for item in library { 
+                if let movie = item as? Movie {  // downcasting and unwrapping  // The result of <item as? Movie> is of type Movie? (optional Movie)
+                    print("Movie: \(movie.name), dir. \(movie.director)")
+                } else if let song = item as? Song {
+                    print("Song: \(song.name), by \(song.artist)")
+                }
+            }
+            // Movie: Casablanca, dir. Michael Curtiz
+            // Song: Blue Suede Shoes, by Elvis Presley
+            // Movie: Citizen Kane, dir. Orson Welles
+            // Song: The One And Only, by Chesney Hawkes
+            // Song: Never Gonna Give You Up, by Rick Astley
             ```
 
-        - cf) type conversion (형 변환)은 타입 캐스팅이 아니라 새로운 인스턴스를 생성하는 것이다.
+    - Type Casting for Any and AnyObject
+        - Use Any and AnyObject only when you explicitly need the behavior and capabilities they provide.
+        - Any : 함수를 포함한 모든 타입의 인스턴스
+        - AnyObject : 클래스 타입의 모든 인스턴스
+            - example of using Any to work with a mix of different types.
 
             ```swift
-            let someInt: Int = 2
-            let someDouble: Double = Double(someInt)  // Double type의 인스턴스를 생성하는 것. someInt의 값만 활용한다. (타입 캐스팅이 아님)
+            var things = [Any]()  // Any 타입 배열을 선언해 여러 타입의 값을 저장합니다. 여기에는 Int, String, 함수, 클로저까지 포함됩니다.
+
+            things.append(0)
+            things.append(0.0)
+            things.append(42)
+            things.append(3.14159)
+            things.append("hello")
+            things.append((3.0, 5.0))
+            things.append(Movie(name: "Ghostbusters", director: "Ivan Reitman"))  // function
+            things.append({ (name: String) -> String in "Hello, \(name)" })  // closure
             ```
 
-    - 예제 - Type 확인 (is)
+            - things를 iterate 하며 타입캐스팅이 되는지 switch case문에 as 연산자로 확인해 타입캐스팅 되는 배열의 원소의 값을 적절히 출력합니다.
+            - [ ]  any 타입 등 여러 type이 섞여있는 변수/인스턴스가 있을 때, 각 요소들의 type 별로 다른 실행을 연결시키기 위해 down casting을 하는 것이 맞나?
+            as?! 안하고 그냥 for...in if 구문으로 해결하면 되지 않나?
 
-        ```swift
-        class Person {
-            var name: String = ""
-            func breath() {
-                print("숨을 쉽니다")
+            ```swift
+            for thing in things {
+                switch thing {
+                case 0 as Int:
+                    print("zero as an Int")
+                case 0 as Double:
+                    print("zero as a Double")
+                case let someInt as Int:
+                    print("an integer value of \(someInt)")
+                case let someDouble as Double where someDouble > 0:
+                    print("a positive double value of \(someDouble)")
+                case is Double:
+                    print("some other double value that I don't want to print")
+                case let someString as String:
+                    print("a string value of \"\(someString)\"")  // a string value of "hello" 출력
+                case let (x, y) as (Double, Double):
+                    print("an (x, y) point at \(x), \(y)") // an (x, y) point at 3.0, 5.0
+                case let movie as Movie:
+                    print("a movie called \(movie.name), dir. \(movie.director)") // a movie called Ghostbusters, dir. Ivan Reitman
+                case let stringConverter as (String) -> String:
+                    print(stringConverter("Michael")) // closure - Hello, Michael
+                default:
+                    print("something else")
+                }
             }
-        }
-        class Student: Person {  // subclass
-            var school: String = ""
-            func goToSchool() {
-                print("등교를 합니다")
-            }
-        }
-        class UniversityStudent: Student {  // subclass의 subclass
-            var major: String = ""
-            func goToMT() {
-                print("멤버쉽 트레이닝을 갑니다 신남!")
-            }
-        }
-        var yagom: Person = Person()  
-        var hana: Student = Student()
-        var jason: UniversityStudent = UniversityStudent()
-        ```
+            // Int, Double뿐만 아니라 튜플, 함수도 Any 타입에 포함될 수 있다는 것을 확인할 수 있습니다.
+            ```
+
+- 특징
+    - 인스턴스의 타입을 확인 하는 용도
+    - 클래스의 인스턴스를 superclass/subclass의 타입으로 사용할 수 있는지 확인 하는 용도
 
         ```swift
         var result: Bool  // true or false로 결과값을 보여주는 용도
 
-        result = yagom is Person // true  // 타입 확인 - 인스턴스 yagom이 Person type인가? 맞으면 true
+        result = yagom is Person // true  // 인스턴스 yagom이 Person type인가? 맞으면 true
         result = yagom is Student // false
         result = yagom is UniversityStudent // false
-
-        result = hana is Person // true  // Student class는 Person class를 상속받아서 Person의 특성을 모두 가지고 있으므로 true
-        result = hana is Student // true
-        result = hana is UniversityStudent // false
-
-        result = jason is Person // true
-        result = jason is Student // true
-        result = jason is UniversityStudent // true
-
-        if yagom is UniversityStudent {
-            print("yagom은 대학생입니다")
-        } else if yagom is Student {
-            print("yagom은 학생입니다")
-        } else if yagom is Person {
-            print("yagom은 사람입니다")
-        } // yagom은 사람입니다
-
-        switch yagom {
-        case is UniversityStudent:
-            print("yagom is UniversityStudent")
-        case is Student:
-            print("yagom is Student")
-        case is PersonZ:  // 이 case에 해당되므로 print 실행
-            print("yagom is Person")  
-        default:
-            print("error")
-        } // yagom is Person - 출력
-
-        switch jason {
-        case is UniversityStudent:
-            print("jason은 대학생입니다")
-        case is Student:
-            print("jason은 학생입니다")
-        case is Person:
-            print("jason은 사람입니다")
-        default:
-            print("jason은 사람도, 학생도, 대학생도 아닙니다")
-        } // jason은 대학생입니다 - 출력
         ```
 
-    - 업 캐스팅(Up Casting) - 활용 빈도 낮음
-        - as를 사용하여 부모클래스의 인스턴스로 행세 (사용)할 수 있도록 컴파일러에게 타입정보를 전환해줍니다.
-        - Any 혹은 AnyObject로 타입정보를 변환할 수 있습니다.
-        - 암시적으로 처리되므로 꼭 필요한 경우가 아니라면 생략해도 무방합니다.
-
-            ```swift
-            var mike: Person = UniversityStudent() as Person  // UniversityStudent 인스턴스를 생성하여 superclass Person 행세를 할 수 있도록 업 캐스팅
-
-            //var mike2: UniversityStudent = Person() as UniversityStudent // 컴파일 오류
-
-            var jina: Any = Person() as Any // as Any 생략가능  // Any type에 Person class가 들어갈 수 있다.
-            ```
-
-    - 다운 캐스팅(Down Casting) - 활용 빈도 높음 as?/as!
-        - 자식 클래스의 인스턴스로 사용할 수 있도록 컴파일러에게 인스턴스의 타입정보를 전환해줍니다.
-            - 1) 조건부 다운 캐스팅 (as?)
-                - Casting에 실패하면, 즉 Casting하려는 타입에 부합하지 않는 인스턴스라면 nil을 반환하기 때문에 결과의 타입은 옵셔널 타입입니다.
-                    - [ ]  optionalCasted = mike as? UniversityStudent  // 2. mike는 실질적으로 UniversityStudent의 인스턴스이므로 subclass UniversityStudent type으로 Casting 성공 ???
-
-                    ```swift
-                    var mike: Person = UniversityStudent() as Person // 1. mike는 Person type이지만, 실질적으로 UniversityStudent의 인스턴스이다.
-                    var jenny: Student = Student()
-
-                    -
-                    var optionalCasted: Student?
-
-                    optionalCasted = mike as? UniversityStudent  // 2. mike는 실질적으로 UniversityStudent의 인스턴스이므로 subclass UniversityStudent type으로 Casting 성공 ???
-
-                    optionalCasted = jenny as? UniversityStudent // nil
-                    optionalCasted = jenny as? Student // always suceeds
-
-                    optionalCasted = jina as? UniversityStudent // nil  // jina는 Person Type 이므로 Student 또는 UniversityStudent로 Casting 실패
-                    optionalCasted = jina as? Student // nil
-                    ```
-
-            - 2) 강제 다운 캐스팅 (as!)
-                - 캐스팅에 실패하면, 즉 캐스팅하려는 타입에 부합하지 않는 인스턴스라면 런타임 오류가 발생합니다.
-                - 캐스팅에 성공하면 옵셔널이 아닌 일반 타입을 반환합니다.
-
-                    ```swift
-                    var forcedCasted: Student
-
-                    forcedCasted = mike as! UniversityStudent
-                    //forcedCasted = jenny as! UniversityStudent // 런타임 오류 // 강제로 UniversityStudent type이 되라고 명령했지만, 불가능해서 오류 발생
-                    //forcedCasted = jina as! UniversityStudent // 런타임 오류
-                    //forcedCasted = jina as! Student // 런타임 오류
-                    ```
-
-    - Type Casting 활용
+    - cf) type conversion (형 변환)은 타입 캐스팅이 아니라 새로운 인스턴스를 생성하는 것이다.
 
         ```swift
-        func doSomethingWithSwitch(someone: Person) {
-            switch someone {  // someone으로 가져온 것이 어떤 type인지 확인하기 위한 switch case-is 구문
-            case is UniversityStudent:
-                (someone as! UniversityStudent).goToMT()  // 확인 결과 해당 값을 가져오려면 다시 down casting 해줘야 한다. (즉, mike는 Person type 이므로 Uni type으로 Casting 해줌)
-            case is Student:
-                (someone as! Student).goToSchool()
-            case is Person:
-                (someone as! Person).breath()
-            }
-        }
-        doSomethingWithSwitch(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
-        doSomethingWithSwitch(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
-        doSomethingWithSwitch(someone: jenny) // 등교를 합니다
-        doSomethingWithSwitch(someone: yagom) // 숨을 쉽니다
-
-        -
-        func doSomething(someone: Person) {
-            if let universityStudent = someone as? UniversityStudent {  // switch 대신 if-let을 쓰면 as?를 통해 casting 함과 동시에 unwrapping (옵셔널 추출)해서 값을 가져올 수 있다.
-                universityStudent.goToMT()
-            } else if let student = someone as? Student {
-                student.goToSchool()
-            } else if let person = someone as? Person {
-                person.breath()
-            }
-        }
-        doSomething(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
-        doSomething(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
-        doSomething(someone: jenny) // 등교를 합니다
-        doSomething(someone: yagom) // 숨을 쉽니다
+        let someInt: Int = 2
+        let someDouble: Double = Double(someInt)  // Double type의 인스턴스를 생성하는 것. someInt의 값만 활용한다. (타입 캐스팅이 아님)
         ```
 
-4. 18. assert / guard
-    - 애플리케이션이 동작 도중에 생성하는 다양한 연산 결과값을 동적으로 확인하고 안전하게 처리한다.
-    - 참고 - [http://seorenn.blogspot.com/2016/05/swift-assertion.html](http://seorenn.blogspot.com/2016/05/swift-assertion.html)
-    - [ ]  찾아보기
-        - `assertionFailure() / preconditionFailure()` : assert() 나 precondition() 의 조건이 실패한 것 처럼 동작시키는 코드 ???
-        - `fatalError()` : 에러를 발생시키고 앱을 죽여야 할 상황에서 사용하며, 활용 빈도 낮다.
-    - Assertion
+- 예제 - Type 확인 (is)
 
-        You use assertion and precondition to make sure an essential condition is satisfied before executing any further code. If the Boolean condition evaluates to true, code execution continues as usual. If the condition evaluates to false, the current state of the program is invalid; code execution ends, and your app is terminated.
+    ```swift
+    class Person {
+        var name: String = ""
+        func breath() {
+            print("숨을 쉽니다")
+        }
+    }
+    class Student: Person {  // subclass
+        var school: String = ""
+        func goToSchool() {
+            print("등교를 합니다")
+        }
+    }
+    class UniversityStudent: Student {  // subclass의 subclass
+        var major: String = ""
+        func goToMT() {
+            print("멤버쉽 트레이닝을 갑니다 신남!")
+        }
+    }
+    var yagom: Person = Person()  
+    var hana: Student = Student()
+    var jason: UniversityStudent = UniversityStudent()
+    ```
 
-        It causes your app to terminate more predictably if an invalid state occurs, and helps make the problem easier to debug. Stopping execution as soon as an invalid state is detected also helps limit the damage caused by that invalid state.
+    ```swift
+    var result: Bool  // true or false로 결과값을 보여주는 용도
 
-        - `assert(_:_:file:line:)` 함수를 사용합니다.
-        - 예상했던 조건의 검증을 위하여 사용합니다.
-        - assert 함수는 디버깅 모드에서만 동작합니다.
-        - 배포 환경 (production builds)의 애플리케이션에서 사용하지 않는다. 주로 디버깅 (debug builds) 중 어떤 조건을 검증하기 위해서 사용한다. 
-        (만약 디버깅 모드에서 assert() 등을 통해 앱이 죽으면 죽은 위치가 확실하게 잡힌다. 이 점을 이용하면 버그를 미연에 방지하거나 디버그에 유용한 정보로 쓸 수 있다.)
-            - [x]  precondition?
-            - assert(*:*:file:line:)와 같은 역할을 하지만 실제 배포 환경 (production builds) 에서도 동작하는 precondition(*:*:file:line:) 함수도 있습니다.
-                - Assertions help you find mistakes and incorrect assumptions during development, and preconditions help you detect issues in production.
-                - The difference between assertions and preconditions is in when they’re checked: Assertions are checked only in debug builds, but preconditions are checked in both debug and production builds.
-                - Use a precondition whenever a condition has the potential to be false, but must definitely be true for your code to continue execution.
+    result = yagom is Person // true  // 타입 확인 - 인스턴스 yagom이 Person type인가? 맞으면 true
+    result = yagom is Student // false
+    result = yagom is UniversityStudent // false
+
+    result = hana is Person // true  // Student class는 Person class를 상속받아서 Person의 특성을 모두 가지고 있으므로 true
+    result = hana is Student // true
+    result = hana is UniversityStudent // false
+
+    result = jason is Person // true
+    result = jason is Student // true
+    result = jason is UniversityStudent // true
+
+    if yagom is UniversityStudent {
+        print("yagom은 대학생입니다")
+    } else if yagom is Student {
+        print("yagom은 학생입니다")
+    } else if yagom is Person {
+        print("yagom은 사람입니다")
+    } // yagom은 사람입니다
+
+    switch yagom {
+    case is UniversityStudent:
+        print("yagom is UniversityStudent")
+    case is Student:
+        print("yagom is Student")
+    case is PersonZ:  // 이 case에 해당되므로 print 실행
+        print("yagom is Person")  
+    default:
+        print("error")
+    } // yagom is Person - 출력
+
+    switch jason {
+    case is UniversityStudent:
+        print("jason은 대학생입니다")
+    case is Student:
+        print("jason은 학생입니다")
+    case is Person:
+        print("jason은 사람입니다")
+    default:
+        print("jason은 사람도, 학생도, 대학생도 아닙니다")
+    } // jason은 대학생입니다 - 출력
+    ```
+
+- 업 캐스팅(Up Casting) - 활용 빈도 낮음
+    - as를 사용하여 부모클래스의 인스턴스로 행세 (사용)할 수 있도록 컴파일러에게 타입정보를 전환해줍니다.
+    - Any 혹은 AnyObject로 타입정보를 변환할 수 있습니다.
+    - 암시적으로 처리되므로 꼭 필요한 경우가 아니라면 생략해도 무방합니다.
 
         ```swift
-        var someInt: Int = 0
+        var mike: Person = UniversityStudent() as Person  // UniversityStudent 인스턴스를 생성하여 superclass Person 행세를 할 수 있도록 업 캐스팅
 
-        // 검증 조건과 실패시 나타날 문구를 작성해 줍니다
-        assert(someInt == 0, "someInt는 0이 아니다")  // someInt == 0 이라는 조건이 true이면 pass하고, false이면 "someInt는 0이 아니다" 문구를 작성한다.
+        //var mike2: UniversityStudent = Person() as UniversityStudent // 컴파일 오류
 
-        someInt = 1
-
-        // assert(someInt == 0) // 동작 중지, 검증 실패 (assertion fails, terminating the application)
-        // assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
-        // => assertion failed: someInt는 0이 아니다: file guard_assert.swift, line 26
-
-        -
-
-        func functionWithAssert(age: Int?) {  // parameter를 통해 입력된 argument를 검증할 때도 활용한다. // nil이 할당될 수 있으므로 optional type
-            
-            assert(age != nil, "age == nil")  // 1. age가 nil이 아니라는 조건이 true이면 pass한다. false이면 "" 문구를 작성한다.
-            assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다") // 2. age가 0 이상 and 130 이하라는 조건이 true이면 pass한다. *age! : forced unwrapping
-
-            print("당신의 나이는 \(age)세 입니다") // 3. 두 가지 assert를 모두 pass 해야 print 가능하다.
-            print("당신의 나이는 \(age!)세 입니다") *age! : forced unwrapping
-        }
-
-        functionWithAssert(age: 50)  // 당신의 나이는 Optional(30)세 입니다 / 당신의 나이는 30세 입니다
-
-        // functionWithAssert(age: nil) // 동작 중지, 검증 실패 (중지되어 아래의 function도 실행되지 않음) // Assertion failed: age가 nil 입니다: file __lldb_expr_193/yagom_basic9 assert.guard.playground, line 14
-        // functionWithAssert(age: 999) // 동작 중지, 검증 실패 // Assertion failed: age가 잘못 입력되었습니다: file __lldb_expr_191/yagom_basic9 assert.guard.playground, line 15
+        var jina: Any = Person() as Any // as Any 생략가능  // Any type에 Person class가 들어갈 수 있다.
         ```
 
-        - [x]  age! 느낌표 왜 찍지?
-
-            assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")  *forced unwrapping
-
-    - guard (빠른 종료- Early Exit)
-
-        You use a guard statement to require that a condition must be true in order for the code after the guard statement to be executed.
-
-        Using a guard statement for requirements improves the readability of your code, compared to doing the same check with an if statement.
-
-        - `guard`를 사용하여 잘못된 값의 전달 시 특정 실행구문을 빠르게 종료합니다.
-        - 디버깅 모드 뿐만 아니라 어떤 조건에서도 동작합니다.
-        - `else` 블럭 내부에는 특정 코드블럭을 종료하는 지시어 `control transfer statement` (`return`, `break` 등)가 꼭 있어**야 합니다.**
-        - 타입 캐스팅, 옵셔널과 자주 사용됩니다.
-        - 그 외에도 단순조건 판단 후 빠르게 종료할 때도 용이합니다.
-            - if-let / guard-let optional binding 비교
+- 다운 캐스팅(Down Casting) - 활용 빈도 높음 as?/as!
+    - 자식 클래스의 인스턴스로 사용할 수 있도록 컴파일러에게 인스턴스의 타입정보를 전환해줍니다.
+        - 1) 조건부 다운 캐스팅 (as?)
+            - Casting에 실패하면, 즉 Casting하려는 타입에 부합하지 않는 인스턴스라면 nil을 반환하기 때문에 결과의 타입은 옵셔널 타입입니다.
+                - [ ]  optionalCasted = mike as? UniversityStudent  // 2. mike는 실질적으로 UniversityStudent의 인스턴스이므로 subclass UniversityStudent type으로 Casting 성공 ???
 
                 ```swift
-                // 1. if / guard 차이
-
-                var age: Int
-
-                if age < 100 { ...
-                } else { ...
-                  return
-                }
-
-                guard age < 100 else { ...
-                  return
-                }
-
-                // 즉, guard 문은 if 문에서 true인 경우에 실행할 statements가 생략된 형태이다. (true인 경우 pass 시키는 것이 목적이므로)
-                ```
-
-                ```swift
-                // 2. if-let / if-guard 차이
-
-                if let unwrapped: Int = someValue { 
-                   // statements
-                   unwrapped = 3
-                } 
-                // unwrapped = 5  // 오류 발생 - if 구문 외부에서는 unwrapped 사용이 불가능 합니다. (if-let 구문에서 암시적으로 선언되었고, if-let 구문 안에서만 사용된다는 뜻)
+                var mike: Person = UniversityStudent() as Person // 1. mike는 Person type이지만, 실질적으로 UniversityStudent의 인스턴스이다.
+                var jenny: Student = Student()
 
                 -
-                guard let unwrapped: Int = someValue else {
-                         return 
-                }
-                unwrapped = 3  // gaurd 구문 이후에도 unwrapped 사용 가능합니다. (일반적인 상수 선언과 마찬가지로 본다는 뜻. 즉, 일반적인 let선언 + guard-필수조건)
-                // Any variables/constants that were assigned values using an optional binding as part of the condition 
-                // are available for the rest of the code block that the guard statement appears in.
+                var optionalCasted: Student?
+
+                optionalCasted = mike as? UniversityStudent  // 2. mike는 실질적으로 UniversityStudent의 인스턴스이므로 subclass UniversityStudent type으로 Casting 성공 ???
+
+                optionalCasted = jenny as? UniversityStudent // nil
+                optionalCasted = jenny as? Student // always suceeds
+
+                optionalCasted = jina as? UniversityStudent // nil  // jina는 Person Type 이므로 Student 또는 UniversityStudent로 Casting 실패
+                optionalCasted = jina as? Student // nil
                 ```
+
+        - 2) 강제 다운 캐스팅 (as!)
+            - 캐스팅에 실패하면, 즉 캐스팅하려는 타입에 부합하지 않는 인스턴스라면 런타임 오류가 발생합니다.
+            - 캐스팅에 성공하면 옵셔널이 아닌 일반 타입을 반환합니다.
+
+                ```swift
+                var forcedCasted: Student
+
+                forcedCasted = mike as! UniversityStudent
+                //forcedCasted = jenny as! UniversityStudent // 런타임 오류 // 강제로 UniversityStudent type이 되라고 명령했지만, 불가능해서 오류 발생
+                //forcedCasted = jina as! UniversityStudent // 런타임 오류
+                //forcedCasted = jina as! Student // 런타임 오류
+                ```
+
+- Type Casting 활용
+
+    ```swift
+    func doSomethingWithSwitch(someone: Person) {
+        switch someone {  // someone으로 가져온 것이 어떤 type인지 확인하기 위한 switch case-is 구문
+        case is UniversityStudent:
+            (someone as! UniversityStudent).goToMT()  // 확인 결과 해당 값을 가져오려면 다시 down casting 해줘야 한다. (즉, mike는 Person type 이므로 Uni type으로 Casting 해줌)
+        case is Student:
+            (someone as! Student).goToSchool()
+        case is Person:
+            (someone as! Person).breath()
+        }
+    }
+    doSomethingWithSwitch(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
+    doSomethingWithSwitch(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
+    doSomethingWithSwitch(someone: jenny) // 등교를 합니다
+    doSomethingWithSwitch(someone: yagom) // 숨을 쉽니다
+
+    -
+    func doSomething(someone: Person) {
+        if let universityStudent = someone as? UniversityStudent {  // switch 대신 if-let을 쓰면 as?를 통해 casting 함과 동시에 unwrapping (옵셔널 추출)해서 값을 가져올 수 있다.
+            universityStudent.goToMT()
+        } else if let student = someone as? Student {
+            student.goToSchool()
+        } else if let person = someone as? Person {
+            person.breath()
+        }
+    }
+    doSomething(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
+    doSomething(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
+    doSomething(someone: jenny) // 등교를 합니다
+    doSomething(someone: yagom) // 숨을 쉽니다
+    ```
+
+# 18. assert / guard
+
+- 애플리케이션이 동작 도중에 생성하는 다양한 연산 결과값을 동적으로 확인하고 안전하게 처리한다.
+- 참고 - [http://seorenn.blogspot.com/2016/05/swift-assertion.html](http://seorenn.blogspot.com/2016/05/swift-assertion.html)
+- [ ]  찾아보기
+    - `assertionFailure() / preconditionFailure()` : assert() 나 precondition() 의 조건이 실패한 것 처럼 동작시키는 코드 ???
+    - `fatalError()` : 에러를 발생시키고 앱을 죽여야 할 상황에서 사용하며, 활용 빈도 낮다.
+- Assertion
+
+    You use assertion and precondition to make sure an essential condition is satisfied before executing any further code. If the Boolean condition evaluates to true, code execution continues as usual. If the condition evaluates to false, the current state of the program is invalid; code execution ends, and your app is terminated.
+
+    It causes your app to terminate more predictably if an invalid state occurs, and helps make the problem easier to debug. Stopping execution as soon as an invalid state is detected also helps limit the damage caused by that invalid state.
+
+    - `assert(_:_:file:line:)` 함수를 사용합니다.
+    - 예상했던 조건의 검증을 위하여 사용합니다.
+    - assert 함수는 디버깅 모드에서만 동작합니다.
+    - 배포 환경 (production builds)의 애플리케이션에서 사용하지 않는다. 주로 디버깅 (debug builds) 중 어떤 조건을 검증하기 위해서 사용한다. 
+    (만약 디버깅 모드에서 assert() 등을 통해 앱이 죽으면 죽은 위치가 확실하게 잡힌다. 이 점을 이용하면 버그를 미연에 방지하거나 디버그에 유용한 정보로 쓸 수 있다.)
+        - [x]  precondition?
+        - assert(*:*:file:line:)와 같은 역할을 하지만 실제 배포 환경 (production builds) 에서도 동작하는 precondition(*:*:file:line:) 함수도 있습니다.
+            - Assertions help you find mistakes and incorrect assumptions during development, and preconditions help you detect issues in production.
+            - The difference between assertions and preconditions is in when they’re checked: Assertions are checked only in debug builds, but preconditions are checked in both debug and production builds.
+            - Use a precondition whenever a condition has the potential to be false, but must definitely be true for your code to continue execution.
+
+    ```swift
+    var someInt: Int = 0
+
+    // 검증 조건과 실패시 나타날 문구를 작성해 줍니다
+    assert(someInt == 0, "someInt는 0이 아니다")  // someInt == 0 이라는 조건이 true이면 pass하고, false이면 "someInt는 0이 아니다" 문구를 작성한다.
+
+    someInt = 1
+
+    // assert(someInt == 0) // 동작 중지, 검증 실패 (assertion fails, terminating the application)
+    // assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
+    // => assertion failed: someInt는 0이 아니다: file guard_assert.swift, line 26
+
+    -
+
+    func functionWithAssert(age: Int?) {  // parameter를 통해 입력된 argument를 검증할 때도 활용한다. // nil이 할당될 수 있으므로 optional type
+        
+        assert(age != nil, "age == nil")  // 1. age가 nil이 아니라는 조건이 true이면 pass한다. false이면 "" 문구를 작성한다.
+        assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다") // 2. age가 0 이상 and 130 이하라는 조건이 true이면 pass한다. *age! : forced unwrapping
+
+        print("당신의 나이는 \(age)세 입니다") // 3. 두 가지 assert를 모두 pass 해야 print 가능하다.
+        print("당신의 나이는 \(age!)세 입니다") *age! : forced unwrapping
+    }
+
+    functionWithAssert(age: 50)  // 당신의 나이는 Optional(30)세 입니다 / 당신의 나이는 30세 입니다
+
+    // functionWithAssert(age: nil) // 동작 중지, 검증 실패 (중지되어 아래의 function도 실행되지 않음) // Assertion failed: age가 nil 입니다: file __lldb_expr_193/yagom_basic9 assert.guard.playground, line 14
+    // functionWithAssert(age: 999) // 동작 중지, 검증 실패 // Assertion failed: age가 잘못 입력되었습니다: file __lldb_expr_191/yagom_basic9 assert.guard.playground, line 15
+    ```
+
+    - [x]  age! 느낌표 왜 찍지?
+
+        assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")  *forced unwrapping
+
+- guard (빠른 종료- Early Exit)
+
+    You use a guard statement to require that a condition must be true in order for the code after the guard statement to be executed.
+
+    Using a guard statement for requirements improves the readability of your code, compared to doing the same check with an if statement.
+
+    - `guard`를 사용하여 잘못된 값의 전달 시 특정 실행구문을 빠르게 종료합니다.
+    - 디버깅 모드 뿐만 아니라 어떤 조건에서도 동작합니다.
+    - `else` 블럭 내부에는 특정 코드블럭을 종료하는 지시어 `control transfer statement` (`return`, `break` 등)가 꼭 있어**야 합니다.**
+    - 타입 캐스팅, 옵셔널과 자주 사용됩니다.
+    - 그 외에도 단순조건 판단 후 빠르게 종료할 때도 용이합니다.
+        - if-let / guard-let optional binding 비교
 
             ```swift
-            func functionWithGuard(age: Int?) {
-                
-                guard let unwrappedAge = age,  // 1. age unwrapping - age가 nil 이라면, 아래 statements가 실행되지 않고 바로 return (함수를 종료) 된다.
-                    unwrappedAge <= 130,
-                    unwrappedAge >= 0 else {   // 2. 만약 unwrappedAge가 130 이하이고 0 이상인 조건이 false 라면, else block이 실행되고 return (함수를 종료) 된다.
-                    print("나이값 입력이 잘못되었습니다")
-                    return
-                }
-                print("당신의 나이는 \(unwrappedAge)세 입니다")  // 3. 모든 조건이 true 라면 pass 한다. // 4. guard-let의 상수 (unwrappedAge)는 guard-let 구문 밖에서도 사용 가능하다.
+            // 1. if / guard 차이
+
+            var age: Int
+
+            if age < 100 { ...
+            } else { ...
+              return
             }
 
-            funcWithGuard(age: 50)  // 당신의 나이는 50세 입니다 - 출력
-            funcWithGuard(age: 500)  // 나이값 입력이 잘못되었습니다 - 출력 (else에서 return되어 함수가 종료되므로 당신의 나이는~ 이 출력되지 않음)
-
-            -
-            var count = 1
-
-            while true {  // while 문에도 guard를 활용할 수 있다.
-                guard count < 3 else {  // count < 3 이라는 조건이 true 이면 pass하고, false 이면 else block이 실행되고 break (while문을 종료) 한다.
-                    break
-                }
-                print(count)
-                count += 1
-            }
-            // 1
-            // 2
-
-            -
-            func someFunction(info: [String: Any]) {  // 1. parameter info의 type을 Dictionary로 지정했다. (value는 Any type이므로 실질적으로 사용하기 위해 casting이 필요함)
-                guard let name = info["name"] as? String else { // 2. name key의 value (nil 가능해서 optional type임)에 대해 -> <as? String> 즉, String type으로 casting 시도
-                    return  // 3. 그래서 optional binding이 성공하면 name 상수에 value가 할당 되고, 실패하면 else block이 실행되면서 return (함수가 종료) 된다.
-                }
-                
-                guard let age = info["age"] as? Int, age >= 0 else { // 4. age key의 value가 optional binding 성공하고, age>=0 조건이 true 이면 pass, false이면 return 된다.
-                    return
-                }
-                
-                print("\(name): \(age)")  // 5. 위의 두 가지 guard를 모두 pass 해야 print 실행이 가능하다.
+            guard age < 100 else { ...
+              return
             }
 
-            someFunction(info: ["name": "jenny", "age": "10"]) // age type이 String 이므로 함수 종료
-            someFunction(info: ["name": "mike"]) // age가 nil 이므로 함수 종료
-            someFunction(info: ["name": "yagom", "age": 10]) // yagom: 10 - 출력
-
-            *참고 - Dictionary [key : value]
-            var anyDictionary: Dictionary<String,Any> = [String: Any]()
-            anyDictionary["someKey"] = "value"   // "someKey"라는 key에 할당한 값이 "value"이다.
+            // 즉, guard 문은 if 문에서 true인 경우에 실행할 statements가 생략된 형태이다. (true인 경우 pass 시키는 것이 목적이므로)
             ```
 
-5. 19. Protocol
-    - L/G
-        - 프로토콜도 하나의 타입으로 사용됩니다. 그렇기 때문에 다음과 같이 타입 사용이 허용되는 모든 곳에 프로토콜을 사용할 수 있습니다.
-            - 함수, 메소드, 이니셜라이저의 파라미터 타입 혹은 리턴 타입
-            - 상수, 변수, 프로퍼티의 타입
-            - 컨테이너인 배열, 사전 등의 아이템 타입
+            ```swift
+            // 2. if-let / if-guard 차이
 
-    - 특징
-        - *프로토콜(Protocol)* 은 특정 기능을 수행하기 위한 메서드, 프로퍼티, 이니셜라이저 등의 요구 사항을 정의합니다. (즉, 특정 기능에 필요한 요구사항에 따르라고 강요하는 것이다.)
-        - 구조체, 클래스, 열거형은 프로토콜을 채택(Adopted) 해서 프로토콜의 요구사항을 실제로 구현할 수 있습니다.
-        - 어떤 프로토콜의 요구사항을 모두 따르는 타입은 그 프로토콜을 준수한다(Conform) 고 표현합니다.
-        - 프로토콜은 기능을 정의하고 제시 할 뿐이지 스스로 기능을 구현하지는 않습니다.
-    - 프로토콜 구현
-        - 프로퍼티 - 저장된 프로퍼티인지 연산 프로퍼티인지 명시하지 않는다. 하지만 프로퍼티의 이름과 타입 그리고 gettable, settable 한지는 명시합니다.
-            - 프로퍼티 요구는 항상 var 키워드를 사용합니다.
-            - get은 '읽기가 가능해야 한다'는 뜻이며 (읽기 전용 또는 읽기쓰기 모두 가능), get과 set을 모두 명시하면 '읽기쓰기 모두 가능'한 프로퍼티여야 합니다.
-            - 타입 프로퍼티는 static 키워드로 선언합니다.
-        - 메서드 - 필수 메소드 지정시 함수명과 반환값을 지정할 수 있다. parameter는 명시할 수 없다.
-            - mutating 키워드를 사용해 인스턴스에서 변경 가능하다는 것을 표시할 수 있습니다. (이 mutating 키워드는 값타입 형에만 사용합니다. → 클래스는 불가하다는 뜻???)
-                - [ ]  mutating 없는 경우랑 뭐가 다르지?
-                - [ ]  toggle() 함수가 인스턴스를 modify 한다는 게 무슨 뜻이지?
+            if let unwrapped: Int = someValue { 
+               // statements
+               unwrapped = 3
+            } 
+            // unwrapped = 5  // 오류 발생 - if 구문 외부에서는 unwrapped 사용이 불가능 합니다. (if-let 구문에서 암시적으로 선언되었고, if-let 구문 안에서만 사용된다는 뜻)
 
-                ```swift
-                protocol Togglable {
-                    mutating func toggle() // method is allowed to modify the instance it belongs to
-                }
+            -
+            guard let unwrapped: Int = someValue else {
+                     return 
+            }
+            unwrapped = 3  // gaurd 구문 이후에도 unwrapped 사용 가능합니다. (일반적인 상수 선언과 마찬가지로 본다는 뜻. 즉, 일반적인 let선언 + guard-필수조건)
+            // Any variables/constants that were assigned values using an optional binding as part of the condition 
+            // are available for the rest of the code block that the guard statement appears in.
+            ```
 
-                enum OnOffSwitch: Togglable {
-                    case off, on
-                    mutating func toggle() {
-                        switch self {
-                        case .off:
-                            self = .on
-                        case .on:
-                            self = .off
-                        }
+        ```swift
+        func functionWithGuard(age: Int?) {
+            
+            guard let unwrappedAge = age,  // 1. age unwrapping - age가 nil 이라면, 아래 statements가 실행되지 않고 바로 return (함수를 종료) 된다.
+                unwrappedAge <= 130,
+                unwrappedAge >= 0 else {   // 2. 만약 unwrappedAge가 130 이하이고 0 이상인 조건이 false 라면, else block이 실행되고 return (함수를 종료) 된다.
+                print("나이값 입력이 잘못되었습니다")
+                return
+            }
+            print("당신의 나이는 \(unwrappedAge)세 입니다")  // 3. 모든 조건이 true 라면 pass 한다. // 4. guard-let의 상수 (unwrappedAge)는 guard-let 구문 밖에서도 사용 가능하다.
+        }
+
+        funcWithGuard(age: 50)  // 당신의 나이는 50세 입니다 - 출력
+        funcWithGuard(age: 500)  // 나이값 입력이 잘못되었습니다 - 출력 (else에서 return되어 함수가 종료되므로 당신의 나이는~ 이 출력되지 않음)
+
+        -
+        var count = 1
+
+        while true {  // while 문에도 guard를 활용할 수 있다.
+            guard count < 3 else {  // count < 3 이라는 조건이 true 이면 pass하고, false 이면 else block이 실행되고 break (while문을 종료) 한다.
+                break
+            }
+            print(count)
+            count += 1
+        }
+        // 1
+        // 2
+
+        -
+        func someFunction(info: [String: Any]) {  // 1. parameter info의 type을 Dictionary로 지정했다. (value는 Any type이므로 실질적으로 사용하기 위해 casting이 필요함)
+            guard let name = info["name"] as? String else { // 2. name key의 value (nil 가능해서 optional type임)에 대해 -> <as? String> 즉, String type으로 casting 시도
+                return  // 3. 그래서 optional binding이 성공하면 name 상수에 value가 할당 되고, 실패하면 else block이 실행되면서 return (함수가 종료) 된다.
+            }
+            
+            guard let age = info["age"] as? Int, age >= 0 else { // 4. age key의 value가 optional binding 성공하고, age>=0 조건이 true 이면 pass, false이면 return 된다.
+                return
+            }
+            
+            print("\(name): \(age)")  // 5. 위의 두 가지 guard를 모두 pass 해야 print 실행이 가능하다.
+        }
+
+        someFunction(info: ["name": "jenny", "age": "10"]) // age type이 String 이므로 함수 종료
+        someFunction(info: ["name": "mike"]) // age가 nil 이므로 함수 종료
+        someFunction(info: ["name": "yagom", "age": 10]) // yagom: 10 - 출력
+
+        *참고 - Dictionary [key : value]
+        var anyDictionary: Dictionary<String,Any> = [String: Any]()
+        anyDictionary["someKey"] = "value"   // "someKey"라는 key에 할당한 값이 "value"이다.
+        ```
+
+# 19. Protocol
+
+- L/G
+    - 프로토콜도 하나의 타입으로 사용됩니다. 그렇기 때문에 다음과 같이 타입 사용이 허용되는 모든 곳에 프로토콜을 사용할 수 있습니다.
+        - 함수, 메소드, 이니셜라이저의 파라미터 타입 혹은 리턴 타입
+        - 상수, 변수, 프로퍼티의 타입
+        - 컨테이너인 배열, 사전 등의 아이템 타입
+
+- 특징
+    - *프로토콜(Protocol)* 은 특정 기능을 수행하기 위한 메서드, 프로퍼티, 이니셜라이저 등의 요구 사항을 정의합니다. (즉, 특정 기능에 필요한 요구사항에 따르라고 강요하는 것이다.)
+    - 구조체, 클래스, 열거형은 프로토콜을 채택(Adopted) 해서 프로토콜의 요구사항을 실제로 구현할 수 있습니다.
+    - 어떤 프로토콜의 요구사항을 모두 따르는 타입은 그 프로토콜을 준수한다(Conform) 고 표현합니다.
+    - 프로토콜은 기능을 정의하고 제시 할 뿐이지 스스로 기능을 구현하지는 않습니다.
+- 프로토콜 구현
+    - 프로퍼티 - 저장된 프로퍼티인지 연산 프로퍼티인지 명시하지 않는다. 하지만 프로퍼티의 이름과 타입 그리고 gettable, settable 한지는 명시합니다.
+        - 프로퍼티 요구는 항상 var 키워드를 사용합니다.
+        - get은 '읽기가 가능해야 한다'는 뜻이며 (읽기 전용 또는 읽기쓰기 모두 가능), get과 set을 모두 명시하면 '읽기쓰기 모두 가능'한 프로퍼티여야 합니다.
+        - 타입 프로퍼티는 static 키워드로 선언합니다.
+    - 메서드 - 필수 메소드 지정시 함수명과 반환값을 지정할 수 있다. parameter는 명시할 수 없다.
+        - mutating 키워드를 사용해 인스턴스에서 변경 가능하다는 것을 표시할 수 있습니다. (이 mutating 키워드는 값타입 형에만 사용합니다. → 클래스는 불가하다는 뜻???)
+            - [ ]  mutating 없는 경우랑 뭐가 다르지?
+            - [ ]  toggle() 함수가 인스턴스를 modify 한다는 게 무슨 뜻이지?
+
+            ```swift
+            protocol Togglable {
+                mutating func toggle() // method is allowed to modify the instance it belongs to
+            }
+
+            enum OnOffSwitch: Togglable {
+                case off, on
+                mutating func toggle() {
+                    switch self {
+                    case .off:
+                        self = .on
+                    case .on:
+                        self = .off
                     }
                 }
-                var lightSwitch = OnOffSwitch.off  // enum OnOffSwitch의 case인 off 를 할당함
-                lightSwitch.toggle()  // lightSwitch is now equal to .on (off -> on 으로 변경됨)
-                ```
+            }
+            var lightSwitch = OnOffSwitch.off  // enum OnOffSwitch의 case인 off 를 할당함
+            lightSwitch.toggle()  // lightSwitch is now equal to .on (off -> on 으로 변경됨)
+            ```
 
+    - 이니셜라이저
+        - required 키워드
+            - You can implement a protocol `initializer requirement` on a conforming class as either a designated initializer or a convenience initializer.  ???
+            In both cases, you must mark the initializer implementation with the required modifier: ???
+            - ensures that you provide an explicit implementation of the initializer requirement on all subclasses.
+
+            ```swift
+            protocol SomeProtocol {
+                init(someParameter: Int)
+            }
+
+            class SomeClass: SomeProtocol {
+                required init(someParameter: Int) {
+                    // initializer implementation goes here
+                }
+            }
+            ```
+
+            - required, override 키워드를 모두 사용하는 경우
+                - superclass의 이니셜라이저를 서브클래싱하여 override 하고, 프로토콜의 필수 이니셜라이저를 구현하는 경우
+                (If a subclass overrides a designated initializer from a superclass, and also implements a matching initializer requirement from a protocol,)
+
+                    ```swift
+                    protocol SomeProtocol {
+                        init()
+                    }
+
+                    class SomeSuperClass {
+                        init() {
+                            // initializer implementation goes here
+                        }
+                    }
+
+                    class SomeSubClass: SomeSuperClass, SomeProtocol {
+                        // "required" from SomeProtocol conformance; "override" from SomeSuperClass
+                        required override init() {
+                            // initializer implementation goes here
+                        }
+                    }
+                    ```
+
+    ```swift
+    protocol 프로토콜 이름 {
+        /* statements */
+    }
+
+    -
+
+    protocol Talkable {  // talk 기능을 구현하기 위한 프로토콜을 생성하겠다. 이를 위해 프로퍼티, 메서드, 이니셜라이즈를 요구 사항으로 정의하겠다.
+        
+        // 프로퍼티 요구 // 프로퍼티가 읽기전용 인지, 읽기쓰기 모두 가능한지 명시해준다.
+        var topic: String { get set } // 읽기쓰기 모두 가능해야 한다.
+        var language: String { get }  // 읽기가 가능해야 한다.  // { get set }으로 수정하면 => 오류 문구 - candidate is not settable, but protocol requires it.
+        
+        // 메서드 요구  // 프로토콜에서는 메서드를 제시하는 것이지 구현하지는 않는다. (구현하려면 func talk() {} 형태)
+        func talk()
+        
+        // 이니셜라이저 요구
+        init(topic: String, language: String) 
+    }
+    ```
+
+- 프로토콜 채택 및 준수
+    - [ ]  프로토콜 필수 이니셜라이저이므로 require init을 써야하는거 아닌가?
+
+    ```swift
+    struct Person: Talkable {  // Person 구조체는 Talkable 프로토콜을 Adapt 했다.
+        // 프로퍼티 요구 준수
+        var topic: String    // 1. topic 프로퍼티를 읽기쓰기 모두가능으로 정의했으므로 var만 사용 가능하다. (let 사용불가) 
+        let language: String // 2. language 프로퍼티를 읽기전용으로 정의했으므로 1) let을 사용 가능하며, 2) var을 통해 읽기쓰기 모두가능으로 변경도 가능하다. (정의 조건이 '읽기가 가능' 이므로)
+        
+        // 위의 저장 프로퍼티를 연산 프로퍼티로 대체 가능하다.
+    //    var language: String { ~~get {~~ return "한국어" ~~}~~ }   // 읽기전용 연산 프로퍼티의 get은 생략 가능
+    //    var language: String { return "한국어" }  
+        
+    //    var subject: String = ""
+    //    var topic: String {
+    //        get {
+    //            return self.subject
+    //        }
+    //        set {
+    //            self.subject = newValue
+    //        }
+    //    }
+        
+        // 메서드 요구 준수    
+        func talk() {
+            print("\(topic)에 대해 \(language)로 말합니다")  // 구현
+        }
+
+        // 이니셜라이저 요구 준수    
+        init(topic: String, language: String) {  // 구현
+            self.topic = topic
+            self.language = language
+        }
+    }
+    ```
+
+- 프로토콜 상속
+    - 프로토콜은 하나 이상의 프로토콜을 상속받아 기존 프로토콜보다 더 많은 요구사항을 추가 가능하다.
+    - 프로토콜 상속 문법은 클래스의 상속 문법과 유사하지만, 프로토콜은 클래스와 달리 다중상속이 가능합니다.
+
+    ```swift
+    protocol 프로토콜 이름: 부모 프로토콜 이름 목록 {
+    	  /* statements */
+    }
+
+    -
+    protocol Readable {  // super1
+        func read()
+    }
+    protocol Writeable {  // super2
+        func write()
+    }
+
+    protocol ReadSpeakable: Readable {  // sub1 - 프로토콜 단일상속
+        func speak()  // func read()를 따로 명시하지 않아도 요구하게 됨 (요구사항을 상속 받았으므로)
+     // func read(a: Int) // 이렇게 parameter가 추가된 함수 read(a:)를 명시할 경우, 해당 프로토콜을 adapt한 클래스는 read(), read(a:)를 모두 구현해줘야 함
+    }
+    protocol ReadWriteSpeakable: Readable, Writeable {  // sub2 - 프로토콜 다중상속
+        func speak()  // func read(), write()를 요구하게 됨 (요구사항을 상속 받았으므로)
+    }
+
+    struct SomeType: ReadWriteSpeakable {  // sub2 ReadWriteSpeakable 프로토콜을 conform 하는 구조체 SomeType을 생성했다.
+        func read() {
+            print("Read")
+        }
+        func write() {
+            print("Write")
+        }
+        func speak() {   // 요구사항 (함수 read, write, speak) 중 하나라도 빠지면 오류 발생
+            print("Speak")
+        }
+    }
+    ```
+
+    - 클래스에서 1) 클래스 상속과 2) 프로토콜 Adapt를 동시에 하려면, 상속받으려는 superclass를 먼저 명시하고 그 뒤에 Adapt할 프로토콜 목록을 작성합니다.
+        - Protocol Composition (결합) : 여러 프로토콜을 동시에 adapt/conform 하는 경우
+
+    ```swift
+    class SuperClass: Readable {
+        func read() { print("read 기능 실행") }
+    }
+
+    class SubClass: SuperClass, Writeable, ReadSpeakable { // 앞) Superclass를 상속하며, 뒤) 프로토콜을 Adapt하는 subClass를 정의했다. // *Protocol Composition
+    //  func read() {}  // override 하거나 반드시 생략해야 한다. (상속 받았으므로)
+    R
+        func write() { print("write 기능 실행") }
+        func speak() { print("speak 기능 실행") }
+    }
+    ```
+
+- 프로토콜 준수 확인
+    - is, as 연산자를 사용해서 인스턴스가 특정 프로토콜을 conform 하는지 확인 가능하다.
+
+    ```swift
+    let sup: SuperClass = SuperClass()
+    let sub: SubClass = SubClass()
+
+    var someAny: Any = sup  // Any type의 변수 someAny에 SuperClass 클래스를 할당했다.
+    someAny is Readable // true 
+    someAny is ReadSpeakable // false - ReadSpeakable 프로토콜을 conform 하는가? 를 확인 가능하다.
+
+    someAny = sub
+    someAny is Readable // true
+    someAny is ReadSpeakable // true
+
+    -
+    someAny = sup
+
+    if let check = someAny as? Readable {  // Any type 이거나 Dictionary로 쓰다가 다운캐스팅이 필요할 때 이렇게 사용 가능하다.
+        check.read()
+    } // read 기능 실행
+
+    if let check = someAny as? ReadSpeakable {
+        check.speak()
+    } // 동작하지 않음 (SuperClass는 ReadSpeakable 프로토콜을 conform 하지 않으므로 다운캐스팅 실패해서)
+
+    someAny = sub
+
+    if let check: Readable = someAny as? Readable {
+        check.read()
+    } // read 기능 실행 
+
+    if let check = someAny as? ReadSpeakable {
+        check.speak()
+    } // speak 기능 실행 (SubClass는 ReadSpeakable 프로토콜을 conform 하므로)
+    ```
+
+# 20. Extension
+
+- 특징
+    - 스위프트의 강력한 기능 중 하나입니다.
+    - 구조체, 클래스, 열거형, 프로토콜, 제네릭 타입에 새로운 기능을 추가 ****할 수 있는 기능입니다.
+    - 기능을 추가하려는 타입의 구현된 소스 코드를 알지 못하거나 볼 수 없다 해도, 타입만 알고 있다면 그 타입의 기능을 확장할 수 있습니다.
+
+    - 익스텐션이 타입에 추가할 수 있는 기능
+        - 연산 타입/인스턴스 프로퍼티
+        - 타입/인스턴스 메서드
         - 이니셜라이저
-            - required 키워드
-                - You can implement a protocol `initializer requirement` on a conforming class as either a designated initializer or a convenience initializer.  ???
-                In both cases, you must mark the initializer implementation with the required modifier: ???
-                - ensures that you provide an explicit implementation of the initializer requirement on all subclasses.
+        - 서브스크립트
+        - 중첩 타입
+        - 특정 프로토콜을 준수하도록 기능 추가
 
-                ```swift
-                protocol SomeProtocol {
-                    init(someParameter: Int)
-                }
+    - 클래스의 상속과 익스텐션 비교
+        - 클래스의 상속은 클래스 타입에서만 가능하지만 익스텐션은 그 외 타입에도 적용이 가능합니다.
+        - 클래스의 상속은 특정 타입을 물려받아 하나의 새로운 타입을 정의하고 추가 기능을 구현하는 수직 확장이지만, 익스텐션은 기존의 타입에 기능을 추가하는 수평 확장입니다.
+        - 클래스 상속을 받으면 기존 기능을 override 가능하지만, 익스텐션은 override 불가합니다.
 
-                class SomeClass: SomeProtocol {
-                    required init(someParameter: Int) {
-                        // initializer implementation goes here
-                    }
-                }
-                ```
+    - 익스텐션 활용
+        - 익스텐션을 사용하는 대신 원래 타입을 정의한 소스에 기능을 추가하는 방법도 있겠지만, 외부 라이브러리나 프레임워크를 가져다 썼다면 원본 소스를 수정하지 못합니다. 
+        이처럼 외부에서 가져온 타입에 내가 원하는 기능을 추가하고자 할 때 익스텐션을 사용합니다. 따로 상속을 받지 않아도 되며, 구조체와 열거형에도 기능을 추가할 수 있으므로 편리한 기능입니다.
+        - 익스텐션은 모든 타입에 적용할 수 있습니다. 모든 타입이라 함은 구조체, 열거형, 클래스, 프로토콜, 제네릭 타입 등을 뜻합니다. 즉, 익스텐션을 통해 모든 타입에 연산 프로퍼티, 메서드, 이니셜라이저, 서브스크립트, 중첩 데이터 타입 등을 추가할 수 있습니다. 
+        더불어 프로토콜과 함께 사용하면 강력한 기능을 선사합니다. 이 부분과 관련해 프로토콜 중심 프로그래밍(Protocol Oriented Programming)에 대해 더 알아보는 것을 추천합니다.
+            - [ ]  프로토콜 중심 프로그래밍(Protocol Oriented Programming) 검색
 
-                - required, override 키워드를 모두 사용하는 경우
-                    - superclass의 이니셜라이저를 서브클래싱하여 override 하고, 프로토콜의 필수 이니셜라이저를 구현하는 경우
-                    (If a subclass overrides a designated initializer from a superclass, and also implements a matching initializer requirement from a protocol,)
+- 정의
 
-                        ```swift
-                        protocol SomeProtocol {
-                            init()
-                        }
+    ```c
+    extension 확장할 타입 이름 {
+        /* 타입에 추가될 새로운 기능 구현 */
+    }
+    ```
 
-                        class SomeSuperClass {
-                            init() {
-                                // initializer implementation goes here
-                            }
-                        }
-
-                        class SomeSubClass: SomeSuperClass, SomeProtocol {
-                            // "required" from SomeProtocol conformance; "override" from SomeSuperClass
-                            required override init() {
-                                // initializer implementation goes here
-                            }
-                        }
-                        ```
-
-        ```swift
-        protocol 프로토콜 이름 {
-            /* statements */
-        }
-
-        -
-
-        protocol Talkable {  // talk 기능을 구현하기 위한 프로토콜을 생성하겠다. 이를 위해 프로퍼티, 메서드, 이니셜라이즈를 요구 사항으로 정의하겠다.
-            
-            // 프로퍼티 요구 // 프로퍼티가 읽기전용 인지, 읽기쓰기 모두 가능한지 명시해준다.
-            var topic: String { get set } // 읽기쓰기 모두 가능해야 한다.
-            var language: String { get }  // 읽기가 가능해야 한다.  // { get set }으로 수정하면 => 오류 문구 - candidate is not settable, but protocol requires it.
-            
-            // 메서드 요구  // 프로토콜에서는 메서드를 제시하는 것이지 구현하지는 않는다. (구현하려면 func talk() {} 형태)
-            func talk()
-            
-            // 이니셜라이저 요구
-            init(topic: String, language: String) 
-        }
-        ```
-
-    - 프로토콜 채택 및 준수
-        - [ ]  프로토콜 필수 이니셜라이저이므로 require init을 써야하는거 아닌가?
-
-        ```swift
-        struct Person: Talkable {  // Person 구조체는 Talkable 프로토콜을 Adapt 했다.
-            // 프로퍼티 요구 준수
-            var topic: String    // 1. topic 프로퍼티를 읽기쓰기 모두가능으로 정의했으므로 var만 사용 가능하다. (let 사용불가) 
-            let language: String // 2. language 프로퍼티를 읽기전용으로 정의했으므로 1) let을 사용 가능하며, 2) var을 통해 읽기쓰기 모두가능으로 변경도 가능하다. (정의 조건이 '읽기가 가능' 이므로)
-            
-            // 위의 저장 프로퍼티를 연산 프로퍼티로 대체 가능하다.
-        //    var language: String { ~~get {~~ return "한국어" ~~}~~ }   // 읽기전용 연산 프로퍼티의 get은 생략 가능
-        //    var language: String { return "한국어" }  
-            
-        //    var subject: String = ""
-        //    var topic: String {
-        //        get {
-        //            return self.subject
-        //        }
-        //        set {
-        //            self.subject = newValue
-        //        }
-        //    }
-            
-            // 메서드 요구 준수    
-            func talk() {
-                print("\(topic)에 대해 \(language)로 말합니다")  // 구현
-            }
-
-            // 이니셜라이저 요구 준수    
-            init(topic: String, language: String) {  // 구현
-                self.topic = topic
-                self.language = language
-            }
-        }
-        ```
-
-    - 프로토콜 상속
-        - 프로토콜은 하나 이상의 프로토콜을 상속받아 기존 프로토콜보다 더 많은 요구사항을 추가 가능하다.
-        - 프로토콜 상속 문법은 클래스의 상속 문법과 유사하지만, 프로토콜은 클래스와 달리 다중상속이 가능합니다.
-
-        ```swift
-        protocol 프로토콜 이름: 부모 프로토콜 이름 목록 {
-        	  /* statements */
-        }
-
-        -
-        protocol Readable {  // super1
-            func read()
-        }
-        protocol Writeable {  // super2
-            func write()
-        }
-
-        protocol ReadSpeakable: Readable {  // sub1 - 프로토콜 단일상속
-            func speak()  // func read()를 따로 명시하지 않아도 요구하게 됨 (요구사항을 상속 받았으므로)
-         // func read(a: Int) // 이렇게 parameter가 추가된 함수 read(a:)를 명시할 경우, 해당 프로토콜을 adapt한 클래스는 read(), read(a:)를 모두 구현해줘야 함
-        }
-        protocol ReadWriteSpeakable: Readable, Writeable {  // sub2 - 프로토콜 다중상속
-            func speak()  // func read(), write()를 요구하게 됨 (요구사항을 상속 받았으므로)
-        }
-
-        struct SomeType: ReadWriteSpeakable {  // sub2 ReadWriteSpeakable 프로토콜을 conform 하는 구조체 SomeType을 생성했다.
-            func read() {
-                print("Read")
-            }
-            func write() {
-                print("Write")
-            }
-            func speak() {   // 요구사항 (함수 read, write, speak) 중 하나라도 빠지면 오류 발생
-                print("Speak")
-            }
-        }
-        ```
-
-        - 클래스에서 1) 클래스 상속과 2) 프로토콜 Adapt를 동시에 하려면, 상속받으려는 superclass를 먼저 명시하고 그 뒤에 Adapt할 프로토콜 목록을 작성합니다.
-            - Protocol Composition (결합) : 여러 프로토콜을 동시에 adapt/conform 하는 경우
-
-        ```swift
-        class SuperClass: Readable {
-            func read() { print("read 기능 실행") }
-        }
-
-        class SubClass: SuperClass, Writeable, ReadSpeakable { // 앞) Superclass를 상속하며, 뒤) 프로토콜을 Adapt하는 subClass를 정의했다. // *Protocol Composition
-        //  func read() {}  // override 하거나 반드시 생략해야 한다. (상속 받았으므로)
-        R
-            func write() { print("write 기능 실행") }
-            func speak() { print("speak 기능 실행") }
-        }
-        ```
-
-    - 프로토콜 준수 확인
-        - is, as 연산자를 사용해서 인스턴스가 특정 프로토콜을 conform 하는지 확인 가능하다.
-
-        ```swift
-        let sup: SuperClass = SuperClass()
-        let sub: SubClass = SubClass()
-
-        var someAny: Any = sup  // Any type의 변수 someAny에 SuperClass 클래스를 할당했다.
-        someAny is Readable // true 
-        someAny is ReadSpeakable // false - ReadSpeakable 프로토콜을 conform 하는가? 를 확인 가능하다.
-
-        someAny = sub
-        someAny is Readable // true
-        someAny is ReadSpeakable // true
-
-        -
-        someAny = sup
-
-        if let check = someAny as? Readable {  // Any type 이거나 Dictionary로 쓰다가 다운캐스팅이 필요할 때 이렇게 사용 가능하다.
-            check.read()
-        } // read 기능 실행
-
-        if let check = someAny as? ReadSpeakable {
-            check.speak()
-        } // 동작하지 않음 (SuperClass는 ReadSpeakable 프로토콜을 conform 하지 않으므로 다운캐스팅 실패해서)
-
-        someAny = sub
-
-        if let check: Readable = someAny as? Readable {
-            check.read()
-        } // read 기능 실행 
-
-        if let check = someAny as? ReadSpeakable {
-            check.speak()
-        } // speak 기능 실행 (SubClass는 ReadSpeakable 프로토콜을 conform 하므로)
-        ```
-
-6. 20. Extension
-    - 특징
-        - 스위프트의 강력한 기능 중 하나입니다.
-        - 구조체, 클래스, 열거형, 프로토콜 타입에 새로운 기능을 추가 ****할 수 있는 기능입니다.
-        - 기능을 추가하려는 타입의 구현된 소스 코드를 알지 못하거나 볼 수 없다 해도, 타입만 알고 있다면 그 타입의 기능을 확장할 수도 있습니다.
-
-        - 익스텐션이 타입에 추가할 수 있는 기능
-            - 연산 타입 프로퍼티 / 연산 인스턴스 프로퍼티
-            - 타입 메서드 / 인스턴스 메서드
-            - 이니셜라이저
-            - 서브스크립트
-            - 중첩 타입
-            - 특정 프로토콜을 준수하도록 기능 추가
-
-        - 클래스의 상속과 익스텐션 비교
-            - 클래스의 상속은 클래스 타입에서만 가능하지만 익스텐션은 구조체, 클래스, 열거형, 프로토콜, 제네릭 등에 적용이 가능합니다.
-            - 클래스의 상속은 특정 타입을 물려받아 하나의 새로운 타입을 정의하고 추가 기능을 구현하는 수직 확장이지만, 익스텐션은 기존의 타입에 기능을 추가하는 수평 확장입니다.
-            - 클래스 상속을 받으면 기존 기능을 override 가능하지만, 익스텐션은 override 불가합니다.
-
-        - 익스텐션 활용
-            - 익스텐션을 사용하는 대신 원래 타입을 정의한 소스에 기능을 추가하는 방법도 있겠지만, 외부 라이브러리나 프레임워크를 가져다 썼다면 원본 소스를 수정하지 못합니다. 
-            이처럼 외부에서 가져온 타입에 내가 원하는 기능을 추가하고자 할 때 익스텐션을 사용합니다. 따로 상속을 받지 않아도 되며, 구조체와 열거형에도 기능을 추가할 수 있으므로 편리한 기능입니다.
-            - 익스텐션은 모든 타입에 적용할 수 있습니다. 모든 타입이라 함은 구조체, 열거형, 클래스, 프로토콜, 제네릭 타입 등을 뜻합니다. 즉, 익스텐션을 통해 모든 타입에 연산 프로퍼티, 메서드, 이니셜라이저, 서브스크립트, 중첩 데이터 타입 등을 추가할 수 있습니다. 
-            더불어 프로토콜과 함께 사용하면 강력한 기능을 선사합니다. 이 부분과 관련해 프로토콜 중심 프로그래밍(Protocol Oriented Programming)에 대해 더 알아보는 것을 추천합니다.
-                - [ ]  프로토콜 중심 프로그래밍(Protocol Oriented Programming) 검색
-
-    - 정의
+    - 활용 예시
 
         ```c
-        extension 확장할 타입 이름 {
-            /* 타입에 추가될 새로운 기능 구현 */
+        // data type인 String 이나 Int에 특정 기능을 추가할 수 있다.
+        extension String {
+        		// statements
+        }
+
+        // 추가적으로 다른 프로토콜을 채택하도록 확장 가능하다. 이 경우 클래스나 구조체에서 사용하던 방법과 동일하게 프로토콜 이름을 나열한다.
+        extension 확장할 타입 이름: 프로토콜1, 프로토콜2, 프로토콜3... {
+            /* 프로토콜 요구사항 구현 */
         }
         ```
 
-        - 활용 예시
+    - 스위프트 라이브러리를 살펴보면 실제로 익스텐션이 굉장히 많이 사용되고 있습니다. data type인 Double에는 수많은 프로퍼티와 메서드, 이니셜라이저가 정의되어 있으며 수많은 프로토콜을 채택하고 있을 것이라고 예상되지만, 실제로 Double 타입의 정의를 살펴보면 그 모든것이 다 정의되어 있지는 않습니다. 
+    그러면 Double 타입이 채택하고 준수해야 하는 수많은 프로토콜은 어디로 갔을까요? 어디에서 채택하고 어디에서 준수하도록 정의되어 있을까요? 당연히 답은 익스텐션입니다. 이처럼 스위프트 표준 라이브러리 타입의 기능은 대부분 익스텐션으로 구현되어 있습니다.
+        - [ ]  라이브러리 타입 정의/익스텐션 활용 예 검색
 
-            ```c
-            // data type인 String 이나 Int에 특정 기능을 추가할 수 있다.
+- 구현
+    - 연산 프로퍼티 추가
+        - data type인 Int에 두 개의 연산 프로퍼티를 추가했습니다.
+        Int 타입의 인스턴스가 짝수 (even)인지 홀수 (odd)인지 판별하여 Bool 타입으로 알려주는 (Bool 값을 return 해주는) 연산 프로퍼티입니다. 
+        익스텐션으로 Int 타입에 추가해준 연산 프로퍼티는 Int 타입의 어떤 인스턴스에도 사용이 가능합니다. 
+        인스턴스 연산 프로퍼티를 추가 가능하며, static 키워드를 사용하여 타입 연산 프로퍼티도 추가 가능합니다. 
+        저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.
+            - [ ]  (저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.) → 왜지?
+            - [x]  소스 코드가 이해가 안감
+                - 아하! 연산 프로퍼티의 syntax구나!
 
-            extension String {
-            		// statements
-            }
+                    ```c
+                    extension Int {
+                        var isEven: Bool {
+                            return self % 2 == 0
+                        }
+                        var isOdd: Bool {
+                            return self % 2 == 1
+                        }
+                    }
 
-            -
+                    // 아래와 동일하다
 
-            // 추가적으로 다른 프로토콜을 채택할 수 있도록 확장할 수도 있습니다. 이런 경우에는 클래스나 구조체에서 사용하던 방법과 동일하게 프로토콜 이름을 나열해줍니다.
-
-            extension 확장할 타입 이름: 프로토콜1, 프로토콜2, 프로토콜3... {
-                /* 프로토콜 요구사항 구현 */
-            }
-            ```
-
-        - 스위프트 라이브러리를 살펴보면 실제로 익스텐션이 굉장히 많이 사용되고 있습니다. data type인 Double에는 수많은 프로퍼티와 메서드, 이니셜라이저가 정의되어 있으며 수많은 프로토콜을 채택하고 있을 것이라고 예상되지만, 실제로 Double 타입의 정의를 살펴보면 그 모든것이 다 정의되어 있지는 않습니다. 
-        그러면 Double 타입이 채택하고 준수해야 하는 수많은 프로토콜은 어디로 갔을까요? 어디에서 채택하고 어디에서 준수하도록 정의되어 있을까요? 당연히 답은 익스텐션입니다. 이처럼 스위프트 표준 라이브러리 타입의 기능은 대부분 익스텐션으로 구현되어 있습니다.
-            - [ ]  라이브러리 타입 정의/익스텐션 활용 예 검색
-
-    - 구현
-        - 연산 프로퍼티 추가
-            - data type인 Int에 두 개의 연산 프로퍼티를 추가했습니다.
-            Int 타입의 인스턴스가 짝수 (even)인지 홀수 (odd)인지 판별하여 Bool 타입으로 알려주는 (Bool 값을 return 해주는) 연산 프로퍼티입니다. 
-            익스텐션으로 Int 타입에 추가해준 연산 프로퍼티는 Int 타입의 어떤 인스턴스에도 사용이 가능합니다. 
-            인스턴스 연산 프로퍼티를 추가 가능하며, static 키워드를 사용하여 타입 연산 프로퍼티도 추가 가능합니다. 
-            저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.
-                - [ ]  (저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.) → 왜지?
-                - [x]  소스 코드가 이해가 안감
-                    - 아하! 연산 프로퍼티의 syntax구나!
-
-                        ```c
-                        extension Int {
-                            var isEven: Bool {
-                                return self % 2 == 0
-                            }
-                            var isOdd: Bool {
-                                return self % 2 == 1
-                            }
+                    extension Int {
+                        var isEven: Bool {
+                          get{
+                    				  return self % 2 == 0  // return 값 (true or false)을 isEven에 할당해줌 (읽기전용 기능)
+                    			}
                         }
 
-                        // 아래와 동일하다
-
-                        extension Int {
-                            var isEven: Bool {
-                              get{
-                        				  return self % 2 == 0  // return 값 (true or false)을 isEven에 할당해줌 (읽기전용 기능)
-                        			}
-                            }
-
-                            var isOdd: Bool {
-                              get{
-                        	        return self % 2 == 1
-                        			}
-                            }
+                        var isOdd: Bool {
+                          get{
+                    	        return self % 2 == 1
+                    			}
                         }
-                        ```
-
-                - [ ]  // 1: Int type의 정수를 나타내는 리터럴 문법이다 ????
-
-                ```c
-                extension Int {
-                    var isEven: Bool {
-                        return self % 2 == 0  // self는 Int type의 인스턴스 값 -> 이 값을 2로 나눠서 나머지가 0 이 맞으면 true, 0이 아니면 false를 return값으로 isEven에 할당
                     }
-                    var isOdd: Bool {
-                        return self % 2 == 1
-                    }
-                }
+                    ```
 
-                var number: Int = 3  // Int type의 인스턴스를 생성하고, 초기값으로 3 을 할당
-                print(number.isEven) // number(3)를 2로 나누면 나머지가 1이므로 (!== 0) -> false 출력
-                print(number.isOdd) // true 출력
-
-                number = 2
-                print(number.isEven) // true 출력
-                print(number.isOdd) // false 출력
-
-                print(1.isEven) // false 출력 // 1도 Int type이기 때문에 인스턴스처럼 넣어줄 수 있다. // *1: Int type의 정수를 나타내는 리터럴 문법이다. (따라서 1이라는 인스턴스로 취급된다.) ??
-                print(2.isEven) // true 출력
-                print(1.isOdd)  // true 출력
-                print(2.isOdd)  // false 출력
-                ```
-
-        - 이어서) 메서드 추가
-            - data type인 Int에 인스턴스 메서드인 multiply(by:) 를 추가했습니다. 
-            여러 기능을 여러 익스텐션 블록으로 나눠서 구현해도 전혀 문제가 없습니다.
+            - [ ]  // 1: Int type의 정수를 나타내는 리터럴 문법이다 ????
 
             ```c
             extension Int {
-                func multiply(by n: Int) -> Int {
-                    return self * n
+                var isEven: Bool {
+                    return self % 2 == 0  // self는 Int type의 인스턴스 값 -> 이 값을 2로 나눠서 나머지가 0 이 맞으면 true, 0이 아니면 false를 return값으로 isEven에 할당
+                }
+                var isOdd: Bool {
+                    return self % 2 == 1
                 }
             }
 
-            var number: Int = 3
-            print(number.multiply(by: 2))   // 3 * 2 = 6 이므로 return 값인 6 출력
-            print(number.multiply(by: 3))   // 3 * 3 = 9
+            var number: Int = 3  // Int type의 인스턴스를 생성하고, 초기값으로 3 을 할당
+            print(number.isEven) // number(3)를 2로 나누면 나머지가 1이므로 (!== 0) -> false 출력
+            print(number.isOdd) // true 출력
 
-            print(3.multiply(by: 2))  // 3 * 2 = 6
-            print(4.multiply(by: 5))  // 20
+            number = 2
+            print(number.isEven) // true 출력
+            print(number.isOdd) // false 출력
+
+            print(1.isEven) // false 출력 // 1도 Int type이기 때문에 인스턴스처럼 넣어줄 수 있다. // *1: Int type의 정수를 나타내는 리터럴 문법이다. (따라서 1이라는 인스턴스로 취급된다.) ??
+            print(2.isEven) // true 출력
+            print(1.isOdd)  // true 출력
+            print(2.isOdd)  // false 출력
             ```
 
-        - 이니셜라이저 추가
-            - 인스턴스를 초기화(이니셜라이즈)할 때 인스턴스 초기화에 필요한 다양한 데이터를 전달받을 수 있도록 여러 종류의 이니셜라이저를 만들 수 있습니다. 타입의 정의부에 이니셜라이저를 추가하지 않더라도 익스텐션을 통해 이니셜라이저를 추가할 수 있습니다. 
-            익스텐션으로 클래스 타입에 편의 이니셜라이저 (convenience initializer)는 추가 가능하지만, 지정 이니셜라이저 (designated initializer) 및 디이니셜라이저는 추가 불가합니다.
-            - [ ]  값 타입 = Struct ?
-            - [ ]  var int, var double 안해도 되나?
-                - 저장 프로퍼티를 생성하면 에러 발생함
+    - 이어서) 메서드 추가
+        - data type인 Int에 인스턴스 메서드인 multiply(by:) 를 추가했습니다. 
+        여러 기능을 여러 익스텐션 블록으로 나눠서 구현해도 전혀 문제가 없습니다.
 
-                    ```c
-                    extension String {
+        ```c
+        extension Int {
+            func multiply(by n: Int) -> Int {
+                return self * n
+            }
+        }
 
-                    //    var intTypeNumber: Int = 0
-                    //    var doubleTypeNumber: Double = 0.0
-                    // 에러 메세지 - Extensions must not contain stored properties.
+        var number: Int = 3
+        print(number.multiply(by: 2))   // 3 * 2 = 6 이므로 return 값인 6 출력
+        print(number.multiply(by: 3))   // 3 * 3 = 9
 
-                        init(intTypeNumber: Int) {
-                            self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
-                        }
-                        
-                        init(doubleTypeNumber: Double) {
-                            self = "\(doubleTypeNumber)"
-                        }
+        print(3.multiply(by: 2))  // 3 * 2 = 6
+        print(4.multiply(by: 5))  // 20
+        ```
+
+    - 이니셜라이저 추가
+        - 인스턴스를 초기화(이니셜라이즈)할 때 인스턴스 초기화에 필요한 다양한 데이터를 전달받을 수 있도록 여러 종류의 이니셜라이저를 만들 수 있습니다. 타입의 정의부에 이니셜라이저를 추가하지 않더라도 익스텐션을 통해 이니셜라이저를 추가할 수 있습니다. 
+        익스텐션으로 클래스 타입에 편의 이니셜라이저 (convenience initializer)는 추가 가능하지만, 지정 이니셜라이저 (designated initializer) 및 디이니셜라이저는 추가 불가합니다.
+        - [ ]  값 타입 = Struct ?
+        - [ ]  var int, var double 안해도 되나?
+            - 저장 프로퍼티를 생성하면 에러 발생함
+
+                ```c
+                extension String {
+
+                //    var intTypeNumber: Int = 0
+                //    var doubleTypeNumber: Double = 0.0
+                // 에러 메세지 - Extensions must not contain stored properties.
+
+                    init(intTypeNumber: Int) {
+                        self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
                     }
-                    ```
-
-            ```c
-            extension String {
-                init(intTypeNumber: Int) {
-                    self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
-                }
-                
-                init(doubleTypeNumber: Double) {
-                    self = "\(doubleTypeNumber)"
-                }
-            }
-
-            let stringFromInt: String = String(intTypeNumber: 100)  // let선언 인스턴스를 생성하고, 이니셜라이저 intTypeNumber의 초기값으로 100을 할당한다.
-            print(stringFromInt) // "100" 출력
-
-            let stringFromDouble: String = String(doubleTypeNumber: 100.0)    
-            print(stringFromDouble) // "100.0" 출력
-            ```
-
-        퀴즈2 앞부분 틀린것들 다시 풀기
-
-7. 21. Error Handling
-    - L/G
-        - Swift는 에러 처리와 관련하여 에러 발생(throwing), 감지(catching), 전파?(propagating), 조작(manipulating)을 지원하는 일급 클래스 (first-class)를 제공함
-        - 에러를 반환하는 throw 구문은 일반적인 반환 구문인 return과 performance characteristic 측면에서 비슷함
-        - 4가지 error hadling 방법
-        1) propagate the error from a function to the code that calls that function (에러가 발생한 함수에서 리턴값으로 에러를 반환하여 해당 함수를 호출한 코드에서 에러를 처리하도록 함)
-        - `throwing function` : 에러 발생의 여지가 있는 함수 (메서드, initializer 또한 가능)를 indicate 하기 위해 throw 키워드를 함수 선언부의 parameter 및 return type 사이에 명시함
-        - A throwing function propagates errors that are thrown inside of it to the scope from which it’s called. 
-          throwing function은 함수 내부에서 에러를 만들어 (throw) 함수가 호출된 곳에 전달함
-        2) use a do-catch statement
-        3) return an optional value
-        4) assert that the error will not occur
-        - Do-Catch statement
-            - If an error is thrown by the code in the do clause, it’s matched against the catch clauses to determine which one of them can handle the error.
-            - general form
-
-                ```swift
-                do {
-                    try expression
-                    statements
-                } catch pattern 1 {
-                    statements
-                } catch pattern 2 where condition {
-                    statements
-                } catch pattern 3, pattern 4 where condition {
-                    statements
+                    
+                    init(doubleTypeNumber: Double) {
+                        self = "\(doubleTypeNumber)"
+                    }
                 }
                 ```
 
-        - ex) VendingMachine (어려움)
-            - [ ]  var inventory = [ // 이 프로퍼티의 타입이 dictionary 인가? - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 ?? 
-                    "Candy Bar": Item(price: 12, count: 7),
-                    "Chips": Item(price: 10, count: 4),
-                    "Pretzels": Item(price: 7, count: 11)
-                ]
-            - [ ]  guard let item = inventory[name] else {  // inventory[name] - 프로퍼티 inventory + 메서드 vend의 parameter ?? 이게 name이 <snack의 name>인지 어떻게 알지? 정의 안해줬는데
-            - String type 이라서 자체 추론?
+        ```c
+        extension String {
+            init(intTypeNumber: Int) {
+                self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
+            }
+            
+            init(doubleTypeNumber: Double) {
+                self = "\(doubleTypeNumber)"
+            }
+        }
+
+        let stringFromInt: String = String(intTypeNumber: 100)  // let선언 인스턴스를 생성하고, 이니셜라이저 intTypeNumber의 초기값으로 100을 할당한다.
+        print(stringFromInt) // "100" 출력
+
+        let stringFromDouble: String = String(doubleTypeNumber: 100.0)    
+        print(stringFromDouble) // "100.0" 출력
+        ```
+
+    퀴즈2 앞부분 틀린것들 다시 풀기
+
+# 21. Error Handling
+
+- L/G
+    - Swift는 에러 처리와 관련하여 에러 발생(throwing), 감지(catching), 전파?(propagating), 조작(manipulating)을 지원하는 일급 클래스 (first-class)를 제공함
+    - 에러를 반환하는 throw 구문은 일반적인 반환 구문인 return과 performance characteristic 측면에서 비슷함
+    - 4가지 error hadling 방법
+    1) propagate the error from a function to the code that calls that function (에러가 발생한 함수에서 리턴값으로 에러를 반환하여 해당 함수를 호출한 코드에서 에러를 처리하도록 함)
+    - `throwing function` : 에러 발생의 여지가 있는 함수 (메서드, initializer 또한 가능)를 indicate 하기 위해 throw 키워드를 함수 선언부의 parameter 및 return type 사이에 명시함
+    - A throwing function propagates errors that are thrown inside of it to the scope from which it’s called. 
+      throwing function은 함수 내부에서 에러를 만들어 (throw) 함수가 호출된 곳에 전달함
+    2) use a do-catch statement
+    3) return an optional value
+    4) assert that the error will not occur
+    - Do-Catch statement
+        - If an error is thrown by the code in the do clause, it’s matched against the catch clauses to determine which one of them can handle the error.
+        - general form
 
             ```swift
-            enum VendingMachineError: Error {
-                case invalidSelection
-                case insufficientFunds(coinsNeeded: Int)
-                case outOfStock
+            do {
+                try expression
+                statements
+            } catch pattern 1 {
+                statements
+            } catch pattern 2 where condition {
+                statements
+            } catch pattern 3, pattern 4 where condition {
+                statements
             }
+            ```
 
-            struct Item { // 자판기에 들어갈 item의 구조체 정의
-                var price: Int
-                var count: Int
-            }
-
-            class VendingMachine {  // 클래서 생성
-                var inventory = [ // 이 프로퍼티의 타입이 dictionary 인가? - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 ?? 
-                    "Candy Bar": Item(price: 12, count: 7),
-                    "Chips": Item(price: 10, count: 4),
-                    "Pretzels": Item(price: 7, count: 11)
-                ]
-                var coinsDeposited = 0
-                
-                func vend(itemNamed name: String) throws {  // 메서드 정의
-                    guard let item = inventory[name] else {  // inventory[name] - 프로퍼티 inventory + 메서드 vend의 parameter ?? 이게 name이 <snack의 name>인지 어떻게 알지? 정의 안해줬는데 - String type 이라서 자체 추론?
-                        throw VendingMachineError.invalidSelection
-                    }
-                    
-                    guard item.count > 0 else { // *복습) if-let 구문과 달리 guard-let의 item 변수는 구문 밖에서도 활용 가능함
-                        throw VendingMachineError.outOfStock
-                    }
-                    
-                    guard item.price <= coinsDeposited else {
-                        throw VendingMachineError.insufficientFunds(coinsNeeded: item.price - coinsDeposited)
-                    }
-                    
-                    coinsDeposited -= item.price
-                    
-                    var newItem = item
-                    newItem.count -= 1
-                    inventory[name] = newItem
-                    
-                    print("Dispensing \(name)")
-                }
-            }
-
-            let favoriteSnacks = [
-                "Alice": "Chips",
-                "Bob": "Licorice",
-                "Eve": "Pretzels"
+    - ex) VendingMachine (어려움)
+        - [ ]  var inventory = [ // 이 프로퍼티의 타입이 dictionary 인가? - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 ?? 
+                "Candy Bar": Item(price: 12, count: 7),
+                "Chips": Item(price: 10, count: 4),
+                "Pretzels": Item(price: 7, count: 11)
             ]
+        - [ ]  guard let item = inventory[name] else {  // inventory[name] - 프로퍼티 inventory + 메서드 vend의 parameter ?? 이게 name이 <snack의 name>인지 어떻게 알지? 정의 안해줬는데
+        - String type 이라서 자체 추론?
 
-            func buyFavoriteSnacks(person: String, vendingMachine: VendingMachine) throws {
-                let snackName = favoriteSnacks[person] ?? "Candy Bar"  // favoriteSnacks[person] 이것도
-                try vendingMachine.vend(itemNamed: snackName)
-            // Because the vend(itemNamed:) method can throw an error, it’s called with the try keyword in front of it.
-            }
+        ```swift
+        enum VendingMachineError: Error {
+            case invalidSelection
+            case insufficientFunds(coinsNeeded: Int)
+            case outOfStock
+        }
 
-            // any errors that the vend(itemNamed:) method throws will propagate up to the point where the buyFavoriteSnack(person:vendingMachine:) function is called.
-            // (vend(itemNamed:) 메소드에서 발생한 에러는 buyFavoriteSnack(person:vendingMachine:) 함수가 실행되는 곳에까지 전해집니다.)
+        struct Item { // 자판기에 들어갈 item의 구조체 정의
+            var price: Int
+            var count: Int
+        }
 
-            // Error Throwing initializers
-
-            struct PurchasedSnack {
-                let name: String
-                init (name: String, vendingMachine: VendingMachine) throws {
-                    try vendingMachine.vend(itemNamed: name)
-                    self.name = name
-                }
-            }
-
-            // the initializer for the PurchasedSnack structure in the listing below calls a throwing function as part of the initialization process, and it handles any errors that it encounters by propagating them to its caller.
-            // PurchasedSnack 구조체의 초기자는 초기화 단계의 일부분으로써 에러를 발생시킬 수 있는 함수입니다. 그리고 초기자가 실행될 때 발생한 에러는 이 초기자를 호출한 곳에 전달 됩니다.
-
-            // 방법-1 (the following code matches against all three cases of the VendingMachineError enumeration.)
-            var vendingMachine = VendingMachine()  // 인스턴스 생성
-            vendingMachine.coinsDeposited = 8
-
-            do {
-                try buyFavoriteSnacks(person: "Alice", vendingMachine: vendingMachine) // buyFavoriteSnacks 함수는 오류 발생 여지가 있으므로 (can throw an error) try expression 에서 호출됨
-                print("Success! Yum.")
-            } catch VendingMachineError.invalidSelection {
-                print("Invalid Selection.")
-            } catch VendingMachineError.outOfStock {
-                print("Out of Stock.")
-            } catch VendingMachineError.insufficientFunds(let coinsNeeded) {
-                print("Insufficient Funds. Please insert an additional \(coinsNeeded) coins.")
-            } catch {
-                print("Unexpected error: \(error).")
-            }
-            // Prints "Insufficient funds. Please insert an additional 2 coins."
-
-            // vendingMachine.coinsDeposited = 10
-            // Prints Dispensing Chips, Success! Yum. (오류가 발생하지 않은 경우)
-
-            // the buyFavoriteSnack(person:vendingMachine:) function is called in a try expression, because it can throw an error. 
-            // If an error is thrown, execution immediately transfers to the catch clauses, which decide whether to allow propagation to continue.
-            // If no pattern is matched, the error gets caught by the final catch clause and is bound to a local error constant. (만약 발생한 에러 종류에 해당하는 catch pattern 가 없다면 에러는 마지막 catch 구문에 걸리게 되서 지역 에러 상수인 error로 처리할 수 있습니다.)
-            // If no error is thrown, the remaining statements in the do statement are executed.
-
-            // 방법-2
-            func nourish(with item: String) throws {
-                do {
-                    try vendingMachine.vend(itemNamed: item)
-                } catch is VendingMachineError {  // *is : Enum Error 3가지 경우에 해당하는지 체크
-                    print("Couldn't buy that from the the vending machine.")  // Error가 발생했는데 Enum Error 3가지 경우에 해당하는 경우
-                }
-            }
-
-            do {
-                try nourish(with: "Beef-Flavored Chips")
-            } catch {
-                print("Unexpected non-vending-machine-related error: \(error)")  // Error가 발생했는데 Enum Error 3가지 경우에 해당하지 않는 경우
-            }
-
-            // The catch clauses don’t have to handle every possible error that the code in the do clause can throw.
-            // For example, the above example can be written so any error that isn’t a VendingMachineError is instead caught by the calling function: (<자동판매기 오류가 아닌 오류>는 다음의 호출 기능에 의해 대신 잡힙니다.)
-
-            // In the nourish(with:) function, if vend(itemNamed:) throws an error that’s one of the cases of the VendingMachineError enumeration, nourish(with:) handles the error by printing a message.
-            // Otherwise, nourish(with:) propagates the error to its call site. (nourish 함수는 그것을 호출한 곳에 에러를 발생시킨다.) The error is then caught by the general catch clause.
-
-            // 방법-3
-            func eat(item: String) throws {
-                do {
-                    try vendingMachine.vend(itemNamed: item)
-                } catch VendingMachineError.invalidSelection, VendingMachineError.insufficientFunds, VendingMachineError.outOfStock {
-                    print("Invalid Selection, out of stock, or not enough money.")
-                }
-            }
-
-            // Another way to catch several related errors is to list them after catch, separated by commas.
-            ```
-
-    - 특징
-        - 오류(Error)는 `Error` 프로토콜을 준수하는 타입의 값을 통해 표현됩니다. `Error` 프로토콜은 사실상 요구사항이 없는 빈 프로토콜일 뿐이지만, 오류를 표현하기 위한 타입 (주로 열거형)은 이 프로토콜을 채택합니다.
-
-            ```swift
-            enum 오류종류이름: Error { 
-            	case 종류1 
-            	case 종류2 
-            	case 종류3
-            }
-            ```
-
-        - 열거형은 에러를 grouping하고, 연관 값 (associated values)을 통해 오류에 관한 부가 정보를 제공 가능합니다.
-        - 오류를 던질 경우 던져진 오류를 처리하기 위한 코드도 작성해야 합니다. (예를 들어 던져진 오류가 무엇인지 판단하여 다시 문제를 해결한다든지, 다른 방법으로 시도해 본다든지, 사용자에게 오류를 알리고 사용자에게 선택 권한을 넘겨주어 다음 동작의 결정을 유도하는 등의 코드)
-        - 오류 발생 여지가 있는 throws 함수는 `try`를 사용하여 호출합니다. `try`와 `do-catch`, `try?`와 `try!` 등을 알아봅니다.
-            - [ ]  rethrows
-            - [x]  defer
-                - defer (Specifying Cleanup Actions) /연기하다/
-                    - use a defer statement to execute a set of statements just before code execution leaves the current block of code. 
-                    A defer statement defers execution until the current scope is exited.
-                    For example, to ensure that file descriptors (포인터와 유사한 개념) are closed and manually allocated memory is freed.
-                    현재 코드블럭이 종료될 때까지 특정 statement를 지연시켜서 필수적인 cleanup을 진행하도록 한다. 
-                    (*cleanup - 함수가 종료 된 후 파일 스트림을 닫거나, 사용했던 메모리를 해지하는 등)
-                    - Deferred actions are executed in the reverse of the order that they’re written in your source code.
-                    defer가 여러 개 있는 경우 가장 마지막 줄부터 실행된다.
-                    - ex) open 함수와 매치되는 close 함수를 실행
-                        - used a defer statement to ensure that the open(*:) function has a corresponding call to close(*:).
-
-                        ```swift
-                        func processFile(filename: String) throws {
-                        	if exists(filename) {
-                        		let file = open(filename)
-                        		defer {
-                        			close(file)  // block 이 끝나기 직전에 실행
-                        		}
-                        		
-                        		while let line = try file.readline() {
-                        				// work with the file.
-                        		}
-                        		// close(file) is called here, at the end of the scope.
-                        	}
-                        }
-                        ```
-
-    - 예제 - 자판기 작동 시 발생하는 오류상황을 구현
-        - Error 표현
-        - 열거형 VendingMachineError, Error 프로토콜으로 Error를 표현
-
-            ```swift
-            enum VendingMachineError: Error {
-                case invalidInput
-                case insufficientFunds(moneyNeeded: Int)
-                case outOfStock
-            }
-            ```
-
-        - Error 던지기 
-        - 오류 발생 여지가 있는 메서드는 throws 함수를 사용하여 오류를 내포하는 함수임을 표시합니다
-
-            ```swift
-            class VendingMachine {
-                let itemPrice: Int = 100
-                var itemCount: Int = 5
-                var deposited: Int = 0
-                
-                // 돈 받기 메서드
-                func receiveMoney(_ money: Int) throws {  // throws : 오류 발생 여지가 있음을 표시
-                    
-                    // 입력한 돈이 0이하면 오류를 던집니다
-                    guard money > 0 else {  // guard 로 빠른 종료를 유도하고
-                        throw VendingMachineError.invalidInput  // 오류 (첫번째 case)를 던져줌
-                    }
-                    
-                    // 오류가 없으면 정상처리를 합니다
-                    self.deposited += money   // *self : machine(class 인스턴스).deposited += money
-                    print("\(money)원 받음")
+        class VendingMachine {  // 클래서 생성
+            var inventory = [ // 이 프로퍼티의 타입이 dictionary 인가? - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 ?? 
+                "Candy Bar": Item(price: 12, count: 7),
+                "Chips": Item(price: 10, count: 4),
+                "Pretzels": Item(price: 7, count: 11)
+            ]
+            var coinsDeposited = 0
+            
+            func vend(itemNamed name: String) throws {  // 메서드 정의
+                guard let item = inventory[name] else {  // inventory[name] - 프로퍼티 inventory + 메서드 vend의 parameter ?? 이게 name이 <snack의 name>인지 어떻게 알지? 정의 안해줬는데 - String type 이라서 자체 추론?
+                    throw VendingMachineError.invalidSelection
                 }
                 
-                // 물건 팔기 메서드
-                func vend(numberOfItems numberOfItemsToVend: Int) throws -> String {  // 오류 발생 여지가 있음을 표시
-                    
-                    // 원하는 아이템의 수량이 잘못 입력되었으면 오류를 던집니다
-                    guard numberOfItemsToVend > 0 else {
-                        throw VendingMachineError.invalidInput
-                    }
-                    
-                    // 구매하려는 수량보다 미리 넣어둔 돈이 적으면 오류를 던집니다
-                    guard numberOfItemsToVend * itemPrice <= deposited else {
-                        let moneyNeeded: Int
-                        moneyNeeded = numberOfItemsToVend * itemPrice - deposited
-                        
-                        throw VendingMachineError.insufficientFunds(moneyNeeded: moneyNeeded)
-                    }
-                    
-                    // 재고보다 구매하려는 수량이 많으면 오류를 던집니다
-                    guard itemCount >= numberOfItemsToVend else {
-                        throw VendingMachineError.outOfStock
-                    }
-                    
-                    // 오류가 없으면 정상처리를 합니다
-                    let totalPrice = numberOfItemsToVend * itemPrice
-                    
-                    self.deposited -= totalPrice
-                    self.itemCount -= numberOfItemsToVend
-                    
-                    return "\(numberOfItemsToVend)개 제공함"
+                guard item.count > 0 else { // *복습) if-let 구문과 달리 guard-let의 item 변수는 구문 밖에서도 활용 가능함
+                    throw VendingMachineError.outOfStock
                 }
+                
+                guard item.price <= coinsDeposited else {
+                    throw VendingMachineError.insufficientFunds(coinsNeeded: item.price - coinsDeposited)
+                }
+                
+                coinsDeposited -= item.price
+                
+                var newItem = item
+                newItem.count -= 1
+                inventory[name] = newItem
+                
+                print("Dispensing \(name)")
             }
+        }
 
-            // 자판기 인스턴스
-            let machine: VendingMachine = VendingMachine()
+        let favoriteSnacks = [
+            "Alice": "Chips",
+            "Bob": "Licorice",
+            "Eve": "Pretzels"
+        ]
 
-            // 판매 결과를 전달받을 변수
-            var result: String?
-            ```
+        func buyFavoriteSnacks(person: String, vendingMachine: VendingMachine) throws {
+            let snackName = favoriteSnacks[person] ?? "Candy Bar"  // favoriteSnacks[person] 이것도
+            try vendingMachine.vend(itemNamed: snackName)
+        // Because the vend(itemNamed:) method can throw an error, it’s called with the try keyword in front of it.
+        }
 
-            - [x]  self.deposited += money   // 왜 self?
-                - machine(class 인스턴스).deposited += money
+        // any errors that the vend(itemNamed:) method throws will propagate up to the point where the buyFavoriteSnack(person:vendingMachine:) function is called.
+        // (vend(itemNamed:) 메소드에서 발생한 에러는 buyFavoriteSnack(person:vendingMachine:) 함수가 실행되는 곳에까지 전해집니다.)
 
-    - 예제 - do-catch, try
-        - do-catch
-            - 오류 발생 여지가 있는 throws 함수는 do-catch 구문을 활용하여 오류 발생에 대비합니다.
+        // Error Throwing initializers
 
-                1) 모든 오류 케이스 (3가지 catch)에 대응하는 방식 (정석적인 방법)
+        struct PurchasedSnack {
+            let name: String
+            init (name: String, vendingMachine: VendingMachine) throws {
+                try vendingMachine.vend(itemNamed: name)
+                self.name = name
+            }
+        }
 
-                ```swift
-                do {
-                    try machine.receiveMoney(0)  // 해당 부분 (입력한 돈이 0 이하 - invalidInput)에서 오류가 발생하여 오류를 throw 했으면
-                } catch VendingMachineError.invalidInput {  // throw 된 오류를 (오류 case에 맞게) 여기서 catch 하여 실행해줌
-                    print("입력이 잘못되었습니다")
-                } catch VendingMachineError.insufficientFunds(let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
-                    print("\(moneyNeeded)원이 부족합니다")
-                } catch VendingMachineError.outOfStock {
-                    print("수량이 부족합니다")
-                } 
-                // 입력이 잘못되었습니다 - 출력
-                ```
+        // the initializer for the PurchasedSnack structure in the listing below calls a throwing function as part of the initialization process, and it handles any errors that it encounters by propagating them to its caller.
+        // PurchasedSnack 구조체의 초기자는 초기화 단계의 일부분으로써 에러를 발생시킬 수 있는 함수입니다. 그리고 초기자가 실행될 때 발생한 에러는 이 초기자를 호출한 곳에 전달 됩니다.
 
-                - [ ]  (let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
+        // 방법-1 (the following code matches against all three cases of the VendingMachineError enumeration.)
+        var vendingMachine = VendingMachine()  // 인스턴스 생성
+        vendingMachine.coinsDeposited = 8
 
-                2) 하나의 catch 블럭에서 switch 구문을 사용하여 오류를 분류해봅니다. 위 코드와 큰 차이가 없습니다.
-                - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
+        do {
+            try buyFavoriteSnacks(person: "Alice", vendingMachine: vendingMachine) // buyFavoriteSnacks 함수는 오류 발생 여지가 있으므로 (can throw an error) try expression 에서 호출됨
+            print("Success! Yum.")
+        } catch VendingMachineError.invalidSelection {
+            print("Invalid Selection.")
+        } catch VendingMachineError.outOfStock {
+            print("Out of Stock.")
+        } catch VendingMachineError.insufficientFunds(let coinsNeeded) {
+            print("Insufficient Funds. Please insert an additional \(coinsNeeded) coins.")
+        } catch {
+            print("Unexpected error: \(error).")
+        }
+        // Prints "Insufficient funds. Please insert an additional 2 coins."
 
-                ```swift
-                do {
-                    try machine.receiveMoney(300)
-                } catch /*(let error)*/ {  // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음
-                    
-                    switch error {
-                    case VendingMachineError.invalidInput:
-                        print("입력이 잘못되었습니다")
-                    case VendingMachineError.insufficientFunds(let moneyNeeded):
-                        print("\(moneyNeeded)원이 부족합니다")
-                    case VendingMachineError.outOfStock:
-                        print("수량이 부족합니다")
-                    default:
-                        print("알수없는 오류 \(error)")   // enum 에서 정의한 3가지 에러 외에 다른 종류의 error가 발생한 경우
-                    }
-                } 
-                // 300원 받음 - 출력
-                ```
+        // vendingMachine.coinsDeposited = 10
+        // Prints Dispensing Chips, Success! Yum. (오류가 발생하지 않은 경우)
 
-                - [x]  } catch /*(let errorA)*/ {  
-                // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음 (단, errorA 등 다른 이름을 지정하면 let errorA가 없으면 오류 발생) 왜지 ?
-                    - L/G - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
+        // the buyFavoriteSnack(person:vendingMachine:) function is called in a try expression, because it can throw an error. 
+        // If an error is thrown, execution immediately transfers to the catch clauses, which decide whether to allow propagation to continue.
+        // If no pattern is matched, the error gets caught by the final catch clause and is bound to a local error constant. (만약 발생한 에러 종류에 해당하는 catch pattern 가 없다면 에러는 마지막 catch 구문에 걸리게 되서 지역 에러 상수인 error로 처리할 수 있습니다.)
+        // If no error is thrown, the remaining statements in the do statement are executed.
 
-                3) 케이스별로 오류처리 할 필요가 없으면 catch 구문 내부를 간략화해도 무방합니다.
+        // 방법-2
+        func nourish(with item: String) throws {
+            do {
+                try vendingMachine.vend(itemNamed: item)
+            } catch is VendingMachineError {  // *is : Enum Error 3가지 경우에 해당하는지 체크
+                print("Couldn't buy that from the the vending machine.")  // Error가 발생했는데 Enum Error 3가지 경우에 해당하는 경우
+            }
+        }
 
-                ```swift
-                do {
-                    result = try machine.vend(numberOfItems: 4)
-                } catch {
-                    print(error)
-                } 
-                // insufficientFunds(moneyNeeded: 400) - 출력  // ?? guard 내용이 자동으로 넘어온건가?
-                ```
+        do {
+            try nourish(with: "Beef-Flavored Chips")
+        } catch {
+            print("Unexpected non-vending-machine-related error: \(error)")  // Error가 발생했는데 Enum Error 3가지 경우에 해당하지 않는 경우
+        }
 
-                - [ ]  // insufficientFunds(moneyNeeded: 400)  // ?? guard 내용이 자동으로 넘어온건가?
+        // The catch clauses don’t have to handle every possible error that the code in the do clause can throw.
+        // For example, the above example can be written so any error that isn’t a VendingMachineError is instead caught by the calling function: (<자동판매기 오류가 아닌 오류>는 다음의 호출 기능에 의해 대신 잡힙니다.)
 
-                4) 케이스별로 오류처리 할 필요가 없으면 do 구문만 써도 무방합니다.
+        // In the nourish(with:) function, if vend(itemNamed:) throws an error that’s one of the cases of the VendingMachineError enumeration, nourish(with:) handles the error by printing a message.
+        // Otherwise, nourish(with:) propagates the error to its call site. (nourish 함수는 그것을 호출한 곳에 에러를 발생시킨다.) The error is then caught by the general catch clause.
 
-                ```swift
-                do {
-                    result = try machine.vend(numberOfItems: 4)
-                }
+        // 방법-3
+        func eat(item: String) throws {
+            do {
+                try vendingMachine.vend(itemNamed: item)
+            } catch VendingMachineError.invalidSelection, VendingMachineError.insufficientFunds, VendingMachineError.outOfStock {
+                print("Invalid Selection, out of stock, or not enough money.")
+            }
+        }
 
-                -
-                Playground execution terminated: An error was thrown and was not caught:
-                ▿ VendingMachineError
-                  ▿ insufficientFunds : 1 element
-                    - moneyNeeded : 400
-                ```
+        // Another way to catch several related errors is to list them after catch, separated by commas.
+        ```
 
-        - try? / try!
-            - try? (Converting Errors to Optional Values)
-                - try? : convert error to an optional value. 
-                Using try? lets you write concise error handling code when you want to handle all errors in the same way.
-                    - 별도의 오류처리 결과를 통보받지 않고, 오류가 발생했으면 결과값을 nil 로 return 합니다.
-                    - 정상동작 시 결과값을 optional 타입으로 정상 반환값을 돌려 받습니다.
+- 특징
+    - 오류(Error)는 `Error` 프로토콜을 준수하는 타입의 값을 통해 표현됩니다. `Error` 프로토콜은 사실상 요구사항이 없는 빈 프로토콜일 뿐이지만, 오류를 표현하기 위한 타입 (주로 열거형)은 이 프로토콜을 채택합니다.
+
+        ```swift
+        enum 오류종류이름: Error { 
+        	case 종류1 
+        	case 종류2 
+        	case 종류3
+        }
+        ```
+
+    - 열거형은 에러를 grouping하고, 연관 값 (associated values)을 통해 오류에 관한 부가 정보를 제공 가능합니다.
+    - 오류를 던질 경우 던져진 오류를 처리하기 위한 코드도 작성해야 합니다. (예를 들어 던져진 오류가 무엇인지 판단하여 다시 문제를 해결한다든지, 다른 방법으로 시도해 본다든지, 사용자에게 오류를 알리고 사용자에게 선택 권한을 넘겨주어 다음 동작의 결정을 유도하는 등의 코드)
+    - 오류 발생 여지가 있는 throws 함수는 `try`를 사용하여 호출합니다. `try`와 `do-catch`, `try?`와 `try!` 등을 알아봅니다.
+        - [ ]  rethrows
+        - [x]  defer
+            - defer (Specifying Cleanup Actions) /연기하다/
+                - use a defer statement to execute a set of statements just before code execution leaves the current block of code. 
+                A defer statement defers execution until the current scope is exited.
+                For example, to ensure that file descriptors (포인터와 유사한 개념) are closed and manually allocated memory is freed.
+                현재 코드블럭이 종료될 때까지 특정 statement를 지연시켜서 필수적인 cleanup을 진행하도록 한다. 
+                (*cleanup - 함수가 종료 된 후 파일 스트림을 닫거나, 사용했던 메모리를 해지하는 등)
+                - Deferred actions are executed in the reverse of the order that they’re written in your source code.
+                defer가 여러 개 있는 경우 가장 마지막 줄부터 실행된다.
+                - ex) open 함수와 매치되는 close 함수를 실행
+                    - used a defer statement to ensure that the open(*:) function has a corresponding call to close(*:).
 
                     ```swift
-                    // x and y have the same value and behavior:
-
-                    func someThrowingFunction() throws -> Int {
-                    	// ...
+                    func processFile(filename: String) throws {
+                    	if exists(filename) {
+                    		let file = open(filename)
+                    		defer {
+                    			close(file)  // block 이 끝나기 직전에 실행
+                    		}
+                    		
+                    		while let line = try file.readline() {
+                    				// work with the file.
+                    		}
+                    		// close(file) is called here, at the end of the scope.
+                    	}
                     }
-
-                    let y = Int?
-                    do {
-                    	y = try someThrowingFunction()
-                    } catch {
-                    	y = nil  // someThrowingFunction() 함수에서 오류 발생 시 nil을 결과값으로 return 한다. 
-                    }
-
-                    let x = try? someThrowingFunction()  // 위와 동일한 표현
                     ```
 
-                ```swift
-                try machine.receiveMoney(300)  // 300원 넣었다고 가정 - 300원 받음 출력
+- 예제 - 자판기 작동 시 발생하는 오류상황을 구현
+    - Error 표현
+    - 열거형 VendingMachineError, Error 프로토콜으로 Error를 표현
 
-                result = try? machine.vend(numberOfItems: 2)
-                result // 2개 제공함 - 출력   ?? 왜 optional 아니지?
-                print(result) // Optional("2개 제공함") - 출력
+        ```swift
+        enum VendingMachineError: Error {
+            case invalidInput
+            case insufficientFunds(moneyNeeded: Int)
+            case outOfStock
+        }
+        ```
 
-                result = try? machine.vend(numberOfItems: 2)
-                print(result) // nil - 출력 (돈이 부족해서 오류 발생했으므로)
-                ```
+    - Error 던지기 
+    - 오류 발생 여지가 있는 메서드는 throws 함수를 사용하여 오류를 내포하는 함수임을 표시합니다
 
-                - [ ]  result // 2개 제공함 - 출력   ?? 왜 optional 아니지?
-            - try! (Disabling Error Propagation)
-                - to disable error propagation and wrap the call in a runtime assertion that no error will be thrown.
-                - 오류가 발생하지 않을 것을 확신할 때, try! (optional-forced unwrapping과 유사함)를 사용하면 정상동작 직후 결과값을 return 합니다.
-                (오류가 발생하면 런타임 오류가 발생하여 애플리케이션 동작이 중지됩니다.)
-                - ex) 앱 설치 시 이미 다운받은 이미지 파일을 load 할 때 (에러 발생 여지가 없음)
-
-                ```swift
-                try machine.receiveMoney(300)  // 300원 넣었다고 가정 - 300원 받음 출력
-
-                result = try! machine.vend(numberOfItems: 2)
-                result // 2개 제공함 - 출력
-                print(result) // Optional("2개 제공함") - 출력
-                print(result!) // 2개 제공함 - 출력
-
-                // result = try! machine.vend(numberOfItems: 1)
-                // print(result)
-                // 런타임 오류 발생!
-                ```
-
-8. 22. Higher-order Function (고차 함수)
-    - 특징
-        - 다른 함수를 전달인자로 받거나, 실행의 결과를 함수로 반환하는 함수
-        - Swift의 함수/closure는 일급 시민 (일급 객체)이기 때문에 함수의 전달인자로 전달할 수 있으며, 함수의 결과값으로 반환할 수 있다.
-        - 스위프트 표준라이브러리에서 제공하는 유용한 고차함수 - map, filter, reduce (Array, Set, Dictionary 등 컨테이너 타입에 구현되어 있음)
-    - [ ]  flatmap
-    - map
-        - 컨테이너 내부의 기존 데이터를 변형(transform)하여 새로운 컨테이너를 생성한다.
-
-            ```swift
-            import Swift
-
-            // 기존 데이터
-            let numbers: [Int] = [0, 1, 2, 3, 4]
-
-            // 변형 결과를 받을 변수
-            var doubledNumbers: [Int]  // 변형 - 각 element를 2배 한 새로운 Array
-            var strings: [String]      // 변형 - 각 element를 Int에서 Sting type으로 변환한 새로운 Array
-
-            // 방법1 - for 구문 사용
-            doubledNumbers = [Int]()
-            strings = [String]()
-
-            for number in numbers {
-                doubledNumbers.append(number * 2)  // array1.append() : array1에 element()를 추가하는 메서드
-                strings.append("\(number)")
-            }
-            print(doubledNumbers) // [0, 2, 4, 6, 8]
-            print(strings) // ["0", "1", "2", "3", "4"]
-
-            // 방법2 - map 메서드 사용
-            doubledNumbers = numbers.map({ (number: Int) -> Int in   // map()의 parameter 자리에 closure가 들어간다! 반환값 type을 명시하도록 되어있음
-                return number * 2
-            })
-
-            strings = numbers.map({ (number: Int) -> String in
-                return "\(number)"
-            })
-            print(doubledNumbers) // [0, 2, 4, 6, 8]
-            print(strings) // ["0", "1", "2", "3", "4"]
-
-            // 방법3 - map 메서드 + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
-            doubledNumbers = numbers.map({ $0 * 2 })
-            strings = numbers.map({ "\($0)" }) // 이것도 가능
-
-            doubledNumbers = numbers.map { $0 * 2 }  // 후행 클로저이므로 함수 외부에 구현 가능
-            strings = numbers.map { "\($0)" } 
-
-            print(doubledNumbers) // [0, 2, 4, 6, 8]
-            print(strings) // ["0", "1", "2", "3", "4"]
-            ```
-
-            - [x]  strings = numbers.map { "\($0)" } // 이것도 되나? (내가 작성)
-            print(strings)
-                - 가능
-            - [ ]  Dictionary는?
-
-                ```swift
-                let dictionary = ["key1":"value1", "key2":"value2"]
-
-                        let keys = dictionary.map { $0.0 }
-                        let values = dictionary.map { $0.1 }
-
-                        print(keys) //["key1", "key2"]
-                        print(values) //["value1", "value2"]
-
-                        let keys2 = dictionary.map { $0.0 + "a" }
-                        let values2 = dictionary.map { $0.1 + "b" }
-
-                        print(keys2) //["key1a", "key2a"]
-                        print(values2) //["value1b", "value2b"]
-                ```
-
-    - filter
-        - 컨테이너 내부의 값을 filtering (ture 해당 값만 추출)하여 새로운 컨테이너로 추출한다.
-
-            ```swift
-            // 기존 데이터
-            let numbers: [Int] = [0, 1, 2, 3, 4]
-
-            // 방법1 - for 문 사용
-            var filtered: [Int] = [Int]()  // reduce와 달리 let 선언 불가
-
-            for number in numbers {
-                if number % 2 == 0 {
-                    filtered.append(number)
+        ```swift
+        class VendingMachine {
+            let itemPrice: Int = 100
+            var itemCount: Int = 5
+            var deposited: Int = 0
+            
+            // 돈 받기 메서드
+            func receiveMoney(_ money: Int) throws {  // throws : 오류 발생 여지가 있음을 표시
+                
+                // 입력한 돈이 0이하면 오류를 던집니다
+                guard money > 0 else {  // guard 로 빠른 종료를 유도하고
+                    throw VendingMachineError.invalidInput  // 오류 (첫번째 case)를 던져줌
                 }
+                
+                // 오류가 없으면 정상처리를 합니다
+                self.deposited += money   // *self : machine(class 인스턴스).deposited += money
+                print("\(money)원 받음")
             }
-            print(filtered) // [0, 2, 4]
-
-            // 방법2 - filter 메서드 사용
-            // numbers의 요소 중 짝수를 걸러내어 새로운 배열로 반환
-            let evenNumbers: [Int] = numbers.filter { (number: Int) -> Bool in   // filter()의 parameter 자리에 closure가 들어간다!
-                return number % 2 == 0   // return 값의 Bool이 true 일때만 해당 number을 변수 evenNumbers 에 반환 (true/false를 return 하는 게 아님)
+            
+            // 물건 팔기 메서드
+            func vend(numberOfItems numberOfItemsToVend: Int) throws -> String {  // 오류 발생 여지가 있음을 표시
+                
+                // 원하는 아이템의 수량이 잘못 입력되었으면 오류를 던집니다
+                guard numberOfItemsToVend > 0 else {
+                    throw VendingMachineError.invalidInput
+                }
+                
+                // 구매하려는 수량보다 미리 넣어둔 돈이 적으면 오류를 던집니다
+                guard numberOfItemsToVend * itemPrice <= deposited else {
+                    let moneyNeeded: Int
+                    moneyNeeded = numberOfItemsToVend * itemPrice - deposited
+                    
+                    throw VendingMachineError.insufficientFunds(moneyNeeded: moneyNeeded)
+                }
+                
+                // 재고보다 구매하려는 수량이 많으면 오류를 던집니다
+                guard itemCount >= numberOfItemsToVend else {
+                    throw VendingMachineError.outOfStock
+                }
+                
+                // 오류가 없으면 정상처리를 합니다
+                let totalPrice = numberOfItemsToVend * itemPrice
+                
+                self.deposited -= totalPrice
+                self.itemCount -= numberOfItemsToVend
+                
+                return "\(numberOfItemsToVend)개 제공함"
             }
-            print(evenNumbers) // [0, 2, 4]
+        }
 
-            // 방법3 - filter + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
-            let evenNumbers2: [Int] = numbers.filter {
-                $0 % 2 == 0   // {} 내용이 true인 경우만 변수 evenNumbers2 에 반환
-            }
-            print(evenNumbers2) // [0, 2, 4]
-            ```
+        // 자판기 인스턴스
+        let machine: VendingMachine = VendingMachine()
 
-    - reduce
-        - 컨테이너 내부의 콘텐츠를 하나로 통합한다.
+        // 판매 결과를 전달받을 변수
+        var result: String?
+        ```
+
+        - [x]  self.deposited += money   // 왜 self?
+            - machine(class 인스턴스).deposited += money
+
+- 예제 - do-catch, try
+    - do-catch
+        - 오류 발생 여지가 있는 throws 함수는 do-catch 구문을 활용하여 오류 발생에 대비합니다.
+
+            1) 모든 오류 케이스 (3가지 catch)에 대응하는 방식 (정석적인 방법)
 
             ```swift
-            // 기존 데이터 
-            let someNumbers: [Int] = [2, 8, 15]
+            do {
+                try machine.receiveMoney(0)  // 해당 부분 (입력한 돈이 0 이하 - invalidInput)에서 오류가 발생하여 오류를 throw 했으면
+            } catch VendingMachineError.invalidInput {  // throw 된 오류를 (오류 case에 맞게) 여기서 catch 하여 실행해줌
+                print("입력이 잘못되었습니다")
+            } catch VendingMachineError.insufficientFunds(let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
+                print("\(moneyNeeded)원이 부족합니다")
+            } catch VendingMachineError.outOfStock {
+                print("수량이 부족합니다")
+            } 
+            // 입력이 잘못되었습니다 - 출력
+            ```
 
-            // 방법1 - for 문 사용
-            var result: Int = 0  // reduce와 달리 let 선언 불가
+            - [ ]  (let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
 
-            for number in someNumbers {
-                result += number
+            2) 하나의 catch 블럭에서 switch 구문을 사용하여 오류를 분류해봅니다. 위 코드와 큰 차이가 없습니다.
+            - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
+
+            ```swift
+            do {
+                try machine.receiveMoney(300)
+            } catch /*(let error)*/ {  // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음
+                
+                switch error {
+                case VendingMachineError.invalidInput:
+                    print("입력이 잘못되었습니다")
+                case VendingMachineError.insufficientFunds(let moneyNeeded):
+                    print("\(moneyNeeded)원이 부족합니다")
+                case VendingMachineError.outOfStock:
+                    print("수량이 부족합니다")
+                default:
+                    print("알수없는 오류 \(error)")   // enum 에서 정의한 3가지 에러 외에 다른 종류의 error가 발생한 경우
+                }
+            } 
+            // 300원 받음 - 출력
+            ```
+
+            - [x]  } catch /*(let errorA)*/ {  
+            // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음 (단, errorA 등 다른 이름을 지정하면 let errorA가 없으면 오류 발생) 왜지 ?
+                - L/G - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
+
+            3) 케이스별로 오류처리 할 필요가 없으면 catch 구문 내부를 간략화해도 무방합니다.
+
+            ```swift
+            do {
+                result = try machine.vend(numberOfItems: 4)
+            } catch {
+                print(error)
+            } 
+            // insufficientFunds(moneyNeeded: 400) - 출력  // ?? guard 내용이 자동으로 넘어온건가?
+            ```
+
+            - [ ]  // insufficientFunds(moneyNeeded: 400)  // ?? guard 내용이 자동으로 넘어온건가?
+
+            4) 케이스별로 오류처리 할 필요가 없으면 do 구문만 써도 무방합니다.
+
+            ```swift
+            do {
+                result = try machine.vend(numberOfItems: 4)
             }
-            print(result) // 25
 
-            // 방법2 - reduce 메서드 사용
-            // 초기값이 0 이고 someNumbers 내부의 모든 값을 더합니다.
-            let sum: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in   // reduce()의 parameter 자리에 초기값, closure가 들어간다!
-             // print("\(first) + \(second)")  
-                return left + right
-            })
-            //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
+            -
+            Playground execution terminated: An error was thrown and was not caught:
+            ▿ VendingMachineError
+              ▿ insufficientFunds : 1 element
+                - moneyNeeded : 400
+            ```
+
+    - try? / try!
+        - try? (Converting Errors to Optional Values)
+            - try? : convert error to an optional value. 
+            Using try? lets you write concise error handling code when you want to handle all errors in the same way.
+                - 별도의 오류처리 결과를 통보받지 않고, 오류가 발생했으면 결과값을 nil 로 return 합니다.
+                - 정상동작 시 결과값을 optional 타입으로 정상 반환값을 돌려 받습니다.
+
+                ```swift
+                // x and y have the same value and behavior:
+
+                func someThrowingFunction() throws -> Int {
+                	// ...
+                }
+
+                let y = Int?
+                do {
+                	y = try someThrowingFunction()
+                } catch {
+                	y = nil  // someThrowingFunction() 함수에서 오류 발생 시 nil을 결과값으로 return 한다. 
+                }
+
+                let x = try? someThrowingFunction()  // 위와 동일한 표현
+                ```
+
+            ```swift
+            try machine.receiveMoney(300)  // 300원 넣었다고 가정 - 300원 받음 출력
+
+            result = try? machine.vend(numberOfItems: 2)
+            result // 2개 제공함 - 출력   ?? 왜 optional 아니지?
+            print(result) // Optional("2개 제공함") - 출력
+
+            result = try? machine.vend(numberOfItems: 2)
+            print(result) // nil - 출력 (돈이 부족해서 오류 발생했으므로)
+            ```
+
+            - [ ]  result // 2개 제공함 - 출력   ?? 왜 optional 아니지?
+        - try! (Disabling Error Propagation)
+            - to disable error propagation and wrap the call in a runtime assertion that no error will be thrown.
+            - 오류가 발생하지 않을 것을 확신할 때, try! (optional-forced unwrapping과 유사함)를 사용하면 정상동작 직후 결과값을 return 합니다.
+            (오류가 발생하면 런타임 오류가 발생하여 애플리케이션 동작이 중지됩니다.)
+            - ex) 앱 설치 시 이미 다운받은 이미지 파일을 load 할 때 (에러 발생 여지가 없음)
+
+            ```swift
+            try machine.receiveMoney(300)  // 300원 넣었다고 가정 - 300원 받음 출력
+
+            result = try! machine.vend(numberOfItems: 2)
+            result // 2개 제공함 - 출력
+            print(result) // Optional("2개 제공함") - 출력
+            print(result!) // 2개 제공함 - 출력
+
+            // result = try! machine.vend(numberOfItems: 1)
+            // print(result)
+            // 런타임 오류 발생!
+            ```
+
+# 22. Higher-order Function (고차 함수)
+
+- 특징
+    - 고차 함수 : 다른 함수를 전달인자로 받거나, 실행의 결과를 함수로 반환하는 함수
+    - Swift의 함수/closure는 일급 시민 (일급 객체)이기 때문에 함수의 전달인자로 전달할 수 있으며, 함수의 결과값으로 반환할 수 있다.
+    - Swift 표준라이브러리의 유용한 고차함수 - map, filter, reduce (Array, Set, Dictionary 등 컨테이너 타입에 구현되어 있음)
+- [ ]  flatmap
+- map
+    - Array, Set, Dictionary, Optional 등에서 사용 가능하다. (엄밀히는 Sequence, Collection 프로토콜을 따르는 type 및 Optional에서 사용 가능하다.)
+    - 컨테이너 내부의 기존 데이터를 변형(transform)하여 새로운 컨테이너를 생성 및 반환한다.
+    - 다중 스레드 환경일 때 대상 컨테이너의 값이 스레드에서 변경되는 시점에 다른 스레드에서도 동시에 값 변경이 되려고 할 때, 예상 외의 결과가 발생하는 부작용을 방지한다. ???
+        - [ ]  
+
+        ```swift
+        container1.map(f(x))
+        => return f(container1의 각 요소) // 실행 결과 새로운 컨테이너를 반환한다.
+        ```
+
+        ```swift
+        import Swift
+
+        // 기존 데이터
+        let numbers: [Int] = [0, 1, 2, 3, 4]
+
+        // 변형 결과를 받을 변수
+        var doubledNumbers: [Int]  // 변형 - 각 element를 2배 한 새로운 Array
+        var strings: [String]      // 변형 - 각 element를 Int에서 Sting type으로 변환한 새로운 Array
+
+        // 방법1 - for 구문 사용
+        doubledNumbers = [Int]()
+        strings = [String]()
+
+        for number in numbers {
+            doubledNumbers.append(number * 2)  // array1.append() : array1에 element()를 추가하는 메서드
+            strings.append("\(number)")
+        }
+        print(doubledNumbers) // [0, 2, 4, 6, 8]
+        print(strings) // ["0", "1", "2", "3", "4"]
+
+        // 방법2 - map 메서드 사용
+        doubledNumbers = numbers.map({ (number: Int) -> Int in   // map()의 parameter 자리에 closure가 들어간다! 반환값 type을 명시하도록 되어있음
+            return number * 2
+        })
+
+        strings = numbers.map({ (number: Int) -> String in
+            return "\(number)"
+        })
+        print(doubledNumbers) // [0, 2, 4, 6, 8]
+        print(strings) // ["0", "1", "2", "3", "4"]
+
+        // 방법3 - map 메서드 + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
+        doubledNumbers = numbers.map({ $0 * 2 })
+        strings = numbers.map({ "\($0)" }) // 이것도 가능
+
+        doubledNumbers = numbers.map { $0 * 2 }  // 후행 클로저이므로 함수 외부에 구현 가능
+        strings = numbers.map { "\($0)" } 
+
+        print(doubledNumbers) // [0, 2, 4, 6, 8]
+        print(strings) // ["0", "1", "2", "3", "4"]
+        ```
+
+        - [x]  strings = numbers.map { "\($0)" } // 이것도 되나? (내가 작성)
+        print(strings)
+            - 가능
+        - [ ]  Dictionary는?
+
+            ```swift
+            let dictionary = ["key1":"value1", "key2":"value2"]
+
+                    let keys = dictionary.map { $0.0 }
+                    let values = dictionary.map { $0.1 }
+
+                    print(keys) //["key1", "key2"]
+                    print(values) //["value1", "value2"]
+
+                    let keys2 = dictionary.map { $0.0 + "a" }
+                    let values2 = dictionary.map { $0.1 + "b" }
+
+                    print(keys2) //["key1a", "key2a"]
+                    print(values2) //["value1b", "value2b"]
+            ```
+
+- filter
+    - 컨테이너 내부의 값을 filtering (ture 해당 값만 추출)하여 새로운 컨테이너로 추출한다.
+
+        ```swift
+        // 기존 데이터
+        let numbers: [Int] = [0, 1, 2, 3, 4]
+
+        // 방법1 - for 문 사용
+        var filtered: [Int] = [Int]()  // reduce와 달리 let 선언 불가
+
+        for number in numbers {
+            if number % 2 == 0 {
+                filtered.append(number)
+            }
+        }
+        print(filtered) // [0, 2, 4]
+
+        // 방법2 - filter 메서드 사용
+        // numbers의 요소 중 짝수를 걸러내어 새로운 배열로 반환
+        let evenNumbers: [Int] = numbers.filter { (number: Int) -> Bool in   // filter()의 parameter 자리에 closure가 들어간다!
+            return number % 2 == 0   // return 값의 Bool이 true 일때만 해당 number을 변수 evenNumbers 에 반환 (true/false를 return 하는 게 아님)
+        }
+        print(evenNumbers) // [0, 2, 4]
+
+        // 방법3 - filter + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
+        let evenNumbers2: [Int] = numbers.filter {
+            $0 % 2 == 0   // {} 내용이 true인 경우만 변수 evenNumbers2 에 반환
+        }
+        print(evenNumbers2) // [0, 2, 4]
+        ```
+
+- reduce
+    - 컨테이너 내부의 콘텐츠를 하나로 통합한다.
+
+        ```swift
+        // 기존 데이터 
+        let someNumbers: [Int] = [2, 8, 15]
+
+        // 방법1 - for 문 사용
+        var result: Int = 0  // reduce와 달리 let 선언 불가
+
+        for number in someNumbers {
+            result += number
+        }
+        print(result) // 25
+
+        // 방법2 - reduce 메서드 사용
+        // 초기값이 0 이고 someNumbers 내부의 모든 값을 더합니다.
+        let sum: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in   // reduce()의 parameter 자리에 초기값, closure가 들어간다!
+         // print("\(first) + \(second)")  
+            return left + right
+        })
+        //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
+        //2 + 8   // 해당 결과값이 다음 line의 left 값으로 들어간다!
+        //10 + 15 // 최종 값을 return 한다
+        print(sum)  // 25
+
+        // 초기값이 0 이고 someNumbers 내부의 모든 값을 뺍니다.
+        var subtract: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in
+         // print("\(first) - \(second)") 
+            return left - right
+        })
+        //0 - 2
+        //-2 - 8
+        //-10 - 15
+        print(subtract) // -25
+
+        // 방법3 - reduce + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
+        // 초깃값이 3이고 someNumbers 내부의 모든 값을 더합니다.
+        let sumFromThree = someNumbers.reduce(3) { $0 + $1 }
+        print(sumFromThree) // 28
+
+        // 방법4
+        let sumFast = someNumbers.reduce(0,+)
+        // 연산자는 중위 연산자로 왼쪽 값이 $0, 오른쪽 값이 $1임을 추론 가능하므로 생략 가능하다.
+
+        ```
+
+        - [x]  let sum: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
+            //print("\(first) + \(second)") //어떻게 동작하는지 확인해보세요
+            - //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
             //2 + 8   // 해당 결과값이 다음 line의 left 값으로 들어간다!
             //10 + 15 // 최종 값을 return 한다
-            print(sum)  // 25
 
-            // 초기값이 0 이고 someNumbers 내부의 모든 값을 뺍니다.
-            var subtract: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in
-             // print("\(first) - \(second)") 
-                return left - right
-            })
-            //0 - 2
-            //-2 - 8
-            //-10 - 15
-            print(subtract) // -25
+# 23. Access Control (접근 제어)
 
-            // 방법3 - reduce + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
-            // 초깃값이 3이고 someNumbers 내부의 모든 값을 더합니다.
-            let sumFromThree = someNumbers.reduce(3) { $0 + $1 }
-            print(sumFromThree) // 28
+- 특징
+    - 코드끼리 상호작용할 때 파일 간 또는 모듈 간에 접근을 제한하는 기능이다. 코드의 상세구현은 숨기고, 허용된 기능만 사용하는 interface를 제공한다.
+    - 외부에서 접근하면 안되는 코드가 있을 때, 캡슐화 및 은닉화를 구현한다. (객체지향 프로그래밍에서 중요한 개념)
+    - Swift는 모듈 및 소스파일을 기반으로 접근제어를 설계한다.
+        - 모듈 (Module) : 배포할 코드의 묶음 단위이다. 보통 하나의 프레임워크 또는 라이브러리 또는 애플리케이션이 모듈 단위가 된다. (import 키워드로 불러옴)
+        - 소스파일 : 하나의 Swift 소스코드 파일이다.
+- 접근 제어는 접근수준 (Access Level)으로 구현한다.
+    - 접근수준 (Access Level)의 종류
+        - 타입 또는 타입 내부의 프로퍼티, 메서드, 이니셜라이저, 서브스크립트 각각에 접근수준 지정이 가능하다. (각 타입 또는 요소 앞에 키워드를 명시)
+        - 접근수준 키워드 종류 (접근도 높은 순으로)
+            1. open 개방 - 모듈 외부까지 (Class, Class 멤버에만 사용)
+            - *public과의 차이점 : Class를 다른 모듈에서도 부모클래스로 사용할 목적으로 사용한다. (ex. Foundation 프레임워크에 정의된 NSString Class)
+                - open 제외 모든 접근수준의 Class/Class 멤버는 해당 Class/Class 멤버가 정의된 모듈 안에서만 상속, override 가능하다.
+                - open의 Class/Class 멤버는 해당 Class/Class 멤버가 정의된 모듈 외부의 다른 모듈에서도 상속, override 가능하다.
+            2. public 공개 - 모듈 외부까지
+            - 자신이 구현된 소스파일, 해당 소스파일이 소속된 모듈, 해당 모듈을 import한 모듈 등 모든 곳에서 사용 가능하다.
+            - 주로 프레임워크에서 외부와 연결될 interface 구현에 사용한다. (ex. Bool type 등 Swift의 기본 요소)
+            3. internal 내부 - 모듈 내부
+            - 모든 요소에 암묵적으로 지정하는 default 접근수준이다.
+            - 소스파일이 소속된 모듈 내부에서 사용 가능하다. 단, 해당 모듈을 import한 외부 모듈에서는 접근 불가하다. (모듈 내부에서 광역적으로 사용할 경우 사용한다.)
+            4. fileprivate 파일외부 비공개 - 파일 내부
+            - 해당 요소가 구현된 소스파일 내부에서만 사용 가능하다.
+            - 해당 소스파일 외부에서 값이 변경되거나 함수를 호출하면 부작용이 생길 가능성이 있을 때 사용한다.
+            5. private 비공개 - 기능 정의 내부
+            - 해당 기능을 정의 및 구현한 범위 내에서만 사용한다. (해당 소스파일 내부에 구현한 다른 타입이나 기능에서 사용 불가하다.)
+        - 하위 요소는 상위 요소보다 더 높은 접근수준을 가질 수 없다. ⇒ 상위는 하위보다 높아야 함 (*하위가 private이면 상위도 private이어야 함)
+            - Struct/Class : 메서드, 프로퍼티는 Struct/Class보다 더 높은 접근수준을 가질 수 없다. (상위 Class-높음 public, 하위 메서드-낮음 private이면 가능하다.)
+            - 함수 : 함수의 parameter로 접근수준이 부여된 type이 전달/반환되면, 함수는 parameter type보다 더 높은 접근수준을 가질 수 없다. (상위 parameter-높음 public, 하위 함수-낮음 private이면 가능하다.) 
+            (상위 함수-높음, 하위 parameter-낮음이면 가능하다. X)
+            - Tuple : Tuple은 Tuple의 내부 요소 type보다 더 높은 접근수준을 가질 수 없다. (상위 Tuple 내부요소-높음 public, 하위 Tuple-낮음 private이면 가능하다.)
+                - [ ]  (상위 parameter-높음 public, 하위 함수-낮음 private이면 가능하다. O) (상위 함수-높음, 하위 parameter-낮음이면 가능하다. X)
+                왜 함수, Tuple이 상위가 아니지??
+            - Enum : 각 case는 개별 지정이 불가하며 Enum의 접근수준을 따른다. Enum은 rawValue 및 연관값 type보다 더 높은 수준을 가질 수 없다. (상위 rawValue, 연관값-높음 public, 하위 Enum-낮음 private이면 가능하다.)
+                - [ ]  enum Point: PointValue { // *rawValue type이 private이므로 enum도 private이어야 함 (왜 fileprivate도 가능하지???)
 
-            // 방법4
-            let sumFast = someNumbers.reduce(0,+)
-            // 연산자는 중위 연산자로 왼쪽 값이 $0, 오른쪽 값이 $1임을 추론 가능하므로 생략 가능하다.
+            ```swift
+            // 옳은 예
+            public class OpenClass {
+                    private func secretMethod() { // 상위 Class-높음 public, 하위 메서드-낮음 private이면 가능하다. 
+                    }
+            }
+
+            private func openFuction2(b: OpenClass) -> OpenClass { // 상위 parameter-높음 public, 하위 함수-낮음 private이면 가능하다. 
+                    return b
+            }
+
+            public func openFuction(a: OpenClass) -> OpenClass { // 동일한 수준도 가능
+                    return a
+            }
+            ```
+
+            ```swift
+            // 잘못된 예
+            private class SecretClass { // *Class가 private이므로 메서드도 private 이어야 함
+            		public func openMethod() { // 잘못된 접근수준 - Class가 private이므로 method도 private 수준으로 취급된다. (에러가 발생하지는 않음) 
+            		}
+            }
+
+            /*
+            public func openFuction(a: SecretClass) -> SecretClass { // 잘못된 접근수준. 에러 발생 - Function cannot be declared public bc its parameter uses a private type.
+            		return a // *parameter가 private이므로 함수도 private 이어야 함
+            }
+            */
+            ```
+
+            ```swift
+            // Tuple
+
+            internal class InternalClass {}
+            private struct PrivateStruct {}
+
+            private var publicTuple: (first: InternalClass, second: PrivateStruct) = (InternalClass(), PrivateStruct()) // 상위 Tuple 내부요소-높음 private, 하위 Tuple-높음 private 동일하므로 가능하다.
+
+            // public var publicTuple: (first: InternalClass, second: PrivateStruct) = (InternalClass(), PrivateStruct()) // 잘못된 접근수준. 에러 발생 - Variable cannot be declared public because its type uses a private type
+            // *Tuple의 내부요소가 private이므로 Tuple도 private 이어야 함
 
             ```
 
-            - [x]  let sum: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
-                //print("\(first) + \(second)") //어떻게 동작하는지 확인해보세요
-                - //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
-                //2 + 8   // 해당 결과값이 다음 line의 left 값으로 들어간다!
-                //10 + 15 // 최종 값을 return 한다
+            ```swift
+            // AClass.swift 파일과 Common.swift 파일이 동일한 모듈에 소속된 경우
 
-9. 23. 기타
-    - [ ]  
-    - 제네릭(Generics)
-    - 서브스크립트(Subscript)
-    - 접근수준(Access Control)
-    - ARC(Automatic Reference Counting)
-    - 중첩타입(Nested Types)
-    - 사용자정의 연산자(Custom Operators)
-    - 오류 처리(Error Handling)
-    - 불명확 타입(Opaque Types)
-    - 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
+            // AClass.swift 파일
+            class AClass {
+                func internalMethod() {}
+                var internalProperty = 0
+                
+                fileprivate func filePrivateMethod() {}
+                fileprivate var filePrivateProperty = 0
+            }
+
+            // Common.swift 파일
+            let aInstance: AClass = AClass()
+            aInstance.internalMethod()     // 동일한 모듈이므로 호출 가능
+            aInstance.internalProperty = 1 // 동일한 모듈이므로 접근 가능
+
+            aInstance.filePrivateMethod()     // 오류 발생. 다른 파일이므로 호출 불가
+            aInstance.filePrivateProperty = 1 // 오류 발생. 다른 파일이므로 호출 불가
+
+            // 따라서 프레임워크를 만들 때는 다른 모듈에서 특정 기능에 접근 가능하도록 API로 사용할 기능을 public으로 지정해야 함. 그 외 요소는 internal 또는 private 등으로 처리함
+            ```
+
+            ```swift
+            private typealias PointValue = Int
+
+            /*
+            enum Point: PointValue { // (enum type은 default인 internal) 잘못된 접근수준. 에러 발생 - Enum must be declared private or fileprivate bc its raw type uses a private type
+                case x, y            // *rawValue type이 private이므로 enum도 private이어야 함 (왜 fileprivate도 가능하지???)
+            }
+            */ 
+
+            private enum Point: PointValue { // 가능
+                case x, y
+            }
+            ```
+
+        - 
+    - private / fileprivate
+    - 원래 private은 같은 파일 내부에 있어도 해당 기능 구현 내에서만 접근 가능하다. 
+       단, 동일한 type의 Extension에서는 private 요소에 접근 가능하다.
+
+        ```swift
+        public struct AType {
+            private var privateVariable = 0
+            fileprivate var fileprivateVariable = 0
+        }
+
+        // 원래 private은 같은 파일 내부에 있어도 해당 기능 구현 내에서만 접근 가능하다. (fileprivate는 동일한 파일 내에서 접근 가능)
+        // 단, 동일한 type의 Extension에서는 private 요소에 접근 가능하다.
+        extension AType {
+            public func publicMethod() {
+                print("\(self.privateVariable), \(self.fileprivateVariable)")
+            }
+            
+            private func privateMethod() {
+                print("\(self.privateVariable), \(self.fileprivateVariable)")
+            }
+            
+            fileprivate func fileprivateMethod() {
+                print("\(self.privateVariable), \(self.fileprivateVariable)")
+            }
+        }
+
+        struct BType {
+            var aInstance: AType = AType() // AType의 인스턴스 생성
+            
+            mutating func someMethod() {
+                self.aInstance.publicMethod() // (1) 0, 0 출력 - public 접근수준은 어디에서든 접근 가능
+                
+                // 동일한 파일 내부에 소속된 코드이므로 fileprivate 접근수준 요소에 접근 가능
+                self.aInstance.fileprivateVariable = 100
+                self.aInstance.fileprivateMethod() // (2) 0, 100 출력
+                
+                // 다른 타입 내부의 코드 (기능 정의 범위의 외부)이므로 private 요소에 접근 불가
+        //      self.aInstance.privateVariable = 100 // 에러 발생 - 'privateVariable' is inaccessible due to 'private' protection level
+        //      self.aInstance.privateMethod() // 에러 발생
+            }
+        }
+
+        var bInstance: BType = BType()
+        bInstance.someMethod() // (1) 0, 0, (2) 0, 100 출력
+        ```
+
+- 읽기 전용 구현
+    - 설정자 (Setter)만 더 낮은 접근수준을 갖도록 제한할 수 있다. 접근수준 키워드 뒤에 (set)으로 표현한다.
+    - 구조체, 클래스를 사용하여 저장 프로퍼티를 구현할 때 허용된 접근수준에서 프로퍼티 값을 가져갈 수 있는데, 값 변경이 불가하도록 설정된다.
+    - 서브스크립트가 읽기 전용으로 제한된다.
+    - 프로퍼티, 서브스크립트, 변수 등에 적용 가능하다. 해당 요소보다 같거나 낮은 수준으로 접근수준을 제한할 수 있다.
+        - [ ]  서브스크립트? 하고나서 다시
+
+        ```swift
+        public struct aType {
+            private var count: Int = 0
+            
+            public var publicStoredProperty: Int = 0
+            
+            // setter는 private 접근수준으로 설정
+            public private(set) var publicGetOnlyStoredProperty: Int = 0
+            
+            internal var internalComputedProperty: Int {
+                get {
+                    return count
+                }
+                set {
+                    count += 1
+                }
+            }
+            
+            // setter는 private 접근수준으로 설정
+            internal private(set) var internalGetOnlyComputedProperty: Int {
+                get {
+                    return count
+                }
+                set {
+                    count += 1
+                }
+            }
+            
+            public subscript() -> Int {
+                get {
+                    return count
+                }
+                set {
+                    count += 1
+                }
+            }
+            
+            // setter는 internal 접근수준으로 설정
+            public internal(set) subscript(some: Int) -> Int {
+                get {
+                    return count
+                }
+                set {
+                    count += 1
+                }
+            }
+        }
+
+        var aInstance: aType = aType()
+
+        print(aInstance.publicStoredProperty) // 0 출력 - 외부에서 getter, setter 모두 사용 가능
+        aInstance.publicStoredProperty = 100
+
+        print(aInstance.publicGetOnlyStoredProperty) // 0 출력 - 외부에서 getter만 사용 가능
+        // aInstance.publicGetOnlyStoredProperty = 100 // 오류 발생 - Cannot assign to property 'publicGetOnlyStoredProperty' setter is inaccessible
+
+        print(aInstance.internalComputedProperty) // 0 출력 - 외부에서 getter, setter 모두 사용 가능
+        aInstance.internalComputedProperty = 100
+
+        print(aInstance.internalGetOnlyComputedProperty) // 1 출력 - 외부에서 getter만 사용 가능
+        //aInstance.internalGetOnlyComputedProperty = 100 // 오류 발생
+
+        print(aInstance[]) // 1 출력 - 외부에서 getter, setter 모두 사용 가능
+        aInstance[] = 100
+
+        print(aInstance[0]) // 2 출력 - 외부에서 getter만, 동일한 모듈 내에서는 setter도 사용 가능
+        aInstance[0] = 100
+        ```
+
+# + 기타
+
+- [ ]  
+- 제네릭(Generics)
+- 서브스크립트(Subscript)
+- ARC(Automatic Reference Counting)
+- 중첩타입(Nested Types)
+- 사용자정의 연산자(Custom Operators)
+- 오류 처리(Error Handling)
+- 불명확 타입(Opaque Types)
+- 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
