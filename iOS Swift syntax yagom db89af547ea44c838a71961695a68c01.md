@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: hyoju son
-Last Edited Time: July 26, 2021 11:09 PM
+Last Edited Time: July 28, 2021 9:39 PM
 Type: 언어
 
 - Contents
@@ -4280,6 +4280,158 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         guardJobWithOptionalChaining(owner: yagom) // 우리집 경비원의 직업은 경비원2입니다 - 출력
         ```
 
+- 옵셔널 체이닝을 통한 메서드 호출
+
+    ```java
+    class Room {
+        var number: Int
+        
+        init(number: Int) {
+            self.number = number
+        }
+    }
+
+    class Building {
+        var name: String
+        var room: Room?
+        
+        init(name: String) {
+            self.name = name
+        }
+    }
+
+    struct Address {
+        var province: String
+        var city: String
+        var street: String
+        
+        var building: Building?
+        var detailAddress: String?
+    } // 이 상태로 struct 인스턴스를 생성하면, optional type을 포함하여 모든 값을 입력하도록 자동 init이 된다. 이 중 optional은 입력하지 않아도 에러가 발생하지 않는다.
+
+    // 옵셔널 체이닝을 통한 메서드 호출
+    struct Address2 {
+        var province: String
+        var city: String
+        var street: String
+        
+        var building: Building?
+        var detailAddress: String?
+        
+        init(province: String, city: String, street: String) {
+            self.province = province
+            self.city = city
+            self.street = street
+        }
+        
+        func fullAddress() -> String? {
+            var restAddress: String? = nil
+            
+            if let buildingInfo: Building = self.building { // self.building가 nil이 아니면, 상수 buildingInfo에 담는다.
+                restAddress = buildingInfo.name // buildingInfo의 name 프로퍼티 값을 변수 restAddress에 할당한다. (근데 메소드 내부 로컬변수라서 fullAddress 함수가 return하면 없어질텐데? -> 아래 코드 확인. fullAddress 내부에 담겨서 return 되어 밖으로 나간다!)
+            } else if let detail: String = self.detailAddress { // self.building가 nil이고, self.detailAddress가 nil이 아니면~
+                restAddress = detail
+            }
+            
+            if let rest: String = restAddress { // restAddress가 nil이 아니면~
+                var fullAddress: String = self.province
+                
+                fullAddress += " " + self.city
+                fullAddress += " " + self.street
+                fullAddress += " " + rest
+                
+    //          print(fullAddress) // 참고 - printAddress() 함수를 대체 가능하다!
+                return fullAddress
+            } else {
+                return nil
+            }
+    		}
+
+    		func printAddress() {
+            if let address: String = self.fullAddress() {
+                print(address)
+            }
+        }
+    }
+
+    class Person {
+        var name: String
+        var address: Address2?
+        
+        init(name: String) { // class는 name 선언 시 기본값을 주거나, init으로 초기화가 필요하다. (struct은 프로퍼티로 자동 init이 됨)
+            self.name = name
+        }
+    }
+
+    let yagom: Person = Person(name: "yagom")
+
+    if let roomNumber: Int = yagom.address?.building?.room?.number { // 옵셔널 체이닝
+        print(roomNumber)
+    } else {
+        print("Cannot find room number")
+    } // Cannot find room number 출력
+    yagom.address?.fullAddress() // nil
+    yagom.address?.fullAddress()?.isEmpty // nil
+
+    yagom.address = Address2(province: "전북", city: "군산시", street: "수송로")
+    yagom.address?.building = Building(name: "스타팰리스")
+    yagom.address?.building?.room = Room(number: 505)
+    yagom.address?.building?.room?.number = 1306 // 옵셔널 체이닝을 통해 할당 가능
+
+    // yagom.address?.fullAddress() // 전북 군산시 수송로 스타팰리스 - 출력 (대체 가능!)
+    yagom.address?.fullAddress()?.isEmpty // 전북 군산시 수송로 스타팰리스 - 출력, false 반환
+
+    yagom.address?.printAddress() // 전북 군산시 수송로 스타팰리스, 전북 군산시 수송로 스타팰리스 - 왜 두번 출력? -> print(address)가 없어도 1번 출력된다.
+    ```
+
+    ```java
+    // guard 구문 활용
+    func fullAddress() -> String? {
+            var restAddress: String? = nil
+            
+            if let buildingInfo: Building = self.building { 
+                restAddress = buildingInfo.name 
+            } else if let detail: String = self.detailAddress { 
+                restAddress = detail
+            }
+            
+    //        if let rest: String = restAddress {
+    //            var fullAddress: String = self.province
+    //
+    //            fullAddress += " " + self.city
+    //            fullAddress += " " + self.street
+    //            fullAddress += " " + rest
+    //
+    //            return fullAddress
+    //        } else {
+    //            return nil
+    //        }
+            
+            guard let rest: String = restAddress else {  // 위 코드를 대체 가능하다.
+                return nil  // guard-else 예외처리
+            }
+            var fullAddress: String = self.province
+
+            fullAddress += " " + self.city
+            fullAddress += " " + self.street
+            fullAddress += " " + rest
+
+            return fullAddress
+        }
+    }
+    ```
+
+- 옵셔널 체이닝을 통한 서브스크립트 호출
+
+    ```java
+    let optionalArray: [Int]? = [1,2,3]
+    optionalArray?[1] // 2
+
+    var optionalDictionary: [String:[Int]]? = [String:[Int]]()
+    optionalDictionary?["numberArray"] = optionalArray
+    optionalDictionary?["numberArray"]?[2] // 3
+    ```
+
 - nil 병합 연산자
     - 중위 연산자입니다. **`??` (**Optional **??** Value)
     - 옵셔널 값이 nil 인 경우, 우측의 값을 반환합니다.
@@ -4670,7 +4822,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     - [x]  age! 느낌표 왜 찍지?
 
-        assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")  *forced unwrapping
+        assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다") ← *forced unwrapping
 
 - guard (빠른 종료- Early Exit)
 
@@ -4680,7 +4832,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     - `guard`를 사용하여 잘못된 값의 전달 시 특정 실행구문을 빠르게 종료합니다.
     - 디버깅 모드 뿐만 아니라 어떤 조건에서도 동작합니다.
-    - `else` 블럭 내부에는 특정 코드블럭을 종료하는 지시어 `control transfer statement` (`return`, `break` 등)가 꼭 있어**야 합니다.**
+    - `else` 블럭 내부에는 특정 코드블럭을 종료하는 지시어 (제어문 전환 명령어, control transfer statement) (`return`, `break`, `continue`, `throw` 등)가 꼭 있어**야 합니다.**
     - 타입 캐스팅, 옵셔널과 자주 사용됩니다.
     - 그 외에도 단순조건 판단 후 빠르게 종료할 때도 용이합니다.
         - if-let / guard-let optional binding 비교
@@ -4699,7 +4851,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
               return
             }
 
-            // 즉, guard 문은 if 문에서 true인 경우에 실행할 statements가 생략된 형태이다. (true인 경우 pass 시키는 것이 목적이므로)
+            // 즉, guard 문은 if 문에서 true인 경우에 실행할 statements가 생략된 형태이다. (true인 경우 pass 시키는 것이 목적이므로, 예외상황만을 처리하고 싶을 때 사용한다.)
             ```
 
             ```swift
@@ -4712,13 +4864,22 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             // unwrapped = 5  // 오류 발생 - if 구문 외부에서는 unwrapped 사용이 불가능 합니다. (if-let 구문에서 암시적으로 선언되었고, if-let 구문 안에서만 사용된다는 뜻)
 
             -
-            guard let unwrapped: Int = someValue else {
+            guard let unwrapped: Int = someValue else { // someValue가 nil이 아니면 상수 unwrapped에 값을 할당한다.
                      return 
             }
-            unwrapped = 3  // gaurd 구문 이후에도 unwrapped 사용 가능합니다. (일반적인 상수 선언과 마찬가지로 본다는 뜻. 즉, 일반적인 let선언 + guard-필수조건)
+            unwrapped = 3  // gaurd 구문 이후에도 unwrapped 사용 가능합니다. ('로컬상수' 선언으로 취급한다는 뜻. 즉, 일반적인 let선언 + guard-필수조건)
+            print("Possible to use \(unwrapped)outside the guard statement")
             // Any variables/constants that were assigned values using an optional binding as part of the condition 
             // are available for the rest of the code block that the guard statement appears in.
             ```
+
+        ```java
+        guard Bool type 조건 else {
+        		// 예외상황 실행문
+            // 제어문 전환 명령어 - 자신보다 상위의 코드블록을 종료하는 코드
+        }
+        // ...
+        ```
 
         ```swift
         func functionWithGuard(age: Int?) {
@@ -5601,7 +5762,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 # 22. Higher-order Function (고차 함수)
 
 - 특징
-    - 고차 함수 : 다른 함수를 전달인자로 받거나, 실행의 결과를 함수로 반환하는 함수
+    - 고차 함수 (Higher-order Function) : 다른 함수를 전달인자로 받거나, 실행의 결과를 함수로 반환하는 함수
     - Swift의 함수/closure는 일급 시민 (일급 객체)이기 때문에 함수의 전달인자로 전달할 수 있으며, 함수의 결과값으로 반환할 수 있다.
     - Swift 표준라이브러리의 유용한 고차함수 - map, filter, reduce (Array, Set, Dictionary 등 컨테이너 타입에 구현되어 있음)
 - [ ]  flatmap
@@ -5609,7 +5770,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - Array, Set, Dictionary, Optional 등에서 사용 가능하다. (엄밀히는 Sequence, Collection 프로토콜을 따르는 type 및 Optional에서 사용 가능하다.)
     - 컨테이너 내부의 기존 데이터를 변형(transform)하여 새로운 컨테이너를 생성 및 반환한다.
     - 다중 스레드 환경일 때 대상 컨테이너의 값이 스레드에서 변경되는 시점에 다른 스레드에서도 동시에 값 변경이 되려고 할 때, 예상 외의 결과가 발생하는 부작용을 방지한다. ???
-        - [ ]  
+        - [ ]  ?
+    - for 구문보다 성능이 좋다. (코드가 짧다. 또한 빈 배열을 생성하고, append 연산을 실행하는 등 작업이 불필요하다.)
 
         ```swift
         container1.map(f(x))
@@ -5623,7 +5785,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         let numbers: [Int] = [0, 1, 2, 3, 4]
 
         // 변형 결과를 받을 변수
-        var doubledNumbers: [Int]  // 변형 - 각 element를 2배 한 새로운 Array
+        var doubledNumbers: [Int]  // 변형 - 각 element를 2배한 새로운 Array
         var strings: [String]      // 변형 - 각 element를 Int에서 Sting type으로 변환한 새로운 Array
 
         // 방법1 - for 구문 사용
@@ -5650,7 +5812,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
         // 방법3 - map 메서드 + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
         doubledNumbers = numbers.map({ $0 * 2 })
-        strings = numbers.map({ "\($0)" }) // 이것도 가능
+        strings = numbers.map({ "\($0)" }) // 이것도? 가능!
 
         doubledNumbers = numbers.map { $0 * 2 }  // 후행 클로저이므로 함수 외부에 구현 가능
         strings = numbers.map { "\($0)" } 
@@ -5659,29 +5821,42 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         print(strings) // ["0", "1", "2", "3", "4"]
         ```
 
-        - [x]  strings = numbers.map { "\($0)" } // 이것도 되나? (내가 작성)
-        print(strings)
-            - 가능
-        - [ ]  Dictionary는?
+    - 코드 재사용성 개선
+
+        ```swift
+        let evenNumbers: [Int] = [0,2,4,6,8]
+        let oddNumbers: [Int] = [1,3,5,7,9]
+
+        let multiplyTwo: (Int) -> Int = { $0 * 2 }
+
+        let doubledEvenNumbers = evenNumbers.map(multiplyTwo) // 기능을 반복한다면, 하나의 클로저를 상수에 할당하여 여러 map 메서드에 적용하는 것이 좋다.
+        print(doubledEvenNumbers) // [0, 4, 8, 12, 16]
+
+        let doubledOddNumbers = oddNumbers.map(multiplyTwo) 
+        print(doubledOddNumbers) // [2, 6, 10, 14, 18]
+        ```
+
+        - [x]  Dictionary는? (교재 p.297 참고)
 
             ```swift
-            let dictionary = ["key1":"value1", "key2":"value2"]
-
-                    let keys = dictionary.map { $0.0 }
-                    let values = dictionary.map { $0.1 }
-
-                    print(keys) //["key1", "key2"]
-                    print(values) //["value1", "value2"]
-
-                    let keys2 = dictionary.map { $0.0 + "a" }
-                    let values2 = dictionary.map { $0.1 + "b" }
-
-                    print(keys2) //["key1a", "key2a"]
-                    print(values2) //["value1b", "value2b"]
+            let dictionary: [String:String] = ["key1":"value1", "key2":"value2"]
+            		
+            		let keys = dictionary.map { $0.0 }
+            		let values = dictionary.map { $0.1 }
+            		
+            		print(keys) //["key1", "key2"] - 변화 없음
+            		print(values) //["value1", "value2"]
+            		
+            		let keys2 = dictionary.map { $0.0 + "a" }
+            		let values2 = dictionary.map { $0.1 + "b" }
+            		
+            		print(keys2) //["key1a", "key2a"]
+            		print(values2) //["value1b", "value2b"]
             ```
 
 - filter
     - 컨테이너 내부의 값을 filtering (ture 해당 값만 추출)하여 새로운 컨테이너로 추출한다.
+    - filter 함수의 parameter로 전달되는 함수의 return type은 Bool이다. 해당 콘텐츠의 값을 갖고 새로운 컨테이너에 포함될 항목이라고 판단되면 true를 반환하면 된다.
 
         ```swift
         // 기존 데이터
@@ -5705,14 +5880,114 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         print(evenNumbers) // [0, 2, 4]
 
         // 방법3 - filter + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
-        let evenNumbers2: [Int] = numbers.filter {
-            $0 % 2 == 0   // {} 내용이 true인 경우만 변수 evenNumbers2 에 반환
-        }
+        let evenNumbers2: [Int] = numbers.filter { $0 % 2 == 0 } // {} 내용이 true인 경우만 변수 evenNumbers2 에 반환
         print(evenNumbers2) // [0, 2, 4]
+
+        // 참고 - map 및 filter 연계 사용 가능
+        let together: [Int] = numbers.map{ $0 + 3 }.filter{ $0 % 2 == 1 } // 3,4,5,6,7 중에서 홀수
+        print(together) // [3, 5, 7]
         ```
 
 - reduce
-    - 컨테이너 내부의 콘텐츠를 하나로 통합한다.
+    - 컨테이너 내부의 콘텐츠를 하나로 통합 (Combine)한다.
+        - 형태-1. reduce(_:_:) 클로저가 각 요소를 전달받아 연산한 이후 값을 다음 클로저 실행을 위해 반환하면서 컨테이너를 순환한다.
+
+            ```swift
+            public func reduce<Result>(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
+
+            // 1. 첫번째 parameter initialResult를 통해 초기값을 지정한다.
+            // 2. 두번째 parameter nextPartialResult를 통해 클로저를 전달받는다. 
+            //    이 클로저의 첫번째 parameter Result는 1의 초기값 또는 '이전 클로저의 결과값'이다. 모든 순회가 끝나면, reduce의 최종 결과값이 된다.
+            //    이 클로저의 두번째 parameter Element는 reduce 메서드가 순환하는 컨테이너의 element이다.
+            ```
+
+            ```swift
+            let numbers: [Int] = [1,2,3] // 이 값은 클로저의 두번째 parameter (next)에 차례로 전달됨
+
+            // +
+            var sum: Int = numbers.reduce(0, { (result: Int, next: Int) -> Int in
+                print("\(result) + \(next)") // 0 + 1, 1 + 2, 3 + 3 출력 ('이전 클로저의 결과값'을 첫번째 parameter result로 전달받음)
+                return result + next
+            })
+            print(sum) // 마지막 결과값을 반환 6
+
+            // -
+            let subtract1: Int = numbers.reduce(0, {
+                print("\($0) - \($1)") // 0 - 1, -1 - 2, -3 - 3
+                return $0 - $1
+            })
+            print(subtract1) // -6
+
+            // String Array를 reduce 메서드를 사용하여 연결시킨다.
+            let names: [String] = ["kevin","sam","mike"]
+
+            let reducedNames1: String = names.reduce("Yagom's Friend : ") {
+                return $0 + ", " + $1 }
+            print(reducedNames1) // Yagom's Friend : , kevin, sam, mike
+            ```
+
+        - 형태-2. reduce(into:_:) 컨테이너를 순환하며 클로저가 실행되지만 클로저가 따로 결과값을 반환하지 않는다.
+            - [ ]  첫번째 parameter Result를 inout parameter로 사용???한다. - inout이 argument label이 아닌가?
+
+            ```swift
+            public func reduce<Result>(into initialResult: Result, _ updateAccumulatingResult: (inout Result, Element) throws -> ()) rethrows -> Result
+
+            // 1. 첫번째 parameter initialResult를 통해 초기값을 지정한다.
+            // 2. 두번째 parameter updateAccumulatingResult를 통해 클로저를 전달받는다. 
+            //    이 클로저의 첫번째 parameter Result를 inout parameter로 사용???한다. *inout parameter를 사용하여 초기값에 직접 연산을 실행한다.
+            //    Result는 1의 초기값 또는 '이전에 실행된 클로저로 인해 변경된 결과값'이다. 모든 순회가 끝나면, reduce의 최종 결과값이 된다.
+            //    이 클로저의 두번째 parameter Element는 reduce 메서드가 순환하는 컨테이너의 element이다.
+            // 이 형태의 reduce는 map과 유사하게 사용 가능하다.
+            ```
+
+            ```swift
+            let numbers: [Int] = [1,2,3]
+
+            // +
+            var sum2: Int = numbers.reduce(into: 0, { (result: inout Int, next: Int) in
+                print("\(result) + \(next)") // 0 + 1, 1 + 2, 3 + 3 (이전 클로저 결과값을 반환하지 않고, 내부에서 직접 이전 값을 변경함)
+                result += next // (형태-1) return result + next 과 다름
+            })
+            print(sum) // 6
+
+            // -
+            var subtract2: Int = numbers.reduce(into: 3, {
+                print("\($0) - \($1)") // 3 - 1, 2 - 2, 0 - 3
+                $0 -= $1
+            })
+            print(subtract2) // -3
+
+            // 다른 컨테이너에 값을 변경하여 넣어줄 수 있다. map 또는 filter와 유사한 형태로 사용 가능하다.
+            // numbers = [1,2,3] 중에서 홀수는 필터링하고, 짝수는 2배로 변경하여 배열에 직접 연산한다.
+            var doubledNumbers: [Int] = numbers.reduce(into: [1,2]) { (result: inout [Int], next: Int) in
+                print("result: \(result), next: \(next)") // 1. result: [1,2], next: 1 / 3. result: [1, 2], next: 2 / 6. result: [1, 2, 4], next: 3
+                
+                guard next.isMultiple(of: 2) else { // Returns true if this value is a multiple of the given value.
+                    return // 2. 여기서 next: 1은 return 된다. / 7. next: 3은 return 된다.
+                }
+                
+                print("\(result) append \(next) * 2") // 4. result: [1, 2], next: 2 가 전달되어 [1, 2] append 2 * 2 출력
+                
+                result.append(next * 2) // 5. append 실행 이후 result = [1, 2, 4]
+            }
+            // 차례로는
+            // result: [1, 2], next: 1
+            // result: [1, 2], next: 2
+            // [1, 2] append 2 * 2
+            // result: [1, 2, 4], next: 3
+            print(doubledNumbers) // [1, 2, 4]
+
+            // filter 및 map을 사용 (위와 동일한 결과)
+            var doubledNumbers2: [Int] = [1,2] + numbers.filter{ $0.isMultiple(of: 2) }.map{ $0 * 2 }
+            print(doubledNumbers2) // [1, 2, 4]
+
+            // 참고 - map, filter, reduce 연계 사용
+            let numbers2: [Int] = [1,2,3,4,5,6,7]
+
+            var result: Int = numbers2.filter{ $0.isMultiple(of: 2) }.map{$0 * 3}.reduce(0, {$0 + $1})
+            // 짝수인 2,4,6만 3배하여 총합을 구한다. 6+12+18 = 36
+            print(result) // 36
+            ```
 
         ```swift
         // 기존 데이터 
@@ -5737,16 +6012,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         //10 + 15 // 최종 값을 return 한다
         print(sum)  // 25
 
-        // 초기값이 0 이고 someNumbers 내부의 모든 값을 뺍니다.
-        var subtract: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in
-         // print("\(first) - \(second)") 
-            return left - right
-        })
-        //0 - 2
-        //-2 - 8
-        //-10 - 15
-        print(subtract) // -25
-
         // 방법3 - reduce + closure 표현방법 (매개변수, 반환 타입, return 생략, 후행 클로저)
         // 초깃값이 3이고 someNumbers 내부의 모든 값을 더합니다.
         let sumFromThree = someNumbers.reduce(3) { $0 + $1 }
@@ -5755,7 +6020,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         // 방법4
         let sumFast = someNumbers.reduce(0,+)
         // 연산자는 중위 연산자로 왼쪽 값이 $0, 오른쪽 값이 $1임을 추론 가능하므로 생략 가능하다.
-
         ```
 
         - [x]  let sum: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
@@ -5763,6 +6027,51 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             - //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
             //2 + 8   // 해당 결과값이 다음 line의 left 값으로 들어간다!
             //10 + 15 // 최종 값을 return 한다
+- Quiz. 구조체 Friend
+
+    ```swift
+    struct Friend {
+        let name: String
+        let gender: Gender
+        let location: String
+        var age: UInt
+    }
+
+    enum Gender {
+        case male, female, unknown
+    }
+
+    var friends: [Friend] = [Friend]() // 구조체 Friend type의 Array를 선언
+
+    friends.append(Friend(name: "kevin", gender: .female, location: "서울", age: 26))
+    friends.append(Friend(name: "sam", gender: .male, location: "시드니", age: 20))
+    friends.append(Friend(name: "mike", gender: .male, location: "스톡홀름", age: 30))
+
+    // Quiz. 구현 - 작년 정보인 friends array를 활용하여, 현재 기준 "서울 외에 거주하는 25세 이상의 친구"를 찾는다. (String 형태로 꺼내어 출력한다.)
+    ```
+
+    - Answer
+        - Answer-1
+
+            ```swift
+            var filteredFriends: [Friend] = friends.filter{ $0.age >= 24 }.filter{ $0.location != "서울" } // *** $0에 Array의 element가 차례로 전달된다.
+            print(filteredFriends) // [__lldb_expr_78.Friend(name: "mike", gender: __lldb_expr_78.Gender.male, location: "스톡홀름", age: 30)]
+            ```
+
+        - Answer-2
+
+            ```swift
+            // map - element를 하나씩 꺼내어 새로운 Array에 넣는다. (age만 +1 한다.)
+            var result: [Friend] = friends.map{ Friend(name: $0.name, gender: $0.gender, location: $0.location, age: $0.age + 1) }
+
+            result = result.filter{ $0.location != "서울" && $0.age >= 25 } // filter 내 조건에 && 사용 가능
+
+            // reduce - String type으로 꺼내어 출력한다.
+            let string1: String = result.reduce("서울 외에 거주하는 25세 이상의 친구 : ") {
+                $0 + "\($1.name) \($1.gender) \($1.location) \($1.age)세"
+            }
+            print(string1) // 서울 외에 거주하는 25세 이상의 친구 : mike male 스톡홀름 31세
+            ```
 
 # 23. Access Control (접근 제어)
 
@@ -6003,6 +6312,23 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         print(aInstance[0]) // 2 출력 - 외부에서 getter만, 동일한 모듈 내에서는 setter도 사용 가능
         aInstance[0] = 100
         ```
+
+# 24. Monad (모나드)
+
+- 순서가 있는 연산을 처리할 때 자주 활용하는 디자인 패턴 또는 자료구조이다. (모나딕 type, 모나드 함수) 특정 기능이 아니다.
+- 수학의 /범주론/ 개념을 차용했다.
+- 모나드 조건
+    1. type을 인자로 받는 type (특정 type의 값을 포장한다.) ← type을 인자로 받는 : 제네릭 기능으로 구현
+    2. 특정 type의 값을 포장한 것을 반환하는 함수가 존재
+    3. 포장된 값을 변환하여 같은 형태로 포장하는 함수가 존재
+- 모나드 개념
+    - 컨텍스트 : 콘텐츠를 담고 있는 그릇 (컨테이너 개념)
+- 모나드 예
+    - 옵셔널 : 값이 있을지 없을지 모르는 상태를 포장하는 것이다. nil 가능성이 있는 상태를 포장하는 것이다.
+        - 옵셔널은 Enum으로 구현되어 있다. 옵셔널에 값이 있으면 .some(value) case이고, 값이 없으면 .none case이다.
+        → optional<2> : 컨텍스트 안에 2라는 콘텐츠가 들어있는 형태이다. "컨텍스트는 2라는 값을 가지고 있다."
+            값이 없는 optional : "컨텍스트는 존재하지만, 내부에 값이 없다."
+        - 옵셔널은 Wrapped type을 인자로 받는 제네릭 type이다.
 
 # + 기타
 
