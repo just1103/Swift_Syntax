@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: hyoju son
-Last Edited Time: July 28, 2021 9:39 PM
+Last Edited Time: July 29, 2021 9:06 PM
 Type: 언어
 
 - Contents
@@ -4282,7 +4282,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 - 옵셔널 체이닝을 통한 메서드 호출
 
-    ```java
+    ```swift
     class Room {
         var number: Int
         
@@ -4384,7 +4384,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     yagom.address?.printAddress() // 전북 군산시 수송로 스타팰리스, 전북 군산시 수송로 스타팰리스 - 왜 두번 출력? -> print(address)가 없어도 1번 출력된다.
     ```
 
-    ```java
+    ```swift
     // guard 구문 활용
     func fullAddress() -> String? {
             var restAddress: String? = nil
@@ -4423,7 +4423,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 - 옵셔널 체이닝을 통한 서브스크립트 호출
 
-    ```java
+    ```swift
     let optionalArray: [Int]? = [1,2,3]
     optionalArray?[1] // 2
 
@@ -4873,7 +4873,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             // are available for the rest of the code block that the guard statement appears in.
             ```
 
-        ```java
+        ```swift
         guard Bool type 조건 else {
         		// 예외상황 실행문
             // 제어문 전환 명령어 - 자신보다 상위의 코드블록을 종료하는 코드
@@ -5854,6 +5854,24 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             		print(values2) //["value1b", "value2b"]
             ```
 
+- x.map(함수)
+    - x.map() 내부에 클로저 뿐만 아니라 함수도 들어갈 수 있다. `x.map(클로저)` `x.map(함수)`
+    - 함수의 argument로 x (array, dictionary 등)의 element가 하나씩 전달된다.
+    - map은 함수를 인자로 받는다.
+
+    ```swift
+    func addThree(_num: Int) -> Int {
+    		return num + 3
+    }
+
+    // 일반적인 연산
+    addThree(2) // 5
+    addThree(Optional(2)) // int type과 int? type은 다르므로 오류 발생
+
+    // 옵셔널 연산이 가능해짐
+    optional(2).map(addThree) // Optional(5) - map 메서드를 통해 옵셔널 연산이 가능해진 addThree 함수
+    ```
+
 - filter
     - 컨테이너 내부의 값을 filtering (ture 해당 값만 추출)하여 새로운 컨테이너로 추출한다.
     - filter 함수의 parameter로 전달되는 함수의 return type은 Bool이다. 해당 콘텐츠의 값을 갖고 새로운 컨테이너에 포함될 항목이라고 판단되면 true를 반환하면 된다.
@@ -6313,31 +6331,291 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         aInstance[0] = 100
         ```
 
-# 24. Monad (모나드)
+# 24. Monad
 
-- 순서가 있는 연산을 처리할 때 자주 활용하는 디자인 패턴 또는 자료구조이다. (모나딕 type, 모나드 함수) 특정 기능이 아니다.
+- Monad (모나드) : 순서가 있는 연산을 처리할 때 자주 활용하는 디자인 패턴 또는 자료구조이다. (모나딕 type, 모나드 함수) 특정 기능이 아니다.
 - 수학의 /범주론/ 개념을 차용했다.
 - 모나드 조건
-    1. type을 인자로 받는 type (특정 type의 값을 포장한다.) ← type을 인자로 받는 : 제네릭 기능으로 구현
-    2. 특정 type의 값을 포장한 것을 반환하는 함수가 존재
-    3. 포장된 값을 변환하여 같은 형태로 포장하는 함수가 존재
+    1. type을 인자로 받는 type 이다. (특정 type의 값을 포장한다.) ← type을 인자로 받는 : 제네릭 기능으로 구현
+    2. 특정 type의 값을 포장한 것을 반환하는 함수가 존재한다.
+    3. 포장된 값을 변환하여 동일한 형태로 포장하는 함수가 존재한다.
 - 모나드 개념
-    - 컨텍스트 : 콘텐츠를 담고 있는 그릇 (컨테이너 개념)
+    - 컨텍스트 (context) : 콘텐츠를 담고 있는 그릇이다. 또한 다른 type의 값들을 담을 수 있는 컨테이너 (Struct, Array 등???)는 컨텍스트의 역할을 수행 가능하다.
+        - ex. 배추를 랩으로 포장해서, 락앤락으로 포장해서, 냉장고에 포장했다. → 콘텐츠=배추 / 3중 컨테이너 / 가장 바깥의 컨텍스트는 냉장고
+    - 함수객체 (Functor) : map 함수를 적용 가능한 컨테이너 type이다. 즉, Array, Dictionary, Set 등 많은 Collection type은 함수객체이다.
+        - 닫힌 함수객체 (Endofunctor) : 자신의 컨텍스트와 동일한 형태로 포장 (맵핑)할 수 있는 함수객체이다.
 - 모나드 예
-    - 옵셔널 : 값이 있을지 없을지 모르는 상태를 포장하는 것이다. nil 가능성이 있는 상태를 포장하는 것이다.
-        - 옵셔널은 Enum으로 구현되어 있다. 옵셔널에 값이 있으면 .some(value) case이고, 값이 없으면 .none case이다.
-        → optional<2> : 컨텍스트 안에 2라는 콘텐츠가 들어있는 형태이다. "컨텍스트는 2라는 값을 가지고 있다."
+    - 옵셔널
+        - 조건-1. 옵셔널은 Wrapped type을 인자로 받는 제네릭 type이다. (값이 있을지 없을지 모르는 상태를 포장하는 것이다. nil 가능성이 있는 상태를 포장하는 것이다.)
+        - 조건-2. Optional<Int>.init(2) 처럼 다른 타입 (Int)의 값을 갖는 상태의 컨텍스트를 생성 가능하다. ???
+        옵셔널은 Enum으로 구현되어 있다. (연관값을 통해 인스턴스 내부에 연관값을 갖는다.) 옵셔널에 값이 있으면 .some(value) case이고, 값이 없으면 .none case이다.
+        → optional(2) : 컨텍스트 안에 2라는 콘텐츠가 들어있는 형태이다. "컨텍스트는 2라는 값을 가지고 있다."
             값이 없는 optional : "컨텍스트는 존재하지만, 내부에 값이 없다."
-        - 옵셔널은 Wrapped type을 인자로 받는 제네릭 type이다.
+        - 조건-3. 옵셔널은 map 함수를 적용가능하다. 즉, 옵셔널은 함수객체이다.
+        map 함수는 컨테이너의 값을 변형시킬 수 있는 고차함수이다. `x.map(클로저)` `x.map(함수)` 형태이다.
+        (컨테이너가 담고 있는 값들을 *변형하고, 새로운 컨테이너를 생성/반환한다. - *(map이 함수를 parameter로 받는다.) 컨테이너의 값을 parameter로 받은 함수에 적용하여 변형함)
+        옵셔널은 컨테이너와 값을 갖기 때문에 map 함수를 사용 가능하다.
+        *map 함수를 사용하면 옵셔널을 일반 값처럼 연산 가능하다.
+
+            ```swift
+            func addThree(_num: Int) -> Int {
+            		return num + 3
+            }
+
+            // 일반적인 연산
+            addThree(2) // 5
+            addThree(Optional(2)) // int type과 int? type은 다르므로 오류 발생
+
+            // 옵셔널 연산이 가능해짐
+            optional(2).map(addThree) // Optional(5) 출력 - *map 함수를 통해 옵셔널 연산이 가능해진 addThree 함수 (quick view에는 5라고 뜸)
+
+            var check: Any? = Optional(2).map(addThree) // 확인용
+            print(check) // Optional(5)
+            ```
+
+            ```swift
+            // map 함수 및 클로저를 사용한 옵셔널 연산
+            var value: Int? = 2  // Optional(2)
+            value.map{ $0 + 3 } // 5
+            check = value.map{ $0 + 3 }
+            print(check) // Optional(5)
+
+            value = nil
+            value.map{ $0 + 3 } // nil
+            check = value.map{ $0 + 3 }
+            print(check) // nil (== Optional<Int>.none
+            ```
+
+            - 함수객체와 map 함수의 동작 모식도
+
+                `map(a→b)` ⇒ `fa()` ⇒ `fb()`
+
+                1. map이 함수를 인자로 받는다. (ex. addThree(_:)) 
+                2. 함수객체에 map이 전달받은 함수를 적용한다. (ex. Optional(2))
+                3. 새로운 함수객체를 반환한다. (ex. Optional(5))
+            - 옵셔널의 map 함수 구현
+
+                ```swift
+                extension Optional {
+                    func map<U>(f: (Wrapped) -> U) -> U? {
+                        switch self {  // 옵셔널의 map 함수를 호출하면, 옵셔널 스스로 값이 있는지 switch문을 통해 판단한다.
+                        case .some(let x): return f(x)  // 옵셔널에 값이 있으면, 전달받은 함수에 자신의 값을 적용한 결과값을 다시 컨텍스트에 넣어 반환한다.
+                        case .none: return .none  // 옵셔널에 값이 없으면, 함수를 실행하지 않고 빈 컨텍스트를 반환한다.
+                        }
+                    }
+                }
+                ```
+
+                - Optional(2).map(addThree)의 동작 모식도
+                    1. 컨텍스트로부터 값을 추출한다.  Optional(2) → 2
+                    2. 추출한 값에 전달받은 함수를 적용한다. addThree(2) = 5
+                    3. 결과값을 다시 컨텍스트에 담아 반환한다. Optional(5)
+                - 값이 없는 옵셔널 Optional.none.map(addThree)의 동작 모식도
+                    1. 컨텍스트로부터 값을 추출하려는데, 값이 없다. Optional(nil)
+                    2. 함수를 적용하지 않는다.
+                    3. 그대로 빈 컨텍스트를 반환한다. nil
+
+- 모나드
+    - 모나드는 닫힌 함수객체이다.
+    - 따라서 map 함수를 적용 가능하다. 이 맵핑의 결과가 함수객체와 동일한 컨텍스트를 반환하는 함수객체를 모나드라고 한다.
+    - 이러한 맵핑을 수행하도록 flatMap 메서드를 활용한다.
+        - flatMap 활용
+            - map과 같이 함수를 매개변수로 받는다. 옵셔널은 모나드이므로 flatMap을 사용 가능하다.
+            - flatMap은 컨텍스트 내부의 컨텍스트를 모두 같은 위상으로 평평하게 펴준다. (포장된 값 내부의 포장된 값을 풀어서 같은 위상으로 펴준다.)
+            - 옵셔널과 관련하여 여러 컨테이너 값을 연쇄 처리할 때, 바인딩을 통해 Chain 형식으로 사용 가능하므로 flatMap이 map보다 유용할 수 있다.
+
+                ```swift
+                func doubledEven(_ num: Int) -> Int? { // return nil 가능성이 있으므로 return type이 Int? 이다.
+                    if num.isMultiple(of: 2) {
+                        return num * 2
+                    }
+                    return nil
+                }
+
+                Optional(3).map(doubledEven) // nil
+                Optional(2).map(doubledEven) // Optional(Optional(4)) - 컨텍스트로부터 추출한 값 2를 함수에 전달한다. 함수의 결과값인 Optional(4)를 본래 컨텍스트 Optional에 담아서 Optional(Optional(4))이 된다.
+
+                Optional(3).flatMap(doubledEven) // nil
+                Optional(2).flatMap(doubledEven) // Optional(4) - *flatMap 및 map의 차이이다. flatMap은 컨텍스트 내부의 컨텍스트를 모두 같은 위상으로 평평하게 펴준다.
+                ```
+
+                - Optional(3).flatMap(doubledEven)의 동작
+                    1. 컨텍스트로부터 값을 추출한다. Optional(3) → 3
+                    2. 추출한 값을 함수에 전달한다. (추출한 값에 전달받은 함수를 적용한다.) doubledEven(3)
+                    3. 결과값이 nil이므로 빈 컨텍스트를 반환한다. Optional(nil)
+                - 값이 없는 옵셔널 Optional.none.flatMap(doubledEven의 동작
+                    1. 빈 컨텍스트이다. (컨텍스트로부터 값을 추출하려는데, 값이 없다.) Optional(nil)
+                    2. flatMap은 아무 일도 하지 않는다. (함수를 적용하지 않는다.)
+                    3. 그대로 빈 컨텍스트를 반환한다.
+            - flatMap을 Chain 형식으로 구현
+            - flatMap은 항상 동일한 컨텍스트를 유지할 수 있으므로 연쇄 처리가 가능하다.
+                - Int ↔ String
+
+                    ```swift
+                    func stringToInt(_ string: String) -> Int? { // String->Int : type 전환 실패 가능성이 있으므로 return type이 Optional이다.
+                        return Int(string)
+                    }
+
+                    func intToString(_ int: Int) -> String? { // Int->String : 실패 가능성이 없지만 예시를 들고자 Optional로 지정했다.
+                        return "\(int)"
+                    }
+
+                    var optionalString: String? = "2"
+                    print(optionalString) // Optional("2")
+
+                    // flatMap
+                    let flatResult = optionalString.flatMap(stringToInt).flatMap(intToString).flatMap(stringToInt) // Chain 형식
+                    print(flatResult) // Optional(2) - Optional로 포장된 값("2")를 추출하여, 함수로 처리하고("2"->2->"2"->2), 결과값을 본래 컨텍스트인 Optional로 포장한다. (2->Optional(2))
+
+                    // map
+                    let mappedResult = optionalString.map(stringToInt) // Chain 형태로 구현 불가
+                    print(mappedResult) // Optional(Optional(2))
+                    // let mappedResult2 = optionalString.map(stringToInt)?.map(intToString()?.map(stringToInt) // 컴파일 에러 발생 - Circular reference
+                    ```
+
+                - Chaining 도중에 연산에 실패하거나 값이 없어지는 경우 (.none OR nil) 별도의 예외처리 없이 빈 컨테이너를 반환한다.
+                - 옵셔널 체이닝과 동일하게 동작한다. 옵셔널이 모나드이기 때문이다.
+
+                    ```swift
+                    func intToNil(param: Int) -> String? {
+                        return nil
+                    }
+
+                    optionalString = "2"
+
+                    var result1 = optionalString.flatMap(stringToInt).flatMap(intToNil)
+                    var result2 = optionalString.flatMap(stringToInt).flatMap(intToNil).flatMap(stringToInt)
+
+                    print(result1) // nil
+                    print(result2) // nil
+                    ```
+
+        - flatMap 정의
+
+            ```swift
+            func map<U>(_ transform: (Wrapped) throws -> U) rethrows -> U? 
+
+            func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
+            ```
+
+            ```swift
+            func map<U>(_ transform: (Wrapped) throws -> U) rethrows -> U? 
+            // map에서 전달받는 함수 transform은 포장된 값을 매개변수로 갖고 U를 반환한다. 최종 type은 U?이다.
+
+            		// 예시
+            		func stringToInt(_ string: String) -> Int? {  // 1) U == Int? 이다. 2) rethrows -> U? 이므로 최종 return type은 Int?? 이다. (U == Int? 이므로 U? == Int??)
+            		    return Int(string)
+            		}
+            		
+
+            func flatMap<U>(_ transform: (Wrapped) throws -> U?) rethrows -> U?
+            // map에서 전달받는 함수 transform은 포장된 값을 매개변수로 갖고, U?를 반환한다. 최종 type은 U?이다.
+
+            		// 예시
+            		func stringToInt(_ string: String) -> Int? {  // 1) U? == Int? 이다. 2) 최종 return type은 Int? 이다. (U? == Int? 이므로 U? == Int?)
+            		    return Int(string)
+            		}
+            ```
+
+    - Sequence type이 Optional type의 Element를 포장한 경우, flatMap을 compactMap으로 사용한다.
+        - [ ]  Sequence?
+            - Sequence Protocol : A type that provides sequential, iterated access to its elements. 순차적 나열이 가능한 type이라는 의미의 프로토콜이다.
+
+                ```swift
+                protocol Sequence {
+                    associatedtype Iterator : IteratorProtocol where Iterator.Element == Element
+                    func makeIterator() -> Iterator
+                }
+                // Sequence 프로토콜은 2개의 요소로 구성됩니다. 
+                // 1) 우선 Iterator라는 associated type이 있습니다. 이 associated type은 IteratorProtocol을 준수(conform)하고 있습니다. 
+                // 2) 다른 하나는 Iterator를 만드는 makeIterator라는 함수이며, 앞서 선언한 Iterator 타입을 반환합니다.
+
+                struct MyRange: SequenceType { 
+                    let start: Int
+                    let end: Int
+                    
+                    // 1
+                    typealias Generator = MyRangeGenerator
+                    
+                    init(start: Int, end: Int) {
+                        self.start = start
+                        self.end = end
+                    }
+                    
+                    // 2
+                    func generate() -> MyRange.Generator { // SequenceType은 이 GeneratorType 프로토콜을 따르는 인스턴스를 반환하는 것이 목표이다.
+                        return MyRangeGenerator(start: self.start, end: self.end)
+                    }
+                }
+                ```
+
+            - Sequence->Collection->Bidirectional Collection->Random Access Collection->Range Replaceable Collection
+            - Sequence는 요소들의 목록이다. 한번만 interate 가능하다. (for-in loop, map 함수, filter 함수를 사용하여 iterate 가능하다.)
+            - Array 타입을 사용할 때 Sequence가 대부분의 기능을 제공한다. 
+            - Sequence를 이용하여 Linked List를 구현 가능하다.
+            [https://academy.realm.io/kr/posts/try-swift-soroush-khanlou-sequence-collection/](https://academy.realm.io/kr/posts/try-swift-soroush-khanlou-sequence-collection/)
+        - 이중 컨테이너 (compactMap)
+        - compactMap을 통해 클로저를 실행하면, 알아서 내부 컨테이너 (Array로 포장된 값 내부의 Optional로 포장된 값)의 값을 추출한다.
+            - [ ]  nil은 왜 자동삭제?
+
+            ```swift
+            let optionals: [Int?] = [1,2,nil,5]  // optionals는 이중 컨테이터 형태이다. (Array 내부에 Optional이 들어있고, 그 안에 값이 있다.)
+
+            let mapped: [Int?] = optionals.map{ $0 }
+            let compactedMapped1 = optionals.compactMap{ $0 } // [Int?]를 처리했는데 최종값이 [Int]가 된다.
+            let compactedMapped2: [Int] = optionals.compactMap{ $0 } // [Int?]를 처리했는데 최종값이 [Int]가 된다.
+            let compactedMapped3: [Int?] = optionals.compactMap{ $0 } // 참고 - 기존 컨테이너와 동일한 type으로 선언한 경우
+
+            print(mapped) // [Optional(1), Optional(2), nil, Optional(5)] - Array로 포장된 값(Optional(1),Optional(2)...)을 추출하여 클로저에 전달 -> 결과값(Optional(1),Optional(2)...)을 하나씩 본래 컨텍스트인 Array로 포장한다. 
+            print(compactedMapped1) // [1,2,5] - *Array로 포장된 Optional 내부의 값(1,2...)을 추출하여 -> 결과값(1,2...)을 하나씩 본래 컨텍스트인 Array로만 포장한다. (nil은 자동 삭제됐다.)
+            print(compactedMapped2) // [1,2,5] 
+            print(compactedMapped3) // [Optional(1), Optional(2), nil, Optional(5)] 
+            ```
+
+        - 삼중 컨테이너 (flatMap)
+
+            ```swift
+            let multipleContainer = [[1,2,Optional.none], [3,Optional.none], [4,5,Optional.none]]
+
+            // 삼중
+            let mappedMC = multipleContainer.map{ $0.map{ $0 } }
+            let flatmappedMC = multipleContainer.flatMap{ $0.flatMap{ $0 } }
+            // Array로 포장된 Optional 내부의 값(1,2...)을 추출하여 -> 결과값(1,2...)을 하나씩 본래 컨텍스트인 Array로만 포장한다.
+
+            print(mappedMC) // [[Optional(1), Optional(2), nil], [Optional(3), nil], [Optional(4), Optional(5), nil]] - 처리 전과 동일하다.
+            print(flatmappedMC) // [1,2,3,4,5] - nil은 자동 삭제
+
+            // 중간과정 참고 - 이중
+            let preMappedMC = multipleContainer.map{ $0 }
+            let preFlatMappedMC = multipleContainer.flatMap{ $0 }
+
+            print(preMappedMC) // [[Optional(1), Optional(2), nil], [Optional(3), nil], [Optional(4), Optional(5), nil]] - 처리 전과 동일하다.
+            print(preFlatMappedMC) // [Optional(1), Optional(2), nil, Optional(3), nil, Optional(4), Optional(5), nil] - ***하나의 Array에 담겨있다.
+            // Array로 포장된 Array 내부의 값(1,2,nil,3,nil,4,5,nil)을 추출하여 -> 결과값(1,2,nil,3,nil,4,5,nil)을 하나씩 본래 컨텍스트인 Array로만 포장한다.
+            ```
+
+# 25. Subscript
+
+- 서브스크립트 (Subscript)
+    - Class, Struct, Enum에는 Collection, List, Sequence 등 타입의 element에 접근하는 단축 문법인 서브스크립트를 구현 가능하다.
+    - 서브스크립트는 별도의 setter, getter 메서드 없이도 index를 통해 값을 설정/할당 가능하다. ex. `array1[index]`, `dictionary1[key]` 등으로 표현하는 것이 서브스크립트이다.
+    - 서브스크립트 중복 정의 (Subscript Overloading) : 여러 서브스크립트를 1개 type에 구현하는 것이다.
+    Class, Struct에 서브스크립트를 여러 개 구현하는 것이 가능하다. 외부에서 서브스크립트를 사용하는 경우, 서브스크립트 사용 시 전달한 값 type을 유추하여 적절한 서브스크립트를 실행한다.
+    - Parameter : 서브스크립트는 통상 1개 또는 여러 개의 parameter를 가진다. parameter type 및 return type은 제한이 없다.
+    매개변수 기본값을 가질 수 있지만, 입출력 매개변수 (in-out parameter)는 가질 수 없다.
+- Syntax
+    - 
+
+    ```swift
+
+    ```
 
 # + 기타
 
 - [ ]  
 - 제네릭(Generics)
-- 서브스크립트(Subscript)
 - ARC(Automatic Reference Counting)
 - 중첩타입(Nested Types)
 - 사용자정의 연산자(Custom Operators)
-- 오류 처리(Error Handling)
 - 불명확 타입(Opaque Types)
 - 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
