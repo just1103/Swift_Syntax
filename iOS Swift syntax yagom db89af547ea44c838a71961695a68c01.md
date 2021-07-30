@@ -1,8 +1,9 @@
 # Swift syntax
 
 Created: January 24, 2021 1:43 PM
-Created By: hyoju son
-Last Edited Time: July 29, 2021 9:06 PM
+Created By: Kevin
+Last Edited Time: July 31, 2021 4:37 AM
+Property: Yagom
 Type: 언어
 
 - Contents
@@ -1837,21 +1838,21 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         ```
 
 - raw value (원시값)
+    - 원시값 지정은 Enum 선언 시에만 가능하다. (아마도????)
     - As an alternative to associated values, enumeration cases can come prepopulated with default values (called raw values), which are all of the same type.
     If a value (known as a raw value) is provided for each enumeration case, the value can be a string, a character, or a value of any integer or floating-point type.
     - you don’t have to explicitly assign a raw value for each case. When you don’t, Swift automatically assigns the values for you. 
     For example, when integers are used for raw values, the implicit value for each case is one more than the previous case. If the first case doesn’t have a value set, its value is 0.
     - When strings are used for raw values, the implicit value for each case is the text of that case’s name.
     Swift enumeration cases don’t have an integer value set by default, unlike languages like C and Objective-C. In the CompassPoint example above, north, south, east and west don’t implicitly equal 0, 1, 2 and 3. Instead, the different enumeration cases are values in their own right (north, south, east and west).
-    - rawValue는 case별로 각각 다른 값을 가져야합니다.
+    - rawValue는 case별로 각각 다른 값을 가져야한다.
     - case 마다 자동으로 1이 증가된 값이 할당됩니다. when integers are used for raw values, the implicit value for each case is one more than the previous case.
     - rawValue를 반드시 지닐 필요가 없다면 굳이 만들지 않아도 된다.
     - rawValue를 지정한 경우 nil 가능성이 있으므로 Enum의 인스턴스는 항상 optional type이다. (실패가능한 이니셜라이저 참고)
 
     ```swift
     // *Int type 원시값
-
-    enum Fruit: Int {  // rawValue를 할당할 때는 Int 타입을 지정해준다.
+    enum Fruit: Int {  // rawValue를 할당할 때는 타입을 지정해준다.
         case apple = 0
         case grape = 1  // 1을 지워도 자동으로 1이 할당된다.
         case peach
@@ -1868,7 +1869,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     print(fruitInstanceImpossible) // nil
 
     // *Int type 뿐만 아니라, Hashable 프로토콜을 따르는 모든 type을 원시값의 type으로 지정 가능하다.
-
     enum School: String {  // rawValue로 String 타입도 가능하다.
         case elementary = "초등"
         case middle = "중등"
@@ -2956,11 +2956,60 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - 다만 열거형 내부에는 연산 프로퍼티만 구현할 수 있다. (저장 프로퍼티 불가)
 
     - 저장 프로퍼티 : 값을 저장한다.
-    - 연산 프로퍼티 { get{} set{} } : 값을 저장하는 것이 아니라 특정 연산의 결과값을 의미한다. get을 통해 값을 연산하여 return 해주거나, set을 통해 값을 연산하여 할당해준다.
-        - 연산 프로퍼티는 `var`로만 선언할 수 있다. (값이 가변적이므로)
-        - 연산프로퍼티를 읽기전용으로는 구현할 수 있지만, 쓰기전용으로는 구현할 수 없다. (setter is optional)
+    - 연산 프로퍼티 { get{} set{} } : 값을 저장하는 것이 아니라 특정 연산의 결과값을 의미한다. *get을 통해 값을 연산하여 자신의 값을 return 하거나, set을 통해 연산하여 남의 값을 할당한다.
+        - `var`로만 선언할 수 있다. (값이 가변적이므로)
+        - 읽기전용으로는 구현할 수 있지만, 쓰기전용으로는 구현할 수 없다. (setter is optional)
         - 읽기전용으로 구현하려면 `get` 블럭만 작성한다. 읽기전용은 `get{}`을 생략 가능하다.
         - `set` 블럭에서 암시적 매개변수 `newValue`를 사용 가능하다. (즉, set(parameter)에서 parameter를 따로 지정하지 않은 경우)
+
+            ```swift
+            struct Student {
+            		var koreanAge: Int = 0
+            		    
+            		var westernAge: Int {  
+            				// read
+            		    get { // 읽기전용은 get{}을 생략 가능하다.
+            		        return koreanAge - 1  // koreanAge 값이 할당되는 즉시, 연산 결과값을 westernAge에 return 한다.
+            		    }
+            		    
+            				// write
+            		    set(newValue) {  // westernAge 새로운 값이 할당되는 즉시, 연산 결과값을 koreanAge에 할당한다.
+            		        koreanAge = newValue + 1
+            		    }
+            		}
+            }
+
+            var yagom: Student = Student();
+            yagom.koreanAge = 10 // koreanAge의 값이 할당되는 즉시, westernAge의 값을 지정한다. westernAge 입장에서 본인의 값을 get/read한다. (getter로 10-1 연산을 하고, 결과값이 westernAge 본인 값에 할당된다.)
+            print(yagom.koreanAge) // 10
+            print(yagom.westernAge) // 9 (getter 결과)
+
+            yagom.westernAge = 30 // westernAge의 값이 할당되는 즉시, koreanAge의 값을 지정한다. westernAge 입장에서 남의 값을 set/write한다. (setter로 westernAge 본인 값을 newValue를 넣어서, 30+1 연산을 하고, 결과값이 koreanAge에 할당된다.)
+            print(yagom.koreanAge) // 31 (setter 결과)
+            print(yagom.westernAge) // 30
+            ```
+
+            ```swift
+            // 읽기전용 - setter의 역할 참고
+            struct Student {
+            		var koreanAge: Int = 0
+            		    
+            		var westernAge: Int {  
+            		    get { 
+            		        return koreanAge - 1 
+            		    }
+            		}
+            }
+
+            var yagom: Student = Student();
+            yagom.koreanAge = 10 
+            print(yagom.koreanAge) // 10
+            print(yagom.westernAge) // 9 (getter)
+
+            yagom.westernAge = 30 // setter가 없으므로 할당 불가하여 컴파일 에러 발생!!! - Cannot assign to property: 'westernAge' is a get-only property
+
+            ```
+
     - 연산 프로퍼티 및 프로퍼티 감시자는 전역변수, 지역변수 모두에 사용 가능하다. (단, 전역변수는 지연 저장 프로퍼티처럼 처음 접근할 때 최초 연산이 실행되므로 lazy 키워드가 필요 없다.)
 
     ```swift
@@ -3018,10 +3067,10 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     ```
 
     - [x]  var selfIntroduction : 읽기전용 인스턴스 연산 프로퍼티 -> 사칙연산 안하는데 왜 연산 프로퍼티? 저장이 아니라서?
-        - 사칙연산은 아니지만 다른 프로퍼티 (self.class 및 name)의 값을 활용한 결과값을 return 해주므로 연산 프로퍼티임
+        - 사칙연산은 아니지만 다른 프로퍼티 (self.class 및 name)의 값을 활용한 결과값을 return 해주므로 연산 프로퍼티이다. (저장 프로퍼티처럼 값을 저장하지 않는다.)
 
         ```swift
-        var selfIntroduction: String {    // 읽기전용 인스턴스 연산 프로퍼티 
+        var selfIntroduction: String {   // 읽기전용 인스턴스 연산 프로퍼티 
                 get {
                     return "저는 \(self.class)반 \(name)입니다"
                 }
@@ -3331,7 +3380,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     }
     ```
 
-# 14. 상속
+# 14. 상속 (Inheritance) / 재정의 (Override)
 
 - Language Guide
     - When one class inherits from another, the inheriting class is known as a subclass, and the class it inherits from is known as its superclass.
@@ -3467,188 +3516,238 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         ```
 
 - 특징
-    - 상속은 클래스, 프로토콜 등에서 가능합니다. (열거형, 구조체는 불가)
-    - 스위프트의 클래스는 단일상속으로, 다중상속을 지원하지 않습니다.
-
-- 클래스 상속 syntax
-    - Superclass (부모 클래스, 기반 클래스, base class)
-    Subclass    (자식 클래스)
+    - 상속은 클래스, 프로토콜 등에서 가능하다. (열거형, 구조체는 불가)
+    - 스위프트의 클래스는 단일상속으로, 다중상속을 지원하지 않는다.
+    - 상속받은 메서드, 프로퍼티, 서브스크립트 등의 특성을 사용 가능하다.
+    1) 그대로 사용 - 부모와 동일
+    2) override를 통해 기능을 변경 
+    3) 자식만의 새로운 기능을 추가 - 새로운 프로퍼티/메서드 생성
+    - 상속받은 연산 프로퍼티 및 저장 프로퍼티의 프로퍼티 감시자를 구현 가능하다.
+    - 연산 프로퍼티를 정의한 부모클래스에서는 연산 프로퍼티에 프로퍼티 감시자 구현이 불가하다.
+- Syntax
+    - 정의
+    - Superclass (부모 클래스) & Subclass (자식 클래스)
+    - 조상 클래스 : 부모 클래스를 포함한 상위 부모클래스
+    - Base class (기반 클래스) : 다른 클래스를 상속받지 않는 클래스 (조상 클래스가 없는 클래스)
 
         ```swift
-        class 이름: 상속받을 부모 클래스 이름 {
+        class 이름: 부모클래스 이름 {
             /* 구현부 */
         }
         ```
 
-- 클래스 상속 사용
-    - override 키워드를 사용해 부모 클래스의 메서드를 override (재정의, 덮어쓰기) 할 수 있다.
-        - 인스턴스 메서드, class 타입 메서드만 가능 (static 타입 메서드 X, final 이 붙은 인스턴스/타입 메서드 X)
-        - 저장 프로퍼티는 override 불가하다. (인스턴스, 타입 모두 불가)
-            - 서브클래스에서는 상속받은 저장된 프로퍼티, 계산된 프로퍼티 모두 오버라이드 가능합니다. ???
-    - final 키워드를 사용하면 override를 방지할 수 있다.
-        - 타입 메서드
-            - static 키워드를 사용해 타입 메서드를 만들면 override가 불가능 하다.
-            - class 키워드를 사용해 타입 메서드를 만들면 override가 가능 하다.
+- Override (재정의, 덮어쓰기)
+    - `override` 키워드를 사용하면, 컴파일러가 조상클래스에 해당 특성(=메서드/프로퍼티/서브스크립트)이 있는지 확인하고 재정의한다. (조상에 없으면 컴파일 오류 발생)
+    - 자식클래스에서 특성을 override 했지만 부모클래스의 특성을 활용하고 싶을 경우, `super`를 사용한다. (`super.methodA` `super.propertyA` `super[index]`으로 부모버전을 호출한다.)
+    - 프로퍼티 재정의
+        - 저장 프로퍼티는 재정의 불가하다.
+        - 프로퍼티 이름 및 type이 일치해야 재정의 가능하다.
+        - 프로퍼티 재정의는 프로퍼티 자체가 아니라 <프로퍼티 getter&setter, 프로퍼티 감시자>를 재정의하는 것을 의미한다.
+            - 조상클래스의 저장 프로퍼티 및 연산 프로퍼티의 getter&setter 재정의가 가능하다. (원래는 연산 프로퍼티만 getter&setter 사용이 가능하다.)
+            - 자식클래스 입장에서 조상클래스의 프로퍼티 종류(저장/연산)는 알 수 없고, 이름 및 type만 알기 때문이다.
+                - 읽고-쓰기 프로퍼티를 재정의할 때, getter 또는 setter 중 하나를 그대로 쓰더라도 모두 재정의해야 한다. (그대로 쓰면 `super.sameProperty`로 부모 값을 받아서 반환한다.)
+                - 조상클래스에서 읽기전용 프로퍼티였더라도 자식클래스에서 읽고-쓰기 프로퍼티로 재정의 가능하다. 
+                - 단, 읽고-쓰기 프로퍼티를 읽기전용으로 재정의는 불가하다.
+
+            ```swift
+            class Person {
+                var name: String = ""
+                var westernAge: Int = 0
+                
+                var koreanAge: Int {
+                    return self.westernAge + 1
+                }
+                
+                var introduction: String {
+                    return "이름 : \(name), 나이 : \(westernAge)"
+                }
+            }
+
+            class Student: Person {
+                var grade: String = "A"
+                
+                override var introduction: String {
+                    return super.introduction + ", 학점 : \(self.grade)"
+                }
+                
+                override var koreanAge: Int {
+                    get {
+                        return super.koreanAge
+                    }
+                    set {
+                        self.westernAge = newValue - 1
+                    }
+                }
+            }
+
+            let yagom: Person = Person()
+            yagom.name = "yagom"
+            yagom.westernAge = 55
+            //yagom.koreanAge = 56 // *setter가 없으므로 컴파일 오류 발생 - 연산 프로퍼티 참고
+            print(yagom.introduction) // 이름 : yagom, 나이 : 55
+            print(yagom.koreanAge) // 56 - getter 결과로 자동 할당된 상태이다.
+
+            let sam: Student = Student()
+            sam.name = "sam"
+            sam.westernAge = 15
+            sam.koreanAge = 30 // *setter가 있으므로 할당 가능
+            print(sam.introduction) // 이름 : sam, 나이 : 29, 학점 : A
+            print(sam.koreanAge) // 30
+            print(sam.westernAge) // 29 - setter 결과
+            ```
+
+    - 메서드 재정의
+        - 메서드 이름 및 return type이 일치해야 재정의 가능하다. (return type이 다르면 다른 메서드로 취급한다. - 중복정의 (overload))
+        - 부모클래스의 메서드를 override 한다면
+            - 인스턴스 메서드, class 타입 메서드만 가능 (static 타입 메서드 X, final 이 붙은 인스턴스/타입 메서드 X)
+            - 저장 프로퍼티는 override 불가하다. (인스턴스, 타입 모두 불가)
+                - 자식클래스에서는 상속받은 저장 프로퍼티, 연산 프로퍼티 모두 오버라이드 가능합니다. ???
+        - final 키워드를 사용하면 override를 방지한다.
+            - 타입 메서드
+            - static 키워드를 사용해 타입 메서드를 만들면 override 불가하다.
+            - class 키워드를 사용해 타입 메서드를 만들면 override 가능하다.
             - class 앞에 final을 붙이면 (final class func) static 키워드를 사용한것과 동일하게 동작한다.
-    - 활용1
+        - 활용1
 
-        ```swift
-        // 클래스 정의
-
-        class Person {   // 부모 클래스 (기반 클래스) Person
-            var name: String = "unknown"   // 인스턴스 프로퍼티
-            
-            func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
-                print("저는 \(name)입니다")
-            }
-            
-            final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
-                print("hello")
-            }
-            
-            static func typeMethod() {    // override 불가 타입 메서드 - static
-                print("type method - static")
-            }
-            
-            class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
-                print("type method - class")
-            }
-            
-            final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
-                print("type method - final class")
-            }
-        }
-
-        class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
-        //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했음)
-
-            var major: String = ""
-            
-            override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
-                print("저는 \(name)이고, 전공은 \(major)입니다")
+            ```swift
+            // 클래스 정의
+            class Person {   // 부모 클래스 (기반 클래스) Person
+                var name: String = "unknown"   // 인스턴스 프로퍼티
+                
+                func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
+                    print("저는 \(name)입니다")
+                }
+                
+                final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
+                    print("hello")
+                }
+                
+                static func typeMethod() {    // override 불가 타입 메서드 - static
+                    print("type method - static")
+                }
+                
+                class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
+                    print("type method - class")
+                }
+                
+                final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
+                    print("type method - final class")
+                }
             }
 
-        //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
-            
-            override class func classMethod() {   // class 타입 메서드를 override 했다.
-                print("overriden type method - class")
-            }
-            
-        //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
-            
-        //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
-        //  override class func finalClassMethod() {}
-        }
+            class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
+            //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했으므로)
+                var major: String = ""
+                
+                override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
+                    print("저는 \(name)이고, 전공은 \(major)입니다")
+                }
 
-        // 클래스 사용
-
-        let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
-        let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
-
-        yagom.name = "yagom"
-        hana.name = "hana"
-        hana.major = "Swift"
-
-        yagom.selfIntroduce()
-        // 저는 yagom입니다
-
-        hana.selfIntroduce()
-        // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
-
-        Person.classMethod()
-        // type method - class
-
-        Person.typeMethod()
-        // type method - static
-
-        Person.finalCalssMethod()
-        // type method - final class
-
-        Student.classMethod()
-        // overriden type method - class
-
-        Student.typeMethod()
-        // type method - static
-
-        Student.finalCalssMethod()
-        // type method - final class
-        ```
-
-    - 활용2
-
-        ```swift
-        class Student {
-            var name: String = "unknown"  // 인스턴트 저장 프로퍼티
-            
-            static var storedProperty: Int = 10  // 타입 저장 프로퍼티
-            
-            func selfIntroduce() {  // 인스턴스 메서드
-                print("저는 \(name)입니다")
+            //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
+                
+                override class func classMethod() {   // class 타입 메서드를 override 했다.
+                    print("overriden type method - class")
+                }
+                
+            //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
+                
+            //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
+            //  override class func finalClassMethod() {}
             }
 
-            final func finalMethod() {  // 인스턴스 메서드
-                print("finalMethod 입니다")
+            // 클래스 사용
+            let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
+            let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
+
+            yagom.name = "yagom"
+            hana.name = "hana"
+            hana.major = "Swift"
+
+            yagom.selfIntroduce() // 저는 yagom입니다
+            hana.selfIntroduce() // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
+
+            Person.classMethod() // type method - class
+            Person.typeMethod() // type method - static
+            Person.finalCalssMethod() // type method - final class
+
+            Student.classMethod() // overriden type method - class
+            Student.typeMethod() // type method - static
+            Student.finalCalssMethod() // type method - final class
+            ```
+
+        - 활용2
+
+            ```swift
+            class Student {
+                var name: String = "unknown"  // 인스턴트 저장 프로퍼티
+                
+                static var storedProperty: Int = 10  // 타입 저장 프로퍼티
+                
+                func selfIntroduce() {  // 인스턴스 메서드
+                    print("저는 \(name)입니다")
+                }
+
+                final func finalMethod() {  // 인스턴스 메서드
+                    print("finalMethod 입니다")
+                }
+
+                static func typeMethodStatic() {  // 타입 메서드 - static
+                    print("static type method")
+                }
+               
+                class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
+                    print("class type method")
+                }
+                
+                final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
+                    print("final - class type method")
+                }
             }
 
-            static func typeMethodStatic() {  // 타입 메서드 - static
-                print("static type method")
+            class University: Student {
+                var major: String = "major0"
+                
+                override func selfIntroduce() {
+                    print("저는 \(name) 이고, 전공은 \(major) 입니다.")
+                }
+                
+                override class func typeMethodClass() {
+                    print("override class type method")
+                }
             }
-           
-            class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
-                print("class type method")
-            }
-            
-            final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
-                print("final - class type method")
-            }
-        }
 
-        class University: Student {
-            var major: String = "major0"
-            
-            override func selfIntroduce() {
-                print("저는 \(name) 이고, 전공은 \(major) 입니다.")
-            }
-            
-            override class func typeMethodClass() {
-                print("override class type method")
-            }
-        }
+            // subclass
+            University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
+            // override class type method - 출력
 
-        // subclass
+            var kevin: University = University()
+            kevin.name = "kevin"
+            kevin.major = "computer science"
+            kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
+            kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
 
-        University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
-        // override class type method - 출력
+            // superclass
+            // 타입 프로퍼티 확인
+            print(Student.storedProperty) // 10
 
-        var kevin: University = University()
-        kevin.name = "kevin"
-        kevin.major = "computer science"
-        kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
-        kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
+            // 타입 메서드 사용
+            Student.typeMethodStatic() // static type method - 출력
+            Student.typeMethodClass() // class type method - 출력
+            Student.finalTypeMethodClass() // final - class type method
 
-        // superclass
+            // var선언 인스턴스 생성
+            var yagom: Student = Student()
+            yagom.name = "yagom"
+            yagom.selfIntroduce() // 저는 yagom입니다
+            yagom.finalMethod() // finalMethod 입니다
 
-        // 타입 프로퍼티 확인
-        print(Student.storedProperty) // 10
+            // let선언 인스턴스 생성
+            let jina: Student = Student()
+            jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! - Class는 값이 아니라 참조이므로 (Structure와 다름)
+            jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
 
-        // 타입 메서드 사용
-        Student.typeMethodStatic() // static type method - 출력
-        Student.typeMethodClass() // class type method - 출력
-        Student.finalTypeMethodClass() // final - class type method
-
-        // var선언 인스턴스 생성
-        var yagom: Student = Student()
-        yagom.name = "yagom"
-        yagom.selfIntroduce() // 저는 yagom입니다
-        yagom.finalMethod() // finalMethod 입니다
-
-        // let선언 인스턴스 생성
-        let jina: Student = Student()
-        jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! (Structure와 다름)
-        jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
-
-        yagom.selfIntroduce()  // 저는 yagom입니다
-        ```
+            yagom.selfIntroduce()  // 저는 yagom입니다
+            ```
 
 # 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
 
@@ -6596,19 +6695,418 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 # 25. Subscript
 
-- 서브스크립트 (Subscript)
-    - Class, Struct, Enum에는 Collection, List, Sequence 등 타입의 element에 접근하는 단축 문법인 서브스크립트를 구현 가능하다.
-    - 서브스크립트는 별도의 setter, getter 메서드 없이도 index를 통해 값을 설정/할당 가능하다. ex. `array1[index]`, `dictionary1[key]` 등으로 표현하는 것이 서브스크립트이다.
+- L/G
+    - Syntax
+
+        ```swift
+        struct TimesTable {
+            let multiplier: Int
+
+            subscript(index: Int) -> Int {
+                return multiplier * index
+            }
+        }
+
+        let threeTimesTable: TimesTable = TimesTable(multiplier: 3) // TimesTable의 인스턴스
+
+        print("six times three is \(threeTimesTable[6])") // 인스턴스[index] 형태 - 서브스크립트에 index parameter로 6이 전달되고, multiplier(3)*6=18 연산 결과값 (threeTimesTable[6]에서 6번째 값???)인 18이 반환된다.
+        // Prints "six times three is 18"
+        ```
+
+    - Usage
+    - `Dictionary변수[key] = value`로 key:value를 추가 (numberOfLegs에 key=bird, value=2를 할당)하는 것은 서브스크립트 문법이다.
+    - 참고 - 항상 Dictionary의 return type은 옵셔널이다. (특정 key 값이 없거나 nil일 수 있기 때문)
+
+        ```swift
+        var numberOfLegs = ["spider": 8, "ant": 6, "cat": 4]  // initializes numberOfLegs with a dictionary literal containing three key-value pairs.
+        numberOfLegs["bird"] = 2  // key:value를 추가하기 위해 서브스크립트를 사용했다.
+        ```
+
+    - Subscript Option
+
+        - parameter/return type에 따라 서브스크립트를 원하는 개수만큼 선언 가능하다.
+        - 아래는 서브스크립트를 이용하여 2차원 행열을 선언 및 접근하는 example이다. (The Matrix structure’s subscript takes two integer parameters.)
+
+        - [x]  grid = Array(repeating: 0.0, count: rows * columns)
+            - Creating an Array with a Default Value
+
+                ```swift
+                var threeDoubles = Array(repeating: 0.0, count: 3)
+                // threeDoubles is of type [Double], and equals [0.0, 0.0, 0.0]
+                ```
+
+        - [ ]  var matrix = Matrix(rows: 2, columns: 2) // 서브스크립트 문법을 활용하여 2 * 2 행렬을 선언한다. - 그냥 구조체 프로퍼티를 통한 구조체 초기화 아닌가???
+        - [ ]  matrix[0, 1] = 1.5 // (0*1)+1=1 이니까 1.0이 반환되어야 하는거 아닌가? → 행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
+
+        ```swift
+        struct Matrix { // Matrix=행렬
+            let rows: Int, columns: Int
+            var grid: [Double] // Double type의 Array
+
+            init(rows: Int, columns: Int) {
+                self.rows = rows
+                self.columns = columns
+                grid = Array(repeating: 0.0, count: rows * columns) // array’s size 및 initial value
+            }
+
+            func indexIsValid(row: Int, column: Int) -> Bool {
+                return row >= 0 && row < rows && column >= 0 && column < columns
+            }
+
+            subscript(row: Int, column: Int) -> Double { // row, column 2개의 parameter를 받고, Double type을 반환하는 서브스크립트
+                get {
+                    assert(indexIsValid(row: row, column: column), "Index out of range") // 유효한 index가 아닌경우 프로그램이 바로 종료 되도록 assert를 호출
+                    return grid[(row * columns) + column]  // grid Array의 해당 index에 들어있는 값을 반환한다.
+                }
+                set {
+                    assert(indexIsValid(row: row, column: column), "Index out of range")
+                    grid[(row * columns) + column] = newValue 
+                }
+            }
+        }
+
+        var matrix = Matrix(rows: 2, columns: 2) // 구조체 인스턴스 초기화. 서브스크립트 문법을 활용?????하여 2*2 행렬을 선언한다. - 그냥 구조체 프로퍼티를 통한  아닌가???
+        // 초기화 과정에서 grid Array [0.0, 0.0, 0.0, 0.0]를 생성한다.
+
+        // Values in the matrix can be set by passing row and column values into the subscript,
+        matrix[0, 1] = 1.5 // 행렬의 값을 할당하기 위해 row/column 값을 서브스크립트에 전달한다. - (0*1)+1=1 이니까 grid[1]이 반환되어야 하는거 아닌가?
+        matrix[1, 0] = 3.2 // (1*0)+2=2 이니까 grid[2]이 반환 ???
+        ```
+
+        - grid 배열은 서브스크립트에 의해 아래와 같이 row와 column을 갖는 행렬도 동작한다.
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
+
+        - row/column에 값을 할당한 결과이다.
+            - [ ]  행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
+
+- 서브스크립트 (Subscript) : Collection, List, Sequence 등 타입의 element에 접근하는 '단축 문법'이다.
+    - Class, Struct, Enum에 서브스크립트를 구현 가능하다.
+    - 서브스크립트는 별도의 setter, getter 메서드 없이도 [index]를 통해 값을 설정/할당 가능하다. ex. `array1[index]`, `dictionary1[key]` 등으로 표현한다.
+- 서브스크립트 문법
+    - 서브스크립트는 `인스턴스[index]` 형태로 인스턴스 내부의 특정 값에 접근한다.
+    - `subscript` 키워드를 통해 정의한다. parameter type/개수 및 return type을 지정하며, 읽고-쓰기 또는 읽기-전용으로 구현한다. (연산 프로퍼티 및 인스턴스 메서드의 syntax와 유사하다.)
+    - 정의
+    - 서브스크립트 정의 코드는 각 type의 구현부 또는 익스텐션 구현부에 위치한다.
+
+        ```swift
+        subscript(index: Int) -> Int {
+        		get {
+        		}
+
+        		// 읽기전용이면 setter가 없다. 또한 get{}을 생략 가능하다.
+        		set (newValue) {  // newValue의 type은 서브스크립트의 return type과 동일하다. (setter의 parameter를 지정하지 않으면, 암시적 전달인자 newValue를 사용한다. - 연산 프로퍼티와 동일)
+        		}
+        }
+        ```
+
+        - 참고 - 연산 프로퍼티 ☀️
+
+            ```swift
+            struct Student {
+            		var koreanAge: Int = 0
+            		    
+            		var westernAge: Int {  
+            				// read
+            		    get { // 읽기전용은 get{}을 생략 가능하다.
+            		        return koreanAge - 1  // koreanAge 값이 할당되는 즉시, 연산 결과값을 westernAge에 return 한다.
+            		    }
+            		    
+            				// write
+            		    set(newValue) {  // westernAge 새로운 값이 할당되는 즉시, 연산 결과값을 koreanAge에 할당한다.
+            		        koreanAge = newValue + 1
+            		    }
+            		}
+            }
+
+            var yagom: Student = Student();
+            yagom.koreanAge = 10 - koreanAge의 값이 할당되는 즉시, westernAge의 값을 지정한다. westernAge 입장에서 본인의 값을 get/read한다. (getter로 10-1 연산을 하고, 결과값이 westernAge의 값에 할당된다.)
+            print(yagom.koreanAge) // 10
+            print(yagom.westernAge) // 9 (getter 결과)
+
+            yagom.westernAge = 30 - westernAge의 값이 할당되는 즉시, koreanAge의 값을 지정한다. westernAge 입장에서 남의 값을 set/write한다. (setter로 westernAge 본인 값을 newValue를 넣어서, 30+1 연산을 하고, 결과값이 koreanAge에 할당된다.)
+            print(yagom.koreanAge) // 31 (setter 결과)
+            print(yagom.westernAge) // 30
+            ```
+
+            ```swift
+            // 읽기전용 - setter의 역할 참고
+            struct Student {
+            		var koreanAge: Int = 0
+            		    
+            		var westernAge: Int {  
+            		    get { 
+            		        return koreanAge - 1 
+            		    }
+            		}
+            }
+
+            var yagom: Student = Student();
+            yagom.koreanAge = 10 
+            print(yagom.koreanAge) // 10
+            print(yagom.westernAge) // 9 (getter 결과)
+
+            yagom.westernAge = 30 // setter가 없으므로 할당 불가하여 컴파일 에러 발생!!! - Cannot assign to property: 'westernAge' is a get-only property
+            ```
+
+- 서브스크립트 구현
+    - 자신이 가지는 Collection, List, Sequence 등 타입의 element를 반환 및 설정한다.
+    - 서브스크립트는 통상 1개 또는 여러 개의 parameter를 가진다. parameter type 및 return type은 제한이 없다.
+    매개변수 기본값을 가질 수 있지만, 입출력 매개변수 (in-out parameter)는 가질 수 없다.
     - 서브스크립트 중복 정의 (Subscript Overloading) : 여러 서브스크립트를 1개 type에 구현하는 것이다.
     Class, Struct에 서브스크립트를 여러 개 구현하는 것이 가능하다. 외부에서 서브스크립트를 사용하는 경우, 서브스크립트 사용 시 전달한 값 type을 유추하여 적절한 서브스크립트를 실행한다.
-    - Parameter : 서브스크립트는 통상 1개 또는 여러 개의 parameter를 가진다. parameter type 및 return type은 제한이 없다.
-    매개변수 기본값을 가질 수 있지만, 입출력 매개변수 (in-out parameter)는 가질 수 없다.
-- Syntax
-    - 
+        - [ ]  type 유추? 
+        let aStudent: Student? = highSchool[1] // class School 인스턴스[index] 형태로 struct Student의 값에 접근한다. 
+        - Case-1. highSchool.studentsList[1] - studentsList를 명시하지 않아도 type 유추를 통해 서브스크립트를 실행한 것???
+        - Case-2. 서브스크립트가 type 유추를 통해 Int type인 totalNum를 선택하여 실행???
+            - ???
+            - 서브스크립트 중복 정의 (Subscript Overloading)에서
+            - The appropriate subscript to be used will be inferred based on the types of the value or values that are contained within the subscript brackets at the point that the subscript is used.
+            즉, 서브스크립트가 `인스턴스[index]` 형태로 사용되는 시점에서 index에 전달되는 값의 type에 따라 어떤 서브스크립트가 사용될 지 자동으로 유추된다.
+        - [ ]  ***교재 - 학생번호(totalNum? OR ~~stNumber?~~)를 argument로 전달받아서 -> 자신의 studentsList의 index에 맞는 Student의 인스턴스 student를 반환한다.
 
-    ```swift
+        ```swift
+        struct Student {
+            var stName: String
+            var stNumber: Int
+        }
 
-    ```
+        class School {
+            var totalNum: Int = 0
+            var studentsList: [Student] = [Student]()
+            
+            func addStudent(addName: String) { // let student -> addStudent 함수가 호출/return 될 때까지 불변하므로 let 선언을 하나??? (+ 함수 3번 호출하면 각각 Stack에 쌓이니까 독립적이므로 let)
+                let student: Student = Student(stName: addName, stNumber: self.totalNum) // struct Student 인스턴스를 생성 - 인스턴스 맞나???
+                
+                self.studentsList.append(student) // student 인스턴스를 studentsList Array에 추가
+                self.totalNum += 1
+                print(self.totalNum)
+            }
+            
+            func addStudents(addNames: String...) {
+                for name1 in addNames {
+                    self.addStudent(addName: name1)
+                }
+            }
+            
+        		// 읽기전용 서브스크립트
+            subscript(index: Int = 0) -> Student? { // 서브스크립트가 type 유추를 통해 Int type인 totalNum를 각각 선택하여 실행???
+                if index < self.totalNum {
+                    return self.studentsList[index] // *아래에서 Class School 인스턴스[index] 형태로 사용 -> studentsList Array에 접근 -> Struct Student의 인스턴스 student를 반환한다.
+                }
+                return nil
+            }
+        }
+
+        let highSchool: School = School() // Class School 인스턴스 생성
+        highSchool.addStudents(addNames: "kevin", "sam", "james") // 1) struct Student의 인스턴스인 student 생성, 2) studentsList Array에 student 인스턴스를 추가 (1 2 3 출력 - addStudent 함수를 3번 호출했으므로)
+        // print(highSchool)
+
+        print(highSchool.studentsList[0]) // Student(stName: "kevin", stNumber: 0) - studentsList Array에는 Student 인스턴스가 들어있다. 
+        print(highSchool.studentsList[1]) // Student(stName: "sam", stNumber: 1)
+        print(highSchool.studentsList[2]) // Student(stName: "james", stNumber: 2)
+        print(highSchool.totalNum) // 3
+
+        let aStudent: Student? = highSchool[1] // *School 인스턴스[index] 형태로 사용 -> studentsList Array에 접근 (type 유추) -> Student 인스턴스 student를 반환한다.
+                              // highSchool.studentsList[1]로 명시하지 않아도 type 유추를 통해 studentsList를 선택하여 서브스크립트를 실행한 것이다. ???
+        // ***교재 - 서브스크립트가 학생번호(totalNum? OR ~~stNumber?~~)를 argument로 전달받아서 -> 자신의 studentsList의 index에 맞는 -> Student 인스턴스 student를 반환한다.
+        print("\(aStudent?.stNumber) \(aStudent?.stName)") // Optional(1) Optional("sam") 출력
+
+        let bStudent: Student? = highSchool.studentsList[2] 
+        print("\(bStudent?.stNumber) \(bStudent?.stName)") // Optional(2) Optional("james")
+
+        print(highSchool[]?.stName) // Optional("kevin") - 매개변수 기본값 사용
+        print(highSchool[0]?.stName) // Optional("kevin")
+        print(highSchool[1]?.stName) // Optional("sam")
+        print(highSchool[2]?.stName) // Optional("james")
+        print(highSchool[3]?.stName) // nil
+
+        ```
+
+- 복수 서브스크립트
+    - 다양한 parameter/return type의 여러 개의 subscript를 사용하여 다양한 목적에 따라 구현하는 데 용이하다.
+        - [ ]  ???
+
+        ```swift
+        struct Student {
+            var stName: String
+            var stNumber: Int
+        }
+
+        class School {
+            var totalNum: Int = 0
+            var studentsList: [Student] = [Student]()
+            
+            func addStudent(addName: String) {
+                let student: Student = Student(stName: addName, stNumber: self.totalNum) // struct Student 인스턴스를 생성
+                
+                self.studentsList.append(student)
+                self.totalNum += 1
+                print(self.totalNum)
+            }
+            func addStudents(addNames: String...) {
+                for name1 in addNames {
+                    self.addStudent(addName: name1)
+                }
+            }
+            
+            // 1번 서브스크립트 
+            subscript(index: Int) -> Student? {
+                get { // 본인의 값을 지정 - 위와 동일 (학생번호를 전달받아 해당 학생의 Student 인스턴스를 반환한다.)
+                    if index < self.totalNum {
+                        return self.studentsList[index] //*아래에서 Class School 인스턴스[index] 형태로 사용 -> studentsList Array에 접근 -> Struct Student의 인스턴스 student를 반환한다.
+                    }
+                    return nil
+                }
+                set { // 남의 값을 지정 - 특정 번호에 학생을 할당한다.
+                    guard var newStudent1: Student = newValue else {
+                        return
+                    }
+                    
+                    var number1: Int = index
+                    
+                    if index > self.totalNum {
+                        number1 = self.totalNum
+                        self.totalNum += 1
+                    }
+                    
+                    newStudent1.stNumber = number1
+                    self.studentsList[number1] = newStudent1 // ???
+                }
+            }
+            
+            // 2번 서브스크립트
+            subscript(name: String) -> Int? {
+                get { // 학생이름을 전달받아 해당 학생이 있으면 학생번호를 반환한다.
+                    return self.studentsList.filter{ $0.stName == name }.first?.stNumber // first 프로퍼티 - The first element of the collection
+                }
+                set { // 특정 이름의 학생을 해당 번호에 할당한다.
+                    guard var number2: Int = newValue else {
+                        return
+                    }
+                    
+                    if number2 > self.totalNum {
+                        number2 = self.totalNum
+                        self.totalNum += 1
+                    }
+                    
+                    let newStudent2: Student = Student(stName: name, stNumber: number2)
+                    self.studentsList[number2] = newStudent2
+                }
+            }
+            
+            // 3번 서브스크립트
+            subscript(name: String, number: Int) -> Student? { // 학생이름과 학생번호를 전달받아 해당 학생이 있으면 Student 인스턴스를 반환한다.
+                return self.studentsList.filter{ $0.stName == name && $0.stNumber == number }.first
+            }
+        }
+
+        let highSchool: School = School()
+        highSchool.addStudents(addNames: "kevin", "sam", "james")
+
+        // 1번 서브스크립트 getter가 사용됨
+        var aStudent: Student? = highSchool[1] // class School 인스턴스[index] 형태로 struct Student의 값에 접근한다.
+        print("\(aStudent?.stNumber) \(aStudent?.stName)") // Optional(1) Optional("sam") 출력
+
+        highSchool[1] = Student(stName: "newYagom", stNumber: 100) // setter를 사용해보자?????
+        aStudent = highSchool[1]
+        print("New - \(aStudent?.stNumber) \(aStudent?.stName)") // New - Optional(1) Optional("newYagom")
+        print(highSchool[1]!) // Student(stName: "newYagom", stNumber: 1)
+        print(highSchool.studentsList[1]) // Student(stName: "newYagom", stNumber: 1) - 100이 아니다! -> setter 때문이지????
+
+        // 2번 서브스크립트 getter가 사용됨
+        print(highSchool["kevin"]) // Optional(0)
+        print(highSchool["anSan"]) // nil
+
+        // 3번 서브스크립트 getter가 사용됨
+        highSchool[0] = Student(stName: "WhoIsThis", stNumber: 0)
+        print(highSchool[0]!) // Student(stName: "WhoIsThis", stNumber: 0)
+
+        print(highSchool["james", 2]!) // Student(stName: "james", stNumber: 2)
+        // print(highSchool["No-james", 2]!) // nil - 컴파일 에러 발생
+
+        // 2번 서브스크립트 setter가 사용됨 - newValue 1이 Int type이므로 (두번째 서브스크립트의 return type이 Int? 이다) 맞나???
+        print(highSchool[1]!) // Student(stName: "newYagom", stNumber: 1)
+        highSchool["Winner"] = 1 // setter
+        print(highSchool[1]!) // Student(stName: "Winner", stNumber: 1)
+        print(highSchool["newYagom"]) // nil - 값이 덮어씌워져서 삭제됨
+
+        print(highSchool["Winner"]) // Optional(1)
+        ```
+
+- Type 서브스크립트
+    - 인스턴스가 아니라 타입 자체에서 사용하는 서브스크립트이다.
+    - static 키워드 또는 class 키워드 (Class인 경우)로 명시한다.
+        - [x]  Self와 self의 차이
+            - self : 해당 type의 인스턴스를 가르킨다.
+            - Self : 해당 type 자체를 가르킨다.
+            The Self type isn't a specific type, but rather lets you conveniently refer to the current type without repeating or knowing that type's name.
+
+        ```swift
+        enum School: Int {  // 원시값 지정한다고 명시
+            case elementary = 1, middle, high, university
+            
+            static subscript(level: Int) -> School? {
+                return Self(rawValue: level)  // self가 아님
+                // return School(rawValue: level) 와 동일한 표현이다.
+            }
+        }
+
+        let school: School? = School[2]  // Enum의 원시값을 index로 case에 접근한다.
+        print(school!) // middle
+        print(school) // Optional(__lldb_expr_207.School.middle)
+        ```
+
+        ```swift
+        enum Planet: Int {
+            case mercury = 1, venus, earth, mars, jupiter, saturn, uranus, neptune
+            
+            static subscript(n: Int) -> Planet {
+                return Planet(rawValue: n)!
+            }
+        }
+        let planetA = Planet[4]
+        print(planetA) // mars
+        ```
+
+        - 참고 - Enum rawValue
+            - 원시값 할당은 Enum 선언 시에만 가능하다.
+            - 원시값을 꺼낼 때는 `enum명.case명.rawValue`를 쓴다.
+
+                ```swift
+                // *Int type 원시값
+                enum Fruit: Int {  // rawValue를 할당할 때는 타입을 지정해준다.
+                    case apple = 0
+                    case grape = 1  // 1을 지워도 자동으로 1이 할당된다.
+                    case peach
+                    case mango 
+                }
+
+                // raw value 값을 꺼낼 때는 enum명.case명.rawValue를 쓴다.
+                print(Fruit.peach.rawValue)  // 2 출력
+
+                // 참고 - rawValue를 지정한 경우 nil 가능성이 있으므로 Enum의 인스턴스는 항상 optional type이다. (실패가능한 이니셜라이저 참고)
+                var fruitInstance: Fruit? = Fruit(rawValue: 0)
+                print(fruitInstance) // optional(apple)
+                var fruitInstanceImpossible: Fruit? = Fruit(rawValue: 10)
+                print(fruitInstanceImpossible) // nil
+
+                // *Int type 뿐만 아니라, Hashable 프로토콜을 따르는 모든 type을 원시값의 type으로 지정 가능하다.
+
+                enum School: String {  // rawValue로 String 타입도 가능하다.
+                    case elementary = "초등"
+                    case middle = "중등"
+                    case high = "고등"
+                    case university
+                }
+
+                print(School.middle.rawValue)  // 중등 - 출력
+
+                print(School.university.rawValue) // university - 출력
+                // 열거형의 원시값 타입이 String일 때, 원시값이 지정되지 않았다면 "case명"을 원시값으로 사용함
+                ```
 
 # + 기타
 
