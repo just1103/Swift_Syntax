@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: Kevin
-Last Edited Time: July 31, 2021 4:37 AM
+Last Edited Time: August 1, 2021 1:51 PM
 Property: Yagom
 Type: 언어
 
@@ -3382,138 +3382,140 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 # 14. 상속 (Inheritance) / 재정의 (Override)
 
-- Language Guide
-    - When one class inherits from another, the inheriting class is known as a subclass, and the class it inherits from is known as its superclass.
-    The subclass inherits characteristics from the existing class, which you can then refine.
-    - Subclasses can themselves be subclassed.
-    - you access the superclass version of a method, property, or subscript by using the super prefix:
-    ex) super.someMethod, super.someProperty, super[someIndex]
-    - You can use property overriding to add property observers to an inherited property. This enables you to be notified when the value of an inherited property changes, regardless of how that property was originally implemented. Property observers can be added to any property, regardless of whether it was originally defined as a stored or computed property.
-        - If you provide a setter as part of a property override, you must also provide a getter for that override.
-        - 같은 프로퍼티에 옵저버를 추가하고 setter를 추가해 둘을 동시에 사용할 수 없습니다. 이미 setter를 설정했다면 옵저버를 붙인 것과 같은 동작을 하기 때문입니다.
-    - You can prevent a method, property, or subscript from being overridden by marking it as final.
-    You can mark an entire class as final by writing the final modifier before the class keyword in its class definition (final class)
-    - example
+- Language Guide (*용어 익숙)
+    - Super/Sub Class
+        - When one class inherits from another, the inheriting class is known as a subclass, and the class it inherits from is known as its superclass.
+        The subclass inherits characteristics from the existing class, which you can then refine.
+        - Subclasses can themselves be subclassed.
+        - you access the superclass version of a method, property, or subscript by using the super prefix.
+    - Property Overriding
+        - You can use property overriding to provide your own custom getter and setter for that property, or to add property observers to an inherited property.
+            - This enables you to be notified when the value of an inherited property changes, regardless of how that property was originally implemented. Property observers can be added to any property, regardless of whether it was originally defined as a stored or computed property.
+            - If you provide a setter as part of a property override, you must also provide a getter for that override.
+            - 단, 같은 프로퍼티에 옵저버를 추가하고 setter를 추가해 둘을 동시에 사용할 수 없다. 이미 setter를 설정했다면 옵저버를 붙인 것과 동일한 동작을 하기 때문이다.
+            - example - getter override
 
-        ```swift
-        class Vehicle {  // superclass 생성
-            var currentSpeed = 0.0
-            var description: String {
-                return "traveling at \(currentSpeed) miles per hour"
-            }
-            func makeNoise() {
-                // do nothing - an arbitrary vehicle doesn't necessarily make a noise
-            }
-        }
-        let someVehicle = Vehicle() // Vehicle class의 인스턴스 생성
-        print("Vehicle: \(someVehicle.description)") // Vehicle: traveling at 0.0 miles per hour
-
-        class Bicycle: Vehicle {  // subclass 생성
-            var hasBasket = false  // superclass에 없는 새로운 프로퍼티 추가
-        		var gear = 1
-            override var description: String {  // override (super. syntax 활용)
-                return super.description + " in gear \(gear)"
-        }
-        // The new Bicycle class automatically gains all of the characteristics of Vehicle, 
-        // such as its currentSpeed and description properties and its makeNoise() method.
-
-        let bicycle = Bicycle() // Bicycle class의 인스턴스 생성
-        bicycle.hasBasket = true // 프로퍼티의 default 값 수정
-        bicycle.currentSpeed = 15.0  // subclass Bicycle에서 따로 선언해주지 않아도, superclass Vehicle에서 정의한 프로퍼티를 사용 가능하다.
-        print("Bicycle: \(bicycle.description)") // Bicycle: traveling at 15.0 miles per hour
-
-        class Tandem: Bicycle {  // subclass의 subclass 생성 (tandem = Bicycle for a two-seater bicycle)
-            var currentNumberOfPassengers = 0
-        }
-        // Tandem inherits all of the properties and methods from Bicycle, 
-        // which in turn inherits all of the properties and methods from Vehicle.
-
-        let tandem = Tandem()
-        tandem.hasBasket = true
-        tandem.currentNumberOfPassengers = 2
-        tandem.currentSpeed = 22.0
-        print("Tandem: \(tandem.description)") // Tandem: traveling at 22.0 miles per hour
-        ```
-
-    - test - property observer 상속
-        - [ ]  // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
-        - [ ]  // *인스턴스의 프로퍼티 값이 변경되어 프로퍼티 감시자가 작동할 때, superclass 및 subclass에 속한 감시자가 둘다 호출됨 (순서는 뭐지? override 했는데 superclass의 프로퍼티 감시자는 왜 작동하지???)
-
-        ```swift
-        // inheritance - property observer test
-
-        class Money {
-            var currencyRate: Double = 1100 {   // 프로퍼티 감시자 사용
-                willSet(newRate) {   // willSet : 변경 직전에 호출됨
-                    print("환율이 \(currencyRate)에서 \(newRate)으로 변경될 예정입니다")
+                ```swift
+                class Vehicle {  // superclass 생성
+                    var currentSpeed = 0.0
+                    var description: String {
+                        return "traveling at \(currentSpeed) miles per hour"
+                    }
+                    func makeNoise() {
+                        // do nothing - an arbitrary vehicle doesn't necessarily make a noise
+                    }
                 }
-                didSet(oldRate) {   // didSet : 변경 직후에 호출됨
-                    print("환율이 \(oldRate)에서 \(currencyRate)으로 변경되었습니다")
+                let someVehicle = Vehicle() // Vehicle class의 인스턴스 생성
+                print("Vehicle: \(someVehicle.description)") // Vehicle: traveling at 0.0 miles per hour
+
+                class Bicycle: Vehicle {  // subclass 생성
+                    var hasBasket = false  // superclass에 없는 새로운 프로퍼티 추가
+                		var gear = 1
+                    override var description: String {  
+                        return super.description + " in gear \(gear)"
                 }
-            }
+                // The new Bicycle class automatically gains all of the characteristics of Vehicle, 
+                // such as its currentSpeed and description properties and its makeNoise() method.
 
-            var dollar: Double = 0 {   // 프로퍼티 감시자 사용
-                willSet {   // willSet의 암시적 매개변수 이름 newValue (willSet(parameter)에서 parameter 지정하지 않은 경우)
-                    print("\(dollar)달러에서 \(newValue)달러로 변경될 예정입니다")
+                let bicycle = Bicycle() // Bicycle class의 인스턴스 생성
+                bicycle.hasBasket = true // 프로퍼티의 default 값 수정
+                bicycle.currentSpeed = 15.0  // subclass Bicycle에서 따로 선언해주지 않아도, superclass Vehicle에서 정의한 프로퍼티를 사용 가능하다.
+                print("Bicycle: \(bicycle.description)") // Bicycle: traveling at 15.0 miles per hour
+
+                class Tandem: Bicycle {  // subclass의 subclass 생성 (tandem = Bicycle for a two-seater bicycle)
+                    var currentNumberOfPassengers = 0
                 }
-                didSet {    // didSet의 암시적 매개변수 이름 oldValue
-                    print("\(oldValue)달러에서 \(dollar)달러로 변경되었습니다")
+                // Tandem inherits all of the properties and methods from Bicycle, 
+                // which in turn inherits all of the properties and methods from Vehicle.
+
+                let tandem = Tandem()
+                tandem.hasBasket = true
+                tandem.currentNumberOfPassengers = 2
+                tandem.currentSpeed = 22.0
+                print("Tandem: \(tandem.description)") // Tandem: traveling at 22.0 miles per hour
+                ```
+
+            - test - property observer 상속
+                - [ ]  // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
+                - [ ]  // *인스턴스의 프로퍼티 값이 변경되어 프로퍼티 감시자가 작동할 때, superclass 및 subclass에 속한 감시자가 둘다 호출됨 (순서는 뭐지? override 했는데 superclass의 프로퍼티 감시자는 왜 작동하지???)
+
+                ```swift
+                // inheritance - property observer test
+
+                class Money {
+                    var currencyRate: Double = 1100 {   // 프로퍼티 감시자 사용
+                        willSet(newRate) {   // willSet : 변경 직전에 호출됨
+                            print("환율이 \(currencyRate)에서 \(newRate)으로 변경될 예정입니다")
+                        }
+                        didSet(oldRate) {   // didSet : 변경 직후에 호출됨
+                            print("환율이 \(oldRate)에서 \(currencyRate)으로 변경되었습니다")
+                        }
+                    }
+
+                    var dollar: Double = 0 {   // 프로퍼티 감시자 사용
+                        willSet {   // willSet의 암시적 매개변수 이름 newValue (willSet(parameter)에서 parameter 지정하지 않은 경우)
+                            print("\(dollar)달러에서 \(newValue)달러로 변경될 예정입니다")
+                        }
+                        didSet {    // didSet의 암시적 매개변수 이름 oldValue
+                            print("\(oldValue)달러에서 \(dollar)달러로 변경되었습니다")
+                        }
+                    }
+
+                    var won: Double {   // 연산 프로퍼티
+                        get {
+                            return dollar * currencyRate
+                        }
+                        set {
+                            dollar = newValue / currencyRate
+                        }
+                     // willSet {}   // 프로퍼티 감시자는 저장 프로퍼티에만 사용 가능 (연산 프로퍼티에는 불가)
+                     // didSet {}
+                    }
                 }
-            }
 
-            var won: Double {   // 연산 프로퍼티
-                get {
-                    return dollar * currencyRate
+                class subClassMoney: Money {
+                    override var currencyRate: Double {   // 프로퍼티 감시자 사용
+                        willSet(newRate) {   // willSet : 변경 직전에 호출됨
+                            print("override - 환율이 \(currencyRate)에서 \(newRate)으로 변경될 예정입니다")
+                        }
+                        didSet(oldRate) {   // didSet : 변경 직후에 호출됨
+                            print("override - 환율이 \(oldRate)에서 \(currencyRate)으로 변경되었습니다")
+                        }
+                    }
                 }
-                set {
-                    dollar = newValue / currencyRate
-                }
-             // willSet {}   // 프로퍼티 감시자는 저장 프로퍼티에만 사용 가능 (연산 프로퍼티에는 불가)
-             // didSet {}
-            }
-        }
 
-        class subClassMoney: Money {
-            override var currencyRate: Double {   // 프로퍼티 감시자 사용
-                willSet(newRate) {   // willSet : 변경 직전에 호출됨
-                    print("override - 환율이 \(currencyRate)에서 \(newRate)으로 변경될 예정입니다")
-                }
-                didSet(oldRate) {   // didSet : 변경 직후에 호출됨
-                    print("override - 환율이 \(oldRate)에서 \(currencyRate)으로 변경되었습니다")
-                }
-            }
-        }
+                var moneyInMyPocket = Money()
 
-        var moneyInMyPocket = Money()
+                moneyInMyPocket.currencyRate = 1150
+                // 환율이 1100.0에서 1150.0으로 변경될 예정입니다 <- 동일한 currencyRate 이지만 다른 값이 나옴 (willSet은 변경 직전 값)
+                // 환율이 1100.0에서 1150.0으로 변경되었습니다   <- 동일한 currencyRate 이지만 다른 값이 나옴  (didSet은 변경 직후 값)
 
-        moneyInMyPocket.currencyRate = 1150
-        // 환율이 1100.0에서 1150.0으로 변경될 예정입니다 <- 동일한 currencyRate 이지만 다른 값이 나옴 (willSet은 변경 직전 값)
-        // 환율이 1100.0에서 1150.0으로 변경되었습니다   <- 동일한 currencyRate 이지만 다른 값이 나옴  (didSet은 변경 직후 값)
+                moneyInMyPocket.dollar = 10
+                // 0.0달러에서 10.0달러로 변경될 예정입니다
+                // 0.0달러에서 10.0달러로 변경되었습니다
 
-        moneyInMyPocket.dollar = 10
-        // 0.0달러에서 10.0달러로 변경될 예정입니다
-        // 0.0달러에서 10.0달러로 변경되었습니다
+                print(moneyInMyPocket.won)  // 11500.0
 
-        print(moneyInMyPocket.won)  // 11500.0
+                var moneyInSubClass = subClassMoney()
 
-        var moneyInSubClass = subClassMoney()
+                moneyInSubClass.currencyRate = 3000
+                // 출력값 -
+                //override 환율이 1100.0에서 3000.0으로 변경될 예정입니다
+                //환율이 1100.0에서 3000.0으로 변경될 예정입니다
+                //환율이 1100.0에서 3000.0으로 변경되었습니다
+                //override 환율이 1100.0에서 3000.0으로 변경되었습니다
+                // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
+                // *인스턴스의 프로퍼티 값이 변경되어 프로퍼티 감시자가 작동할 때, superclass 및 subclass에 속한 감시자가 둘다 호출됨 (순서는 뭐지? override 했는데 superclass의 프로퍼티 감시자는 왜 작동하지???)
 
-        moneyInSubClass.currencyRate = 3000
-        // 출력값 -
-        //override 환율이 1100.0에서 3000.0으로 변경될 예정입니다
-        //환율이 1100.0에서 3000.0으로 변경될 예정입니다
-        //환율이 1100.0에서 3000.0으로 변경되었습니다
-        //override 환율이 1100.0에서 3000.0으로 변경되었습니다
-        // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
-        // *인스턴스의 프로퍼티 값이 변경되어 프로퍼티 감시자가 작동할 때, superclass 및 subclass에 속한 감시자가 둘다 호출됨 (순서는 뭐지? override 했는데 superclass의 프로퍼티 감시자는 왜 작동하지???)
+                moneyInSubClass.dollar = 20
+                // 출력값 -
+                //0.0달러에서 20.0달러로 변경될 예정입니다
+                //0.0달러에서 20.0달러로 변경되었습니다
+                // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
 
-        moneyInSubClass.dollar = 20
-        // 출력값 -
-        //0.0달러에서 20.0달러로 변경될 예정입니다
-        //0.0달러에서 20.0달러로 변경되었습니다
-        // *superclass의 인스턴스에 영향을 받지 않고, superclass의 default 값을 oldValue로 받아옴 (왜지?)
+                ```
 
-        ```
+        - You can prevent a method, property, or subscript from being overridden by marking it as final. (You can mark an entire class as final.)
 
 - 특징
     - 상속은 클래스, 프로토콜 등에서 가능하다. (열거형, 구조체는 불가)
@@ -3522,8 +3524,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     1) 그대로 사용 - 부모와 동일
     2) override를 통해 기능을 변경 
     3) 자식만의 새로운 기능을 추가 - 새로운 프로퍼티/메서드 생성
-    - 상속받은 연산 프로퍼티 및 저장 프로퍼티의 프로퍼티 감시자를 구현 가능하다.
-    - 연산 프로퍼티를 정의한 부모클래스에서는 연산 프로퍼티에 프로퍼티 감시자 구현이 불가하다.
 - Syntax
     - 정의
     - Superclass (부모 클래스) & Subclass (자식 클래스)
@@ -3536,218 +3536,470 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         }
         ```
 
-- Override (재정의, 덮어쓰기)
-    - `override` 키워드를 사용하면, 컴파일러가 조상클래스에 해당 특성(=메서드/프로퍼티/서브스크립트)이 있는지 확인하고 재정의한다. (조상에 없으면 컴파일 오류 발생)
-    - 자식클래스에서 특성을 override 했지만 부모클래스의 특성을 활용하고 싶을 경우, `super`를 사용한다. (`super.methodA` `super.propertyA` `super[index]`으로 부모버전을 호출한다.)
-    - 프로퍼티 재정의
-        - 저장 프로퍼티는 재정의 불가하다.
-        - 프로퍼티 이름 및 type이 일치해야 재정의 가능하다.
-        - 프로퍼티 재정의는 프로퍼티 자체가 아니라 <프로퍼티 getter&setter, 프로퍼티 감시자>를 재정의하는 것을 의미한다.
-            - 조상클래스의 저장 프로퍼티 및 연산 프로퍼티의 getter&setter 재정의가 가능하다. (원래는 연산 프로퍼티만 getter&setter 사용이 가능하다.)
-            - 자식클래스 입장에서 조상클래스의 프로퍼티 종류(저장/연산)는 알 수 없고, 이름 및 type만 알기 때문이다.
-                - 읽고-쓰기 프로퍼티를 재정의할 때, getter 또는 setter 중 하나를 그대로 쓰더라도 모두 재정의해야 한다. (그대로 쓰면 `super.sameProperty`로 부모 값을 받아서 반환한다.)
-                - 조상클래스에서 읽기전용 프로퍼티였더라도 자식클래스에서 읽고-쓰기 프로퍼티로 재정의 가능하다. 
-                - 단, 읽고-쓰기 프로퍼티를 읽기전용으로 재정의는 불가하다.
+## Override (재정의, 덮어쓰기)
+
+- `override` 키워드를 사용하면, 컴파일러가 조상클래스에 해당 특성(=메서드/프로퍼티/서브스크립트)이 있는지 확인하고 재정의한다. (조상에 없으면 컴파일 오류 발생)
+- 자식클래스에서 특성을 override 했지만 부모클래스의 특성을 활용하고 싶을 경우, `super`를 사용한다. (`super.methodA` `super.propertyA` `super[index]`으로 부모버전을 호출한다.)
+- 메서드 재정의
+    - 메서드 이름 및 return type이 일치해야 재정의 가능하다. (return type이 다르면 다른 메서드로 취급한다. - 중복정의 (overload))
+    - 메서드 재정의는 인스턴스 메서드, class 타입 메서드만 가능하다. (static 타입 메서드 X, final이 붙은 메서드 X)
+    - 타입 메서드
+    - static 키워드를 사용해 타입 메서드를 만들면 override 불가하다.
+    - class 키워드를 사용해 타입 메서드를 만들면 override 가능하다.
+    - class 앞에 final을 붙이면 (final class func) static 키워드를 사용한것과 동일하게 동작한다.
+    - 활용1
+
+        ```swift
+        // 클래스 정의
+        class Person {   // 부모 클래스 (기반 클래스) Person
+            var name: String = "unknown"   // 인스턴스 프로퍼티
+            
+            func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
+                print("저는 \(name)입니다")
+            }
+            
+            final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
+                print("hello")
+            }
+            
+            static func typeMethod() {    // override 불가 타입 메서드 - static
+                print("type method - static")
+            }
+            
+            class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
+                print("type method - class")
+            }
+            
+            final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
+                print("type method - final class")
+            }
+        }
+
+        class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
+        //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했으므로)
+            var major: String = ""
+            
+            override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
+                print("저는 \(name)이고, 전공은 \(major)입니다")
+            }
+
+        //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
+            
+            override class func classMethod() {   // class 타입 메서드를 override 했다.
+                print("overriden type method - class")
+            }
+            
+        //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
+            
+        //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
+        //  override class func finalClassMethod() {}
+        }
+
+        // 클래스 사용
+        let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
+        let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
+
+        yagom.name = "yagom"
+        hana.name = "hana"
+        hana.major = "Swift"
+
+        yagom.selfIntroduce() // 저는 yagom입니다
+        hana.selfIntroduce() // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
+
+        Person.classMethod() // type method - class
+        Person.typeMethod() // type method - static
+        Person.finalCalssMethod() // type method - final class
+
+        Student.classMethod() // overriden type method - class
+        Student.typeMethod() // type method - static
+        Student.finalCalssMethod() // type method - final class
+        ```
+
+    - 활용2
+
+        ```swift
+        class Student {
+            var name: String = "unknown"  // 인스턴트 저장 프로퍼티
+            
+            static var storedProperty: Int = 10  // 타입 저장 프로퍼티
+            
+            func selfIntroduce() {  // 인스턴스 메서드
+                print("저는 \(name)입니다")
+            }
+
+            final func finalMethod() {  // 인스턴스 메서드
+                print("finalMethod 입니다")
+            }
+
+            static func typeMethodStatic() {  // 타입 메서드 - static
+                print("static type method")
+            }
+           
+            class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
+                print("class type method")
+            }
+            
+            final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
+                print("final - class type method")
+            }
+        }
+
+        class University: Student {
+            var major: String = "major0"
+            
+            override func selfIntroduce() {
+                print("저는 \(name) 이고, 전공은 \(major) 입니다.")
+            }
+            
+            override class func typeMethodClass() {
+                print("override class type method")
+            }
+        }
+
+        // subclass
+        University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
+        // override class type method - 출력
+
+        var kevin: University = University()
+        kevin.name = "kevin"
+        kevin.major = "computer science"
+        kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
+        kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
+
+        // superclass
+        // 타입 프로퍼티 확인
+        print(Student.storedProperty) // 10
+
+        // 타입 메서드 사용
+        Student.typeMethodStatic() // static type method - 출력
+        Student.typeMethodClass() // class type method - 출력
+        Student.finalTypeMethodClass() // final - class type method
+
+        // var선언 인스턴스 생성
+        var yagom: Student = Student()
+        yagom.name = "yagom"
+        yagom.selfIntroduce() // 저는 yagom입니다
+        yagom.finalMethod() // finalMethod 입니다
+
+        // let선언 인스턴스 생성
+        let jina: Student = Student()
+        jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! - Class는 값이 아니라 참조이므로 (Structure와 다름)
+        jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
+
+        yagom.selfIntroduce()  // 저는 yagom입니다
+        ```
+
+- 프로퍼티 재정의
+    - 저장 프로퍼티는 재정의 불가하다. (인스턴스 및 타입 모두 불가)
+    - 프로퍼티 이름 및 type이 일치해야 재정의 가능하다.
+    - 프로퍼티 재정의는 프로퍼티 자체가 아니라 <프로퍼티 getter&setter, 프로퍼티 감시자>를 재정의하는 것을 의미한다.
+        - 조상클래스의 저장 프로퍼티 및 연산 프로퍼티의 getter&setter 재정의가 가능하다. (원래는 연산 프로퍼티만 getter&setter 사용이 가능하다.)
+        - 자식클래스 입장에서 조상클래스의 프로퍼티 종류(저장/연산)는 알 수 없고, 이름 및 type만 알기 때문이다.
+            - 읽고-쓰기 프로퍼티를 재정의할 때, getter 또는 setter 중 하나를 그대로 쓰더라도 모두 재정의해야 한다. (그대로 쓰면 `super.sameProperty`로 부모 값을 받아서 반환한다.)
+            - 조상클래스에서 읽기전용 프로퍼티였더라도 자식클래스에서 읽고-쓰기 프로퍼티로 재정의 가능하다. 
+            - 단, 읽고-쓰기 프로퍼티를 읽기전용으로 재정의는 불가하다.
+
+        ```swift
+        class Person {
+            var name: String = ""
+            var westernAge: Int = 0
+            
+            var koreanAge: Int { // 부모-읽기전용
+                return self.westernAge + 1
+            }
+            
+            var introduction: String {
+                return "이름 : \(name), 나이 : \(westernAge)"
+            }
+        }
+
+        class Student: Person {
+            var grade: String = "A"
+            
+            override var introduction: String {
+                return super.introduction + ", 학점 : \(self.grade)" // 부모클래스의 String 뒤에 추가 String을 붙여서 반환한다.
+            }
+            
+            override var koreanAge: Int {
+                get {
+                    return super.koreanAge // getter는 그대로 - 부모클래스 접근자 super를 사용하여 부모 값을 받아서 반환한다.
+                }
+                set { // 자식-쓰기 기능 추가
+                    self.westernAge = newValue - 1
+                }
+            }
+        }
+
+        let yagom: Person = Person()
+        yagom.name = "yagom"
+        yagom.westernAge = 55
+        //yagom.koreanAge = 56 // *setter가 없으므로 컴파일 오류 발생 - 연산 프로퍼티 참고
+        print(yagom.introduction) // 이름 : yagom, 나이 : 55
+        print(yagom.koreanAge) // 56 - getter 결과로 자동 할당된 상태이다.
+
+        let sam: Student = Student()
+        sam.name = "sam"
+        sam.westernAge = 15
+        sam.koreanAge = 30 // *setter가 있으므로 할당 가능
+        print(sam.introduction) // 이름 : sam, 나이 : 29, 학점 : A
+        print(sam.koreanAge) // 30
+        print(sam.westernAge) // 29 - setter 결과
+        ```
+
+- 프로퍼티 감시자 재정의
+    - 상속받은 연산 프로퍼티 및 저장 프로퍼티의 프로퍼티 감시자를 구현 가능하다.
+    - 원래는 연산 프로퍼티를 정의한 부모클래스에서 연산 프로퍼티에 감시자 구현이 불가하다.
+    - 상수 저장 프로퍼티, 읽기전용 연산 프로퍼티는 감시자 재정의가 불가하다. (선언 이후 값 설정(set)이 불가해서, 감시자의 사용이 원천적으로 불가하므로)
+    - getter 및 감시자는 '동시에 재정의' 불가하다. ??? (동시 작동을 원한다면, 재정의하는 getter에 프로퍼티 감시자 역할을 구현해야 한다.)
+    - 동일한 프로퍼티에 setter 및 감시자를 '동시에 정의' 불가하다. (이미 setter를 설정했다면 감시자를 붙인 것과 동일하게 동작하므로) - 재정의와 상관 없이???
+    - 자식클래스가 감시자를 재정의하더라도 조상클래스에 정의한 감시자도 동작한다.
+        - [ ]  왜 이렇게 만들었지???
+
+        ```swift
+        class Person {
+            var name: String = ""
+            var westernAge: Int = 0 {
+                didSet {  
+                    print("PO didSet - Person age : \(self.westernAge)")
+                }
+            }
+            var koreanAge: Int {
+                return self.westernAge + 1
+            }
+            var fullName: String { // 연산 프로퍼티
+                get {
+                    return self.name
+                }
+                set {
+                    self.name = newValue
+                }
+            }
+        }
+
+        class Student: Person {
+            var grade: String = "A"
+            
+            override var westernAge: Int {
+                didSet {
+                    print("PO didSet - Student age : \(self.westernAge)")  // 감시자 내용 변경
+                }
+            }
+            
+            override var koreanAge: Int {
+                get {
+                    return super.koreanAge
+                }
+                set {
+                    self.westernAge = newValue - 1  // setter 추가
+                }
+        //      didSet {} // 컴파일 오류 발생 - 'didSet' cannot be provided together with a getter (+ setter 및 감시자 동시 정의 또한 불가하다)
+            }
+            
+            override var fullName: String {
+                didSet { // 부모클래스에서 연산 프로퍼티로 정의되었으나, 자식클래스는 감시자 구현이 가능하다.
+                    print("PO didSet - Full Name : \(self.fullName)")  // 감시자 추가
+                }
+            }
+        }
+
+        let yagom: Person = Person()
+        yagom.name = "yagom"
+        yagom.westernAge = 55
+        // PO didSet - Person age : 55
+        print(yagom.koreanAge) // 56
+
+        yagom.fullName = "Jo yagom"
+
+        let san: Student = Student()
+        san.name = "san"
+        san.westernAge = 15
+        // PO didSet - Person age : 15 -> ***재정의했지만 조상클래스의 감시자도 동작한다.
+        // PO didSet - Student age : 15
+
+        san.koreanAge = 30
+        // PO didSet - Person age : 29 -> ***재정의했지만 조상클래스의 감시자도 동작한다.
+        // PO didSet - Student age : 29
+
+        print(san.koreanAge) // 30
+        print(san.westernAge) // 29
+
+        san.fullName = "An san"
+        // PO didSet - Full Name : An san
+        ```
+
+- 서브스크립트 재정의
+    - 서브스크립트 이름, parameter/return type이 일치해야 재정의 가능하다.
+    - 메서드 재정의와 방법이 동일하다.
+
+        ```swift
+        struct Student {
+            var grade: String = "A"
+        }
+
+        class School {
+            var students: [Student] = [Student]()
+            
+            subscript(number: Int) -> Student {
+                print("School Subscript")
+                return students[number]
+            }
+        }
+
+        class MiddleSchool: School {
+            var middleStudents: [Student] = [Student]()
+            
+        		override subscript(index: Int) -> Student {
+                print("Middle School Subscript")
+                return middleStudents[index]
+            }
+        }
+
+        let university: School = School()
+        university.students.append(Student())
+        university[0] // School Subscript
+
+        let middle: MiddleSchool = MiddleSchool()
+        middle.middleStudents.append(Student())
+        middle[0] // (서브스크립트 재정의를 한 경우) Middle School Subscript
+
+        middle[0] // 참고 - (안한 경우) School Subscript, 에러 발생 - Swift/ContiguousArrayBuffer.swift:580: Fatal error: Index out of range
+        ```
+
+- 재정의 방지 (final)
+    - `final` 키워드로 특성의 재정의를 방지한다. `final var` `final func` `final class func` `final subscript` (final-을 재정의 시 컴파일 오류 발생)
+    - static은 원래 재정의 불가하다.
+    - Class 자체를 상속하거나 재정의하지 못하게 하려면 `final class`로 명시한다.
+
+## Class 이니셜라이저의 상속/재정의
+
+### Class 이니셜라이저
+
+- 값 타입과 달리, Class 이니셜라이저는 이니셜라이저 위임을 위해 '지정 이니셜라이저(Designated Initializer)' 및 '편의 이니셜라이저(Convenience Initializer)'로 역할을 구분한다.
+- Class는 이니셜라이저 상속이 가능하므로 재정의를 신경써야 한다.
+    - 지정init / 편의init
+        - 지정 이니셜라이저 (main 역할)
+        - 해당 Class의 모든 프로퍼티를 초기화해야 한다. (`var name: String = ""`와 같이 Class를 정의할 때 모든 프로퍼티의 기본값을 지정하면 이니셜라이저가 필요 없다.)
+        - 부모클래스의 이니셜라이저를 호출 가능하다. 
+        - 모든 Class는 1개 이상의 지정 이니셜라이저를 갖는다. (단, 상속받은 조상클래스의 지정 이니셜라이저가 자손클래스에서 충분히 역할 수행이 가능하다면, 자손클래스는 지정 이니셜라이저를 갖지 않을 수 있다.) - 상속받아서 암시적으로 갖고 있는 거 아닌가??
+        - 편의 이니셜라이저 (Optional)
+        - 편의 이니셜라이저의 내부에서 지정 이니셜라이저를 호출한다. 
+        - Class 설계자의 의도를 반영하여 인스턴스를 초기화하는 등 특수 목적에 따라 선택적으로 사용한다.
+        - 🎃🎃🎃 인스턴스 생성 후 프로퍼티 값을 수정하기 어려운 경우에는 이니셜라이저 init을 통해 인스턴스가 가져야 할 초기값을 전달 가능하다.
 
             ```swift
-            class Person {
-                var name: String = ""
-                var westernAge: Int = 0
+            class PersonB {
+                var name: String
+                var age: Int
+                var nickName: String
                 
-                var koreanAge: Int {
-                    return self.westernAge + 1
-                }
-                
-                var introduction: String {
-                    return "이름 : \(name), 나이 : \(westernAge)"
+                init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 이니셜라이저
+                    self.name = nameKeyIn  // 인스턴스 초기화 단계에서 argument (오른쪽)가 각 프로퍼티 (왼쪽)로 들어간다.
+                    self.age = ageKeyIn
+                    self.nickName = nickNameKeyIn
                 }
             }
 
-            class Student: Person {
-                var grade: String = "A"
+            let hana: PersonB = PersonB(nameKeyIn: "hana", ageKeyIn: 20, nickNameKeyIn: "하나")  // 인스턴스 생성 시 init의 parameter에 따라 초기값을 지정할 수 있다.
+            // let hana: PersonB = PersonB() 로 입력하면 parameter 없다고 오류 발생
+
+            print(hana.name) // hana
+            print(hana.age) // 20
+            print(hana.nickName) // 하나
+            ```
+
+        - 일부 프로퍼티가 필수 항목이 아닐 때는 옵셔널을 사용하고, 이니셜라이저 init을 2개 생성할 수 있다.
+        → 초기화 하는 방법이 2가지인 것임
+
+            ```swift
+            // nickname이 선택 사항인 경우
+
+            class PersonC {
+                var name: String
+                var age: Int
+                var nickName: String?
                 
-                override var introduction: String {
-                    return super.introduction + ", 학점 : \(self.grade)"
+                init(nameKeyIn: String, ageKeyIn: Int) {
+                    self.name = nameKeyIn
+                    self.age = ageKeyIn
                 }
                 
-                override var koreanAge: Int {
-                    get {
-                        return super.koreanAge
+                init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) { // init parameter는 프로퍼티명과 꼭 동일할 필요 없음
+                    self.name = nameKeyIn
+                    self.age = ageKeyIn
+                    self.nickName = nickNameKeyIn
+                }
+            }
+
+            let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10) // 초기화 방법이 2가지
+            let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
+
+            print(kevin.nickname)  // nil 출력
+            ```
+
+            ```swift
+            // convenience init을 통해 중복 최소화 
+
+            class PersonC {
+                var name: String
+                var age: Int
+                var nickName: String?
+                
+                **init**(nameKeyIn: String, ageKeyIn: Int) {
+                    self.name = nameKeyIn
+                    self.age = ageKeyIn
+                }
+                
+            /*     ~~init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {
+                    self.name = nameKeyIn
+                    self.age = ageKeyIn
+                    self.nickName = nickNameKeyIn
+                } */~~
+
+            		convenience init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 위와 동일한 기능
+                   self**.init**(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
+                   self.nickName = nickNameKeyIn
+              }
+            }
+
+            let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10)
+            let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
+            ```
+
+            - [x]  self.init(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // 왜 type을 명시하지 않지?
+                - type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
+
+            - 암시적 추출 옵셔널! 은 인스턴스 사용에 꼭 필요하지만 초기값을 할당하지 않고자 할 때 사용
+
+                ```swift
+                // 구현 - 강아지는 주인없이 산책하면 안돼요!
+                class Puppy {
+                    var name: String
+                    var owner: PersonC!  // String! 이 아니라 프로퍼티 owner의 data type이 PersonC Class라는 뜻
+                    
+                    init(name: String) {
+                        self.name = name
                     }
-                    set {
-                        self.westernAge = newValue - 1
+                    
+                    func goOut() {
+                        print("\(name)가 주인 \(owner.name)와 산책을 합니다")  // owner가 nil인 경우 오류 발생함 (암시적 추출 옵셔널!을 사용했기 때문)
                     }
                 }
-            }
 
-            let yagom: Person = Person()
-            yagom.name = "yagom"
-            yagom.westernAge = 55
-            //yagom.koreanAge = 56 // *setter가 없으므로 컴파일 오류 발생 - 연산 프로퍼티 참고
-            print(yagom.introduction) // 이름 : yagom, 나이 : 55
-            print(yagom.koreanAge) // 56 - getter 결과로 자동 할당된 상태이다.
+                let happy: Puppy = Puppy(name: "happy")
+                //happy.goOut()   // 주인이 없는 상태라서 오류 발생 
+                happy.owner = kevin   // "kevin"이 아님 (PersonC Class type의 인스턴스 kevin 이므로)
+                happy.goOut()  // happy가 주인 kevin와 산책을 합니다 - 출력
+                ```
 
-            let sam: Student = Student()
-            sam.name = "sam"
-            sam.westernAge = 15
-            sam.koreanAge = 30 // *setter가 있으므로 할당 가능
-            print(sam.introduction) // 이름 : sam, 나이 : 29, 학점 : A
-            print(sam.koreanAge) // 30
-            print(sam.westernAge) // 29 - setter 결과
-            ```
+    - Class 초기화 위임
+        - 규칙
+            1. 자식의 지정init은 부모의 지정init을 반드시 호출해야 한다.
+            2. 편의init은 자신이 속한 Class의 다른 init을 반드시 호출해야 한다. (부모의 init 호출 불가)
+            3. 편의init은 궁극적으로 지정init을 반드시 호출해야 한다.
 
-    - 메서드 재정의
-        - 메서드 이름 및 return type이 일치해야 재정의 가능하다. (return type이 다르면 다른 메서드로 취급한다. - 중복정의 (overload))
-        - 부모클래스의 메서드를 override 한다면
-            - 인스턴스 메서드, class 타입 메서드만 가능 (static 타입 메서드 X, final 이 붙은 인스턴스/타입 메서드 X)
-            - 저장 프로퍼티는 override 불가하다. (인스턴스, 타입 모두 불가)
-                - 자식클래스에서는 상속받은 저장 프로퍼티, 연산 프로퍼티 모두 오버라이드 가능합니다. ???
-        - final 키워드를 사용하면 override를 방지한다.
-            - 타입 메서드
-            - static 키워드를 사용해 타입 메서드를 만들면 override 불가하다.
-            - class 키워드를 사용해 타입 메서드를 만들면 override 가능하다.
-            - class 앞에 final을 붙이면 (final class func) static 키워드를 사용한것과 동일하게 동작한다.
-        - 활용1
-
-            ```swift
-            // 클래스 정의
-            class Person {   // 부모 클래스 (기반 클래스) Person
-                var name: String = "unknown"   // 인스턴스 프로퍼티
-                
-                func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
-                    print("저는 \(name)입니다")
-                }
-                
-                final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
-                    print("hello")
-                }
-                
-                static func typeMethod() {    // override 불가 타입 메서드 - static
-                    print("type method - static")
-                }
-                
-                class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
-                    print("type method - class")
-                }
-                
-                final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
-                    print("type method - final class")
-                }
-            }
-
-            class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
-            //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했으므로)
-                var major: String = ""
-                
-                override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
-                    print("저는 \(name)이고, 전공은 \(major)입니다")
-                }
-
-            //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
-                
-                override class func classMethod() {   // class 타입 메서드를 override 했다.
-                    print("overriden type method - class")
-                }
-                
-            //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
-                
-            //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
-            //  override class func finalClassMethod() {}
-            }
-
-            // 클래스 사용
-            let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
-            let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
-
-            yagom.name = "yagom"
-            hana.name = "hana"
-            hana.major = "Swift"
-
-            yagom.selfIntroduce() // 저는 yagom입니다
-            hana.selfIntroduce() // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
-
-            Person.classMethod() // type method - class
-            Person.typeMethod() // type method - static
-            Person.finalCalssMethod() // type method - final class
-
-            Student.classMethod() // overriden type method - class
-            Student.typeMethod() // type method - static
-            Student.finalCalssMethod() // type method - final class
-            ```
-
-        - 활용2
-
-            ```swift
-            class Student {
-                var name: String = "unknown"  // 인스턴트 저장 프로퍼티
-                
-                static var storedProperty: Int = 10  // 타입 저장 프로퍼티
-                
-                func selfIntroduce() {  // 인스턴스 메서드
-                    print("저는 \(name)입니다")
-                }
-
-                final func finalMethod() {  // 인스턴스 메서드
-                    print("finalMethod 입니다")
-                }
-
-                static func typeMethodStatic() {  // 타입 메서드 - static
-                    print("static type method")
-                }
-               
-                class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
-                    print("class type method")
-                }
-                
-                final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
-                    print("final - class type method")
-                }
-            }
-
-            class University: Student {
-                var major: String = "major0"
-                
-                override func selfIntroduce() {
-                    print("저는 \(name) 이고, 전공은 \(major) 입니다.")
-                }
-                
-                override class func typeMethodClass() {
-                    print("override class type method")
-                }
-            }
-
-            // subclass
-            University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
-            // override class type method - 출력
-
-            var kevin: University = University()
-            kevin.name = "kevin"
-            kevin.major = "computer science"
-            kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
-            kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
-
-            // superclass
-            // 타입 프로퍼티 확인
-            print(Student.storedProperty) // 10
-
-            // 타입 메서드 사용
-            Student.typeMethodStatic() // static type method - 출력
-            Student.typeMethodClass() // class type method - 출력
-            Student.finalTypeMethodClass() // final - class type method
-
-            // var선언 인스턴스 생성
-            var yagom: Student = Student()
-            yagom.name = "yagom"
-            yagom.selfIntroduce() // 저는 yagom입니다
-            yagom.finalMethod() // finalMethod 입니다
-
-            // let선언 인스턴스 생성
-            let jina: Student = Student()
-            jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! - Class는 값이 아니라 참조이므로 (Structure와 다름)
-            jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
-
-            yagom.selfIntroduce()  // 저는 yagom입니다
-            ```
+            즉, *누군가=다른 지정init 또는 다른 편의init
+            - 누군가는 지정init에게 초기화를 반드시 위임한다.
+            - 편의init은 초기화를 반드시 누군가에 위임한다. (다른 지정init 또는 다른 편의init)
 
 # 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
 
@@ -3903,116 +4155,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             print(mike.name)  // mike 출력
             ```
 
-- 이니셜라이저 (init / convenience init)
-    - 🎃🎃🎃 인스턴스 생성 후 프로퍼티 값을 수정하기 어려운 경우에는 이니셜라이저 init을 통해 인스턴스가 가져야 할 초기값을 전달 가능하다.
-
-        ```swift
-        class PersonB {
-            var name: String
-            var age: Int
-            var nickName: String
-            
-            init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 이니셜라이저
-                self.name = nameKeyIn  // 인스턴스 초기화 단계에서 argument (오른쪽)가 각 프로퍼티 (왼쪽)로 들어간다.
-                self.age = ageKeyIn
-                self.nickName = nickNameKeyIn
-            }
-        }
-
-        let hana: PersonB = PersonB(nameKeyIn: "hana", ageKeyIn: 20, nickNameKeyIn: "하나")  // 인스턴스 생성 시 init의 parameter에 따라 초기값을 지정할 수 있다.
-        // let hana: PersonB = PersonB() 로 입력하면 parameter 없다고 오류 발생
-
-        print(hana.name) // hana
-        print(hana.age) // 20
-        print(hana.nickName) // 하나
-        ```
-
-    - 일부 프로퍼티가 필수 항목이 아닐 때는 옵셔널을 사용하고, 이니셜라이저 init을 2개 생성할 수 있다.
-    → 초기화 하는 방법이 2가지인 것임
-
-        ```swift
-        // nickname이 선택 사항인 경우
-
-        class PersonC {
-            var name: String
-            var age: Int
-            var nickName: String?
-            
-            init(nameKeyIn: String, ageKeyIn: Int) {
-                self.name = nameKeyIn
-                self.age = ageKeyIn
-            }
-            
-            init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) { // init parameter는 프로퍼티명과 꼭 동일할 필요 없음
-                self.name = nameKeyIn
-                self.age = ageKeyIn
-                self.nickName = nickNameKeyIn
-            }
-        }
-
-        let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10) // 초기화 방법이 2가지
-        let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
-
-        print(kevin.nickname)  // nil 출력
-        ```
-
-        ```swift
-        // convenience init을 통해 중복 최소화 
-
-        class PersonC {
-            var name: String
-            var age: Int
-            var nickName: String?
-            
-            **init**(nameKeyIn: String, ageKeyIn: Int) {
-                self.name = nameKeyIn
-                self.age = ageKeyIn
-            }
-            
-        /*     ~~init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {
-                self.name = nameKeyIn
-                self.age = ageKeyIn
-                self.nickName = nickNameKeyIn
-            } */~~
-
-        		convenience init(nameKeyIn: String, ageKeyIn: Int, nickNameKeyIn: String) {  // 위와 동일한 기능
-               self**.init**(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
-               self.nickName = nickNameKeyIn
-          }
-        }
-
-        let kevin: PersonC = PersonC(nameKeyIn: "kevin", ageKeyIn: 10)
-        let mike: PersonC = PersonC(nameKeyIn: "mike", ageKeyIn: 15, nickNameKeyIn: "m")
-        ```
-
-        - [x]  self.init(nameKeyIn: nameKeyIn, ageKeyIn: ageKeyIn)  // 왜 type을 명시하지 않지?
-            - type이 아니라 다른 init의 parameter로 전달될 argument가 들어감
-
-        - 암시적 추출 옵셔널! 은 인스턴스 사용에 꼭 필요하지만 초기값을 할당하지 않고자 할 때 사용
-
-            ```swift
-            // 구현 - 강아지는 주인없이 산책하면 안돼요!
-            class Puppy {
-                var name: String
-                var owner: PersonC!  // String! 이 아니라 프로퍼티 owner의 data type이 PersonC Class라는 뜻
-                
-                init(name: String) {
-                    self.name = name
-                }
-                
-                func goOut() {
-                    print("\(name)가 주인 \(owner.name)와 산책을 합니다")  // owner가 nil인 경우 오류 발생함 (암시적 추출 옵셔널!을 사용했기 때문)
-                }
-            }
-
-            let happy: Puppy = Puppy(name: "happy")
-            //happy.goOut()   // 주인이 없는 상태라서 오류 발생 
-            happy.owner = kevin   // "kevin"이 아님 (PersonC Class type의 인스턴스 kevin 이므로)
-            happy.goOut()  // happy가 주인 kevin와 산책을 합니다 - 출력
-            ```
-
 - 초기화 위임 (Initialization Delegation)
-    - 값 type인 Struct, Enum은 코드 중복을 줄이기 위해 초기화 위임을 구현 가능하다. (Class는 상속이 있으므로 위임 불가)
+    - 값 type인 Struct, Enum은 코드 중복을 줄이기 위해 초기화 위임을 구현 가능하다. (*Class는 상속이 있으므로 위임 불가)
     - 최소 2개 이상의 '사용자 정의 이니셜라이저'가 있을 때, 이니셜라이저가 `self.init` 키워드로 다른 이니셜라이저에게 일부 초기화 내용을 위임하는 것이다.
     - 단, 사용자 정의 이니셜라이저가 있는 동시에 기본 이니셜라이저 또는 멤버와이즈 이니셜라이즈를 사용하고 싶다면, Extension을 사용하여 사용자 정의 이니셜라이저를 구현하면 된다.
 
@@ -4052,6 +4196,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         var yagom: Student = Student() // 기본 이니셜라이저
         print(yagom) // none
         ```
+
+cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
 - 실패가능한 이니셜라이저 (Failable Initializers)
     - 실패가능한 이니셜라이저의 반환타입은 옵셔널 타입이다. init? 을 사용한다.
@@ -7117,3 +7263,5 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 - 사용자정의 연산자(Custom Operators)
 - 불명확 타입(Opaque Types)
 - 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
+
+- Contents-2
