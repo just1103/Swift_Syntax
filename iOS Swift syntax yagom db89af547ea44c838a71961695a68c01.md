@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: Kevin
-Last Edited Time: August 1, 2021 1:51 PM
+Last Edited Time: August 2, 2021 12:30 AM
 Property: Yagom
 Type: 언어
 
@@ -3547,147 +3547,147 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - static 키워드를 사용해 타입 메서드를 만들면 override 불가하다.
     - class 키워드를 사용해 타입 메서드를 만들면 override 가능하다.
     - class 앞에 final을 붙이면 (final class func) static 키워드를 사용한것과 동일하게 동작한다.
-    - 활용1
+        - 활용1
 
-        ```swift
-        // 클래스 정의
-        class Person {   // 부모 클래스 (기반 클래스) Person
-            var name: String = "unknown"   // 인스턴스 프로퍼티
-            
-            func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
-                print("저는 \(name)입니다")
-            }
-            
-            final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
-                print("hello")
-            }
-            
-            static func typeMethod() {    // override 불가 타입 메서드 - static
-                print("type method - static")
-            }
-            
-            class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
-                print("type method - class")
-            }
-            
-            final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
-                print("type method - final class")
-            }
-        }
-
-        class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
-        //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했으므로)
-            var major: String = ""
-            
-            override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
-                print("저는 \(name)이고, 전공은 \(major)입니다")
+            ```swift
+            // 클래스 정의
+            class Person {   // 부모 클래스 (기반 클래스) Person
+                var name: String = "unknown"   // 인스턴스 프로퍼티
+                
+                func selfIntroduce() {   // 인스턴스 메서드   **override 가능!!!
+                    print("저는 \(name)입니다")
+                }
+                
+                final func sayHello() {    // final 키워드를 사용하여 override를 방지 (final 인스턴스 메서드)
+                    print("hello")
+                }
+                
+                static func typeMethod() {    // override 불가 타입 메서드 - static
+                    print("type method - static")
+                }
+                
+                class func classMethod() {    // override 가능 타입 메서드 - class   **override 가능!!!
+                    print("type method - class")
+                }
+                
+                final class func finalCalssMethod() {    // 메서드 앞의 `static`과 `final class`는 동일한 역할 (override 불가)
+                    print("type method - final class")
+                }
             }
 
-        //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
-            
-            override class func classMethod() {   // class 타입 메서드를 override 했다.
-                print("overriden type method - class")
-            }
-            
-        //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
-            
-        //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
-        //  override class func finalClassMethod() {}
-        }
+            class Student: Person {   // 부모 클래스 Person을 상속받는 자식 클래스 Student
+            //  var name: String = "unknown"   // 오류 발생 - 저장 프로퍼티는 override 불가함 (부모 클래스에서 이미 정의했으므로)
+                var major: String = ""
+                
+                override func selfIntroduce() {    // 기존의 인스턴스 메서드를 override 했다.
+                    print("저는 \(name)이고, 전공은 \(major)입니다")
+                }
 
-        // 클래스 사용
-        let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
-        let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
-
-        yagom.name = "yagom"
-        hana.name = "hana"
-        hana.major = "Swift"
-
-        yagom.selfIntroduce() // 저는 yagom입니다
-        hana.selfIntroduce() // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
-
-        Person.classMethod() // type method - class
-        Person.typeMethod() // type method - static
-        Person.finalCalssMethod() // type method - final class
-
-        Student.classMethod() // overriden type method - class
-        Student.typeMethod() // type method - static
-        Student.finalCalssMethod() // type method - final class
-        ```
-
-    - 활용2
-
-        ```swift
-        class Student {
-            var name: String = "unknown"  // 인스턴트 저장 프로퍼티
-            
-            static var storedProperty: Int = 10  // 타입 저장 프로퍼티
-            
-            func selfIntroduce() {  // 인스턴스 메서드
-                print("저는 \(name)입니다")
+            //  super.selfIntroduce()   // *super.메서드명 - 부모 클래스의 메서드를 호출한다.
+                
+                override class func classMethod() {   // class 타입 메서드를 override 했다.
+                    print("overriden type method - class")
+                }
+                
+            //  override static func typeMethod() {}    // static을 사용한 타입 메서드는 override 불가
+                
+            //  override func sayHello() {}    // final 키워드를 사용한 메서드, 프로퍼티는 override 불가
+            //  override class func finalClassMethod() {}
             }
 
-            final func finalMethod() {  // 인스턴스 메서드
-                print("finalMethod 입니다")
+            // 클래스 사용
+            let yagom: Person = Person()   // 부모 클래스 Person의 인스턴스 생성
+            let hana: Student = Student()  // 자식 클래스 Student의 인스턴스 생성
+
+            yagom.name = "yagom"
+            hana.name = "hana"
+            hana.major = "Swift"
+
+            yagom.selfIntroduce() // 저는 yagom입니다
+            hana.selfIntroduce() // 저는 hana이고, 전공은 Swift입니다 - override 했으므로
+
+            Person.classMethod() // type method - class
+            Person.typeMethod() // type method - static
+            Person.finalCalssMethod() // type method - final class
+
+            Student.classMethod() // overriden type method - class
+            Student.typeMethod() // type method - static
+            Student.finalCalssMethod() // type method - final class
+            ```
+
+        - 활용2
+
+            ```swift
+            class Student {
+                var name: String = "unknown"  // 인스턴트 저장 프로퍼티
+                
+                static var storedProperty: Int = 10  // 타입 저장 프로퍼티
+                
+                func selfIntroduce() {  // 인스턴스 메서드
+                    print("저는 \(name)입니다")
+                }
+
+                final func finalMethod() {  // 인스턴스 메서드
+                    print("finalMethod 입니다")
+                }
+
+                static func typeMethodStatic() {  // 타입 메서드 - static
+                    print("static type method")
+                }
+               
+                class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
+                    print("class type method")
+                }
+                
+                final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
+                    print("final - class type method")
+                }
             }
 
-            static func typeMethodStatic() {  // 타입 메서드 - static
-                print("static type method")
+            class University: Student {
+                var major: String = "major0"
+                
+                override func selfIntroduce() {
+                    print("저는 \(name) 이고, 전공은 \(major) 입니다.")
+                }
+                
+                override class func typeMethodClass() {
+                    print("override class type method")
+                }
             }
-           
-            class func typeMethodClass() {  // 타입 메서드 - class (override 가능)
-                print("class type method")
-            }
-            
-            final class func finalTypeMethodClass() {  // final 타입 메서드 - class (override 불가)
-                print("final - class type method")
-            }
-        }
 
-        class University: Student {
-            var major: String = "major0"
-            
-            override func selfIntroduce() {
-                print("저는 \(name) 이고, 전공은 \(major) 입니다.")
-            }
-            
-            override class func typeMethodClass() {
-                print("override class type method")
-            }
-        }
+            // subclass
+            University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
+            // override class type method - 출력
 
-        // subclass
-        University.typeMethodClass()  // child class의 타입 메서드 (부모 class의 타입 메서드를 override 했던)
-        // override class type method - 출력
+            var kevin: University = University()
+            kevin.name = "kevin"
+            kevin.major = "computer science"
+            kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
+            kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
 
-        var kevin: University = University()
-        kevin.name = "kevin"
-        kevin.major = "computer science"
-        kevin.selfIntroduce()  // 저는 kevin 이고, 전공은 computer science 입니다.
-        kevin.finalMethod()  // 부모 class의 인스턴스 메서드 호출해보기 - finalMethod 입니다 출력
+            // superclass
+            // 타입 프로퍼티 확인
+            print(Student.storedProperty) // 10
 
-        // superclass
-        // 타입 프로퍼티 확인
-        print(Student.storedProperty) // 10
+            // 타입 메서드 사용
+            Student.typeMethodStatic() // static type method - 출력
+            Student.typeMethodClass() // class type method - 출력
+            Student.finalTypeMethodClass() // final - class type method
 
-        // 타입 메서드 사용
-        Student.typeMethodStatic() // static type method - 출력
-        Student.typeMethodClass() // class type method - 출력
-        Student.finalTypeMethodClass() // final - class type method
+            // var선언 인스턴스 생성
+            var yagom: Student = Student()
+            yagom.name = "yagom"
+            yagom.selfIntroduce() // 저는 yagom입니다
+            yagom.finalMethod() // finalMethod 입니다
 
-        // var선언 인스턴스 생성
-        var yagom: Student = Student()
-        yagom.name = "yagom"
-        yagom.selfIntroduce() // 저는 yagom입니다
-        yagom.finalMethod() // finalMethod 입니다
+            // let선언 인스턴스 생성
+            let jina: Student = Student()
+            jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! - Class는 값이 아니라 참조이므로 (Structure와 다름)
+            jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
 
-        // let선언 인스턴스 생성
-        let jina: Student = Student()
-        jina.name = "jina"    // let선언 인스턴스이지만 가변 프로퍼티는 수정가능하다! - Class는 값이 아니라 참조이므로 (Structure와 다름)
-        jina.selfIntroduce()  // 저는 jina입니다 - 출력 (Structure에서는 unknown)
-
-        yagom.selfIntroduce()  // 저는 yagom입니다
-        ```
+            yagom.selfIntroduce()  // 저는 yagom입니다
+            ```
 
 - 프로퍼티 재정의
     - 저장 프로퍼티는 재정의 불가하다. (인스턴스 및 타입 모두 불가)
@@ -3867,15 +3867,14 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 - 재정의 방지 (final)
     - `final` 키워드로 특성의 재정의를 방지한다. `final var` `final func` `final class func` `final subscript` (final-을 재정의 시 컴파일 오류 발생)
-    - static은 원래 재정의 불가하다.
-    - Class 자체를 상속하거나 재정의하지 못하게 하려면 `final class`로 명시한다.
+    - static은 원래 재정의 불가하다. (static 타입 메서드 또는 static 타입 프로퍼티)
+    - Class 자체를 상속하지 못하게 하려면 `final class`로 명시한다.
 
 ## Class 이니셜라이저의 상속/재정의
 
 ### Class 이니셜라이저
 
 - 값 타입과 달리, Class 이니셜라이저는 이니셜라이저 위임을 위해 '지정 이니셜라이저(Designated Initializer)' 및 '편의 이니셜라이저(Convenience Initializer)'로 역할을 구분한다.
-- Class는 이니셜라이저 상속이 가능하므로 재정의를 신경써야 한다.
     - 지정init / 편의init
         - 지정 이니셜라이저 (main 역할)
         - 해당 Class의 모든 프로퍼티를 초기화해야 한다. (`var name: String = ""`와 같이 Class를 정의할 때 모든 프로퍼티의 기본값을 지정하면 이니셜라이저가 필요 없다.)
@@ -3991,15 +3990,400 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 happy.goOut()  // happy가 주인 kevin와 산책을 합니다 - 출력
                 ```
 
-    - Class 초기화 위임
-        - 규칙
-            1. 자식의 지정init은 부모의 지정init을 반드시 호출해야 한다.
+    - Class 초기화
+        - 초기화 위임 규칙
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
+
+            1. 자식의 모든 지정init은 부모의 지정init을 반드시 호출해야 한다.
             2. 편의init은 자신이 속한 Class의 다른 init을 반드시 호출해야 한다. (부모의 init 호출 불가)
             3. 편의init은 궁극적으로 지정init을 반드시 호출해야 한다.
 
             즉, *누군가=다른 지정init 또는 다른 편의init
             - 누군가는 지정init에게 초기화를 반드시 위임한다.
             - 편의init은 초기화를 반드시 누군가에 위임한다. (다른 지정init 또는 다른 편의init)
+
+        - 초기화 과정 (2단계)
+            - 안전확인 이후 초기화 1단계/2단계를 진행한다. 맞나?????
+            - 초기화 안전확인 (safty-checks)
+                1. 자식의 지정init은 부모의 init을 호출하기 이전에 "자신의 프로퍼티"를 모두 초기화했는지 확인한다. 
+                (*따라서 자식의 지정init이 부모의 지정init을 호출하기 이전에 자신의 모든 (기본값이 없는) 프로퍼티에 값을 할당해야 한다.) → 충돌할 수도 있어서????????
+                = 자식의 지정init은 "자신의 프로퍼티"를 모두 초기화한 이후에 → 부모의 init을 호출한다.
+                2. 자식의 지정init은 "상속받은 프로퍼티"에 값을 할당하기 이전에 부모의 지정init를 호출해야 한다.
+                = 자식의 지정 init은 부모의 지정init을 호출한 이후에 → 자식이 "상속받은 프로퍼티"에 값을 할당한다.
+                3. 편의init은 (자신의 Class에 정의한 프로퍼티를 포함하여) 어떤 프로퍼티라도 값을 할당하기 이전에 다른 init을 호출해야 한다. ????????
+                = 편의init은 우선 다른 init을 호출한 이후에 → 프로퍼티의 값을 할당한다.
+                4. 초기화 1단계 완료 이전에 모든 init은 인스턴스 메서드 호출, 인스턴스 프로퍼티의 값 읽기, self 활용이 불가하다.
+                = init이 인스턴스 메서드 호출, 인스턴스 프로퍼티의 값 읽기, self 활용을 하려면 초기화 1단계가 완료되어야 한다.
+
+            - 초기화 1단계 : init을 통해 저장 프로퍼티에 초기값을 할당한다.
+                1. Class가 지정init 또는 편의init을 호출한다.
+                2. Class 인스턴스를 위해 메모리가 할당된다. 메모리는 아직 초기화되지 않은 상태이다.
+                3. 지정init은 해당 Class의 모든 프로퍼티 (자식 본인의 프로퍼티)에 값이 있는지 확인한다. 이제 Class 부분까지의 저장 프로퍼티를 위한 메모리가 초기화되었다.
+                4. 지정init은 부모init이 동일하게 동작하도록 초기화를 양도한다. ???? 동작주체가 넘어간다는 뜻?
+                5. 부모클래스는 상속 체인을 따라 최상위 클래스에 도달할 때까지 해당 작업을 반복한다. 
+                (최상위 클래스까지의 모든 저장 프로퍼티에 값이 있음을 확인하면, 해당 인스턴스의 메모리는 모두 초기화된 것이다.)
+            - 초기화 2단계 : 저장 프로퍼티를 사용자 정의한다. ?????
+            - 1단계 완료 이전에 프로퍼티 값에 접근하는 것을 방지하여 안전성을 확보하는 목적이다. (다른 init이 실수로 프로퍼티 값을 변경하는 것을 방지함)
+                1. 최상위 클래스부터 최하위 클래스까지 상속 체인을 따라내려오면서 지정init들이 인스턴스를 각각 사용자 정의한다. (여기서 self를 통해 프로퍼티 값을 수정하거나, 인스턴스 메서드의 호출 등 가능)
+                2. 편의init을 통해 self를 통한 사용자 정의를 진행한다.
+
+            ```swift
+            class Person {
+                var name: String
+                var age: Int
+                
+                init(nameInput: String, ageInput: Int) {
+                    self.name = nameInput
+                    self.age = ageInput
+                }
+            }
+
+            class Student: Person {
+                var major: String
+                
+                init(nameInput2: String, ageInput2: Int, majorInput: String) {
+                    self.major = "Swift" // 구현 - 프로퍼티 major는 항상 동일한 값으로 초기화
+                    super.init(nameInput: nameInput2, ageInput: ageInput2) // 없으면 컴파일 오류 발생 - 'super.init' isn't called on all paths before returning from initializer.
+                }
+            		// 1. 자식의 지정init은 부모의 지정init을 호출하기 이전에 자신의 self로 major 프로퍼티의 값을 할당한다. - 안전확인 조건-1 만족
+            		// 2. super.init으로 부모의 init을 호출하고, 상속받은 프로퍼티 (name, age)에 값을 할당한다. 그 후 값을 할당할 다른 상속받은 프로퍼티가 없다. - 안전확인 조건-2 만족
+                
+                convenience init(nameInput3: String) {
+                    self.init(nameInput2: nameInput3, ageInput2: 7, majorInput: "iOS") // 구현 - 프로퍼티 age, major는 항상 동일한 값으로 초기화
+                }
+            		// 3. 편의init은 차후에 값을 할당할 프로퍼티가 없고, 다른 init을 호출했다. - 안전확인 조건-3 만족
+            		// 4. init 어디에서도 인스턴스 메서드를 호출하거나, 인스턴스 프로퍼티의 값을 읽어오지 않았다. - 안전확인 조건-4 만족
+            }
+
+            var st: Student = Student(nameInput2: "지정init", ageInput2: 100, majorInput: "뭘넣어도결과는Swift") // 지정init으로 초기화
+            print("\(st.name), \(st.age), \(st.major)") // 지정init, 100, Swift 출력 - 항상 major는 Swift
+
+            st = Student(nameInput3: "7살의iOSmater신동") // 편의init으로 초기화
+            print("\(st.name), \(st.age), \(st.major)") // 7살의iOSmater신동, 7, Swift 출력 - 항상 age는 7, major는 iOS
+            ```
+
+### Class 이니셜라이저 상속/재정의
+
+- Class는 이니셜라이저 상속이 가능하므로 재정의에 주의해야 한다.
+- init 재정의
+    - 기본적으로 init은 부모클래스의 init을 상속받지 않는다. 
+    (부모init은 자식클래스에 최적화되어 있지 않으므로 자식클래스의 인스턴스가 부정확하게 초기화되는 것을 방지하는 목적이다. 단, 안전하다고 판단되면 부모의 init이 상속받기도 한다. - init 자동상속 참고)
+    - 자식이 부모와 동일한 init을 사용하고 싶을 경우, 보통 부모의 init과 동일하게 자식의 init을 구현한다. (이게 기본init???)
+        - 부모의 지정init과 *동일하게 자식의 지정init이 구현하려면 재정의를 한다. *동일한 = parameter가 동일한???
+            - 부모의 지정init을 자식의 편의init이 재정의 가능하다.
+            - 반면, 부모의 편의init을 자식의 편의init에 구현하려면 재정의하지 않는다. (자식은 부모의 편의init을 절대 호출 불가하다. 따라서 부모의 편의init은 재정의 불가) 부모의 편의init을 복붙하여 자식의 편의init으로 쓴다.
+
+            ```swift
+            class Person {
+                var name: String
+                var age: Int
+                
+                init(nameInput: String, ageInput: Int) {
+                    self.name = nameInput
+                    self.age = ageInput
+                }
+
+                convenience init(nameInputA: String) {
+                    self.init(nameInput: nameInputA, ageInput: 0)
+                }
+            }
+
+            class Student: Person {
+                var major: String
+
+            		override init(nameInput nameInput2: String, ageInput ageInput2: Int) { // 주의 - override한 부모의 init과 argument label (parameter명이 아니라?!)이 일치해야 한다.
+            //  override init(nameInput2: String, ageInput2: Int) {
+                // 오류 발생 - Argument labels for initializer 'init(nameInput2:ageInput2:)' do not match those of overridden initializer 'init(nameInput:ageInput:)'
+                
+                    self.major = "Swift"
+                    super.init(nameInput: nameInput2, ageInput: ageInput2)
+                }	 
+
+            		convenience init(nameInput3: String) { // 부모의 편의init과 자식의 편의init이 동일하지만, 재정의 불가하다.
+            //      self.init(nameInput2: nameInput3, ageInput2: 7, majorInput: "iOS")
+                    // 오류 발생1 - Extra argument 'ageInput2' in call
+                    // 오류 발생2 - incorrect argument label in call (have 'nameInput2:ageInput:', expected 'nameInput:ageInput:')
+                    
+                    self.init(nameInput: nameInput3, ageInput: 100) // 주의 - self.init의 argument label (parameter명이 아니라?!)을 기준으로 일치해야 한다.
+                }
+
+            		init(nameInput2: String, ageInput2: Int, majorInput: String) { // 확인용 - extra init도 사용 가능하다.
+                    self.major = "extra init-Swift"
+                    super.init(nameInput: nameInput2, ageInput: ageInput2)
+                }
+            }
+
+            var st = Student(nameInput: "재정의_지정init", ageInput: 999)
+            print("\(st.name), \(st.age), \(st.major)") // 재정의_지정init, 999, Swift
+
+            st = Student(nameInput3: "7살의iOSmater신동")
+            print("\(st.name), \(st.age), \(st.major)") // 7살의iOSmater신동, 100, Swift - 편의init이므로 100 출력
+
+            st = Student(nameInput2: "확인용", ageInput2: 1, majorInput: "뭐든")
+            print("\(st.name), \(st.age), \(st.major)") // 확인용, 1, extra init-Swift 
+            ```
+
+            ```swift
+            // 자동상속
+
+            class Person {
+                var name: String
+                var age: Int
+                
+                init(nameInput: String, ageInput: Int) {
+                    self.name = nameInput
+                    self.age = ageInput
+                }
+            }
+
+            class Test: Person { // init을 따로 구현하지 않았고, 부모의 init을 상속받는다.
+                func gogo() {
+                    print("\(self.name), \(self.age)")
+                }
+            }
+            var test: Test = Test(nameInput: "auto", ageInput: 0)
+            test.gogo() // auto, 0
+            ```
+
+- 실패가능한 이니셜라이저 init? 재정의
+    - 부모클래스의 실패가능한 이니셜라이저(init?)를 자식클래스에서 재정의하는 경우,
+    실패가능한 이니셜라이저(init?), 실패하지 않는 이니셜라이저(init) 모두 사용 가능하다.
+        - [ ]  super.init(name: name, age: age) // 부모의 init?을 재정의했고, 부모의 init?을 호출하므로 nil 가능성이 있어서 -> init?으로 사용한다. 
+        // 근데 왜 super.init?(name: name, age: age) -> 가 아니지?
+
+        ```swift
+        class Person {
+            var name: String
+            var age: Int
+            
+            init() {
+                self.name = "Unknown"
+                self.age = 0
+            }
+            
+            init?(name: String, age: Int) {
+                if name.isEmpty { // 참고) "".isEmpty = true
+                    return nil
+                }
+                self.name = name
+                self.age = age
+            }
+            
+            init?(age: Int) {
+                if age < 0 {
+                    return nil
+                }
+                self.name = "Unknown"
+                self.age = age
+            }
+        }
+
+        class Student: Person {
+            var major: String
+            
+            override init?(name: String, age: Int) { // 부모의 2번째 init (init?)을 *init?으로 override
+                self.major = "누구나 Swift"
+                super.init(name: name, age: age) // 부모의 init?을 재정의했고, 부모의 init?을 호출하므로 nil 가능성이 있어서 -> init?으로 사용한다. 
+        				// 근데 왜 super.init?(name: name, age: age) -> 가 아니지?
+            }
+            
+            override init(age: Int) { // 부모의 3번째 init (init?)을 override *init으로 override
+                self.major = "누구나 Swift"
+                super.init() // ***부모의 init?을 재정의했지만, (상속받은 부모 init?이 아니라) 부모의 init을 호출하므로 nil 가능성이 제거되었으므로 -> init으로 사용한다.
+            }
+        }
+
+        var st: Student = Student(name: "kevin", age: -1)!
+        print("\(st.name), \(st.age), \(st.major)") // kevin, -1, 누구나 Swift <- age=-1이 할당된다. 부모의 두번째 init?이 호출되기 때문 (이름만 ""가 아니면 age는 그대로 출력)
+
+        st = Student(name: "", age: -1)! // nil이 return되어 컴파일 에러 발생 - Unexpectedly found nil while unwrapping an Optional value
+            
+        st = Student(age: -1) // nil 가능성이 없으므로 unwrapping도 필요 없음
+        print("\(st.name), \(st.age), \(st.major)") // Unknown, 0, 누구나 Swift <- age=-1이 할당되지 않는다. 부모의 첫번째 init이 호출되기 때문
+        ```
+
+- init 자동상속
+    - 대부분의 경우 자식클래스에서 init 재정의를 할 필요가 없다...
+    - 자동상속 2가지 규칙
+
+        - 전제 : 자식클래스에서 프로퍼티 기본값을 모두 제공한다. (상속받지 않은 자식 본인의 프로퍼티???????) 또는 프로퍼티 기본값을 제공하지 않으나 init을 통해 초기화된다.
+
+        1. 자식클래스에서 별도의 지정init을 구현하지 않는 경우, 부모의 모든 init (부모의 지정init 및 부모의 편의init)이 자동상속된다.
+        2. 규칙-1에 따라 자식클래스에서 부모의 지정init을 자동상속 받은 경우,
+        또는 자식클래스에서 부모의 지정init을 모두 **재정의하여 사용하는 경우, 부모의 편의init이 자동상속된다.
+
+               - 자식클래스에 지정init 및 편의init을 추가해도 유효하다.
+               - **자식클래스에서 부모의 지정init을 (자식의 지정init으로 재정의하지 않고) 자식의 편의init으로 구현하더라도 (이것도 재정의이다.) 규칙-2를 만족한다.
+
+    - init 자동상속
+
+        ```swift
+        class Person {
+            var name: String
+            
+            init(name: String) {
+                self.name = name
+            }
+
+            convenience init() {
+                self.init(name: "Unknown")
+            }
+        }
+
+        class Student: Person {
+            var major: String = "Swift" // 프로퍼티 기본값을 제공하고, 별도 지정init을 구현하지 않았다. *자동상속의 전제, 규칙1 및 규칙2를 만족
+        } 
+
+        // 부모의 지정init 자동상속
+        let yagom: Person = Person(name: "yagom")
+        let hana: Student = Student(name: "hana")
+        print(yagom.name) // yagom
+        print(hana.name) // hana
+
+        // 부모의 편의init 자동상속
+        let kevin: Person = Person()
+        let sam: Student = Student()
+        print(kevin.name) // Unknown
+        print(sam.name) // Unknown
+        ```
+
+    - 편의init 자동 상속-1
+
+        ```swift
+        class Person {
+            var name: String
+            
+            init(name: String) {
+                self.name = name
+            }
+
+            convenience init() {
+                self.init(name: "Unknown-name")
+            }
+        }
+
+        class Student: Person {
+            var major: String // 프로퍼티 기본값이 없다. 그러나 init을 통해 초기화한다. - *자동상속 전제 만족
+
+            override init(name: String) { // 부모의 지정init를 모두 재정의하여 사용한다. - *자동상속 규칙2 만족
+                self.major = "Unknown-major"
+                super.init(name: name)
+            }
+            
+            init(name: String, major: String) { // init 추가
+                self.major = major
+                super.init(name: name)
+            }
+        }
+
+        // 부모의 편의init 자동상속
+        let kevin: Person = Person()
+        let sam: Student = Student()
+        print(kevin.name) // Unknown-name
+        print(sam.name) // Unknown-name
+        ```
+
+    - 편의init 자동 상속-2
+
+        ```swift
+        class Person {
+            var name: String
+            
+            init(name: String) {
+                self.name = name
+            }
+
+            convenience init() {
+                self.init(name: "Unknown-name")
+            }
+        }
+
+        class Student: Person {
+            var major: String // 프로퍼티 기본값이 없다. 그러나 init을 통해 초기화한다. - *자동상속 전제 만족
+            
+            override convenience init(name: String) { // ** <부모의 지정init를 자식의 편의init으로 재정의하여 사용한다.> - 자동상속 규칙2 만족
+                self.init(name: name, major: "Unknown-major")
+            }
+            
+            init(name: String, major: String) { // init 추가
+                self.major = major
+                super.init(name: name)
+            }
+        }
+
+        let kevin: Person = Person()
+        let sam: Student = Student(name: "sam") // 부모의 지정init을 재정의한 자식의 convenience init로 초기화
+        print(kevin.name) // Unknown-name
+        print(sam.name) // sam
+        print(sam.major) // Unknown-major
+
+        // 부모의 편의init 자동상속
+        let james: Student = Student()
+        print(james.name) // Unknown-name
+        print(james.major) // Unknown-major
+        ```
+
+    - 편의init 자동 상속-3
+        - '부모클래스의 init을 모두 상속받는다'는 뜻은 조상클래스의 init을 사용 가능하다는 의미이다. (부모가 상속받은 조상의 init)
+
+            ```swift
+            class Person { // 조상
+                var name: String
+                
+                init(name: String) {
+                    self.name = name
+                }
+
+                convenience init() {
+                    self.init(name: "Unknown-name")
+                }
+            }
+
+            class Student: Person { // 부모
+                var major: String // 프로퍼티 기본값이 없다. 그러나 init을 통해 초기화한다. - *자동상속 전제 만족
+                
+                override convenience init(name: String) { // <부모의 지정init를 자식의 편의init으로 재정의하여 사용한다.> - *자동상속 규칙2 만족
+                    self.init(name: name, major: "Unknown-major")
+                }
+                
+                init(name: String, major: String) { 
+                    self.major = major
+                    super.init(name: name)
+                }
+            }
+
+            class UniversityStudent: Student { // 자식
+                var grade: String = "A"
+                var description: String {
+                    return "\(self.name), \(self.major), \(self.grade)"
+                }
+                
+                convenience init(name: String, major: String, grade: String) {
+                    self.init(name: name, major: major) // *self.init = 상속받은 부모의 지정init
+            				// 자식클래스에 써있지 않지만, 자동상속 전체 및 규칙1을 만족 (프로퍼티 기본값이 있고, 별도의 지정init을 구현하지 않음)하므로 -> 부모의 모든 init이 자동상속된 상태이다. (부모의 지정init 및 편의init를 모두 사용 가능하다.)
+                    self.grade = grade
+                }
+            }
+
+            let nova: UniversityStudent = UniversityStudent() // *조상의 편의init을 사용 (부모가 상속받은 편의init이므로 가능)
+            print(nova.description) // Unknown-name, Unknown-major, A
+
+            let raon: UniversityStudent = UniversityStudent(name: "raon") // 부모의 편의init을 사용
+            print(raon.description) // raon, Unknown-major, A
+
+            let joker: UniversityStudent = UniversityStudent(name: "joker", major: "CS") // 부모의 지정init을 사용
+            print(joker.description) // joker, CS, A
+
+            var chope: UniversityStudent = UniversityStudent(name: "chope", major: "PC", grade: "C") // 자식 본인의 편의init을 사용
+            print(chope.description) // chope, PC, C
+
+            chope = UniversityStudent() // 다른 init으로 재할당 가능하다.
+            print(chope.description) // Unknown-name, Unknown-major, A
+            ```
+
+- 요구 init
+    - 
 
 # 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
 
@@ -4100,7 +4484,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
         RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
 
 - 기본 이니셜라이저 (Default Initializers)
     - 모든 인스턴스는 초기화와 동시에 모든 저장 프로퍼티에 유효한 값이 할당되어 있어야 한다. (Class는 Class 선언 시 기본값이나 초기값을 할당하지 않으면 오류 발생)
@@ -4199,39 +4583,39 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
-- 실패가능한 이니셜라이저 (Failable Initializers)
-    - 실패가능한 이니셜라이저의 반환타입은 옵셔널 타입이다. init? 을 사용한다.
-    - 이니셜라이저 매개변수로 전달되는 초기값이 잘못된 경우 인스턴스 생성에 실패할 수 있다. 인스턴스 생성에 실패하면 nil을 반환한다.
+- 실패가능한 이니셜라이저 (Failable Initializers) init?
+    - 실패가능한 이니셜라이저의 return type은 옵셔널 타입이다.
+    - 이니셜라이저 매개변수로 전달되는 초기값이 잘못된 경우, 인스턴스 생성에 실패할 수 있다. 인스턴스 생성에 실패하면 nil을 반환한다.
 
-    ```swift
-    class PersonD {
-        var name: String
-        var age: Int
-        var nickName: String?
-        
-        init?(name: String, age: Int) {   // 인스턴트 초기화 단계에서 전달이 실패 가능하므로 init?을 사용함
-            if (0...120).contains(age) == false {   // age가 0 이상 120 이하가 아니라면 return nil 해라
-                return nil
-            }
+        ```swift
+        class PersonD {
+            var name: String
+            var age: Int
+            var nickName: String?
             
-            self.name = name
-            self.age = age
+            init?(name: String, age: Int) {   // 인스턴트 초기화 단계에서 전달이 실패 가능하므로 init?을 사용함
+                if (0...120).contains(age) == false {   // age가 0 이상 120 이하가 아니라면 return nil 해라
+                    return nil
+                }
+                
+                self.name = name
+                self.age = age
+            }
         }
-    }
 
-    //let john: PersonD = PersonD(name: "john", age: 23)  // 오류 발생 - Value of optional type 'PersonD?' must be unwrapped to a value of type 'PersonD'
+        //let john: PersonD = PersonD(name: "john", age: 23)  // 오류 발생 - Value of optional type 'PersonD?' must be unwrapped to a value of type 'PersonD'
 
-    let john: PersonD? = PersonD(name: "john", age: 23)   // 인스턴스 초기화 단계 - 반환이 실패 가능하므로 (nil을 반환) 옵셔널 타입인 personD?를 사용함
-    let joker: PersonD? = PersonD(name: "joker", age: 123)
+        let john: PersonD? = PersonD(name: "john", age: 23)   // 인스턴스 초기화 단계 - 반환이 실패 가능하므로 옵셔널 타입 personD?를 사용함
+        let joker: PersonD? = PersonD(name: "joker", age: 123)
 
-    print(john)  // Optional(__lldb_expr_52.PersonD) ???
-    print(jocker)  // nil 출력
+        print(john)  // Optional(__lldb_expr_52.PersonD) 
+        print(john?.name) // Optional("john")
+        print(john?.age)  // Optional(23)
 
-    print(john?.name) // Optional("john")
-    print(john?.age)  // Optional(23)
-    print(joker?.name) // nil
-    print(joker?.age)  // nil
-    ```
+        print(jocker)  // nil 출력
+        print(joker?.name) // nil
+        print(joker?.age)  // nil
+        ```
 
 - Enum에서 사용하는 실패가능한 이니셜라이저 (Failable Initializers for Enumerations)
     - 1) 특정 case에 해당하지 않는 값이 전달되거나, 2) rawValue로 초기화할 때 잘못된 rawValue 값이 전달된 경우, 이니셜라이저 생성에 실패할 수 있다.
@@ -4251,7 +4635,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 case 17...19:
                     self = .high
                 default:
-                    return nil // 앞의 예제에서는 self = .none 이었음 (nil 가능성 없으므로 init)
+                    return nil // cf. 앞의 예제에서는 self = .none 이었음 (nil 가능성 없으므로 init)
                 }
             }
             
@@ -4260,7 +4644,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             }
         }
 
-        var younger: Student? = Student(koreanAge: 20) // switch문 return nil 대신 .none이면, init 가능하지만, rawValue를 지정했으므로 인스턴스는 optional type이어야 함
+        var younger: Student? = Student(koreanAge: 20) // (switch문 return nil 대신 .none이면, init 가능하지만) rawValue를 지정했으므로 인스턴스는 optional type이어야 함
         print(younger) // nil
 
         younger = Student(bornAt: 2020, currentYear: 2016)
@@ -4277,7 +4661,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         enum TemperatureUnit {
             case kelvin, celsius, fahrenheit
 
-            init?(symbol: Character) { // symbol을 왜 따로 선언을 안해주지? - init 메서드의 parameter 이므로
+            init?(symbol: Character) { 
                 switch symbol {
                 case "K":
                     self = .kelvin   
@@ -6921,12 +7305,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
         - grid 배열은 서브스크립트에 의해 아래와 같이 row와 column을 갖는 행렬도 동작한다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
 
         - row/column에 값을 할당한 결과이다.
             - [ ]  행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
 
 - 서브스크립트 (Subscript) : Collection, List, Sequence 등 타입의 element에 접근하는 '단축 문법'이다.
     - Class, Struct, Enum에 서브스크립트를 구현 가능하다.
@@ -7265,3 +7649,5 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 - 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
 
 - Contents-2
+
+    
