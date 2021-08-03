@@ -1,8 +1,8 @@
 # Swift syntax
 
 Created: January 24, 2021 1:43 PM
-Created By: Kevin
-Last Edited Time: August 2, 2021 12:30 AM
+Created By: 손효주
+Last Edited Time: August 4, 2021 12:19 AM
 Property: Yagom
 Type: 언어
 
@@ -223,16 +223,93 @@ Type: 언어
 
     - 특수문자
 
-        ```swift
         \n  줄바꿈
         \\  String 내 백슬래쉬를 표현 
-        \"  String 내 "를 표현 
+        \"  String 내부의 "를 표현 
         \t  탭 문자
         \0  String 종료를 나타내는 null 문자
 
+        ```swift
         // String 내부에 위의 특수문자를 사용하지 않는 방법
         // print(#""#)
+
+        print("문자열 내부에\n 이런 \"특수문자\"를\t사용하면 \\이런 놀라운 결과를 볼 수 있습니다")
+        print(#"문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요"#) // 백슬래쉬가 없어도 특수문자가 그대로 출력된다.
+        let number: Int = 100
+        print(#"특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 \#(number) 해보세요"#)
+
+        //출력
+        문자열 내부에
+         이런 "특수문자"를	사용하면 \이런 놀라운 결과를 볼 수 있습니다
+        문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요
+        특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 100 해보세요
         ```
+
+- Floating Point (부동소수점)
+    - 부동소수는 정수와 달리 소수를 가진다. 컴퓨터는 소수를 나타내기 위해 IEEE754 표준을 따른다.
+    - ↔  고정소수점
+
+        '정수'를 표현하는 비트와 '소수'를 표현하는 비트의 비트 수를 사전에 미리 정해두고, 해당 비트만큼 의미를 부여하여 소수를 표현하는 방식이다. 예를 들어 실수 표현에 4byte(32bit)를 사용하고, 부호 표현에 1bit, 정수 표현에 16bit, 소수 표현에 15bit를 사용하기로 약속한 '소수 표현방식'이 있다고 가정한다. 해당 시스템에서 263.3을 소수로 표현하게 되면 (0)0000000100000111.010011001100110 와 같은 수로 표현이 된다.
+
+        고정 소수점 방식을 사용하게 되면 사용하지 않는 비트를 낭비해야 한다는 단점이 있다. 정수를 표현하는 bit 수를 늘리면 더 큰 수를 표현할 수 있겠지만, 소수를 표현하는 bit가 상대적으로 작아지기 때문에 정밀한 수를 표현하기에는 무리가 있다. 반면 소수를 표현하는 bit를 늘리게 될 경우 큰 수를 표현할 수 없게 된다.
+
+        이러한 문제점을 해결하기 위해 정수와 소수를 나타내는 비트를 사전에 정해 놓지 않고, 상황에 따라 변경되는 부동소수점(floating point) 방식을 사용한다. floating point란 소수점이 둥둥 떠다닌다는 의미로 쉽게 말해 소수점의 위치가 변한다는 뜻이다.
+
+        IEEE754 방식은 '정수'와 '소수' 부분으로 나눴던 고정소수점 방식과는 다르게, '지수' 비트와 '가수' 비트로 나뉜다. 지수 비트에는 소수점의 위치를 기록하고 가수 비트에는 수 전체의 형태를 기록한다.
+
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png)
+
+        출처: [https://ooeunz.tistory.com/98](https://ooeunz.tistory.com/98)
+
+    - IEEE754
+
+        IEEE754는 IEEE에서 개발한 컴퓨터에서 부동소수점을 표현하는 가장 널리 쓰이는 표준이다.
+        (Institute of Electrical and Electronics Engineers, 전기전자기술자협회)
+
+        산술 형식, 형식의 교환, 예외 처리 등의 항목에 대해 정의한다.
+        - 산술 형식: 유한한 수들(0을 포함한)과 무한대와 NaN(Not a number)값으로 구성된 2진수와 10진수의 부동소수점 데이터 집합
+        - 형식의 교환: 부동소수점 데이터를 효율적이고 압축적으로 전환할 수도 있는 인코딩
+
+        IEEE754의 부동소수점 표현은 크게 세 부분으로 구성되는데, 최상위 비트는 부호를 표시하는 데 사용되며, 지수 부분(exponent)과 가수 부분(fraction/mantissa)이 있다.
+
+        - 예시 - 십진법 118.625를 IEEE754로 표현
+            - 음수이므로 부호부는 1이 된다.
+            - 그 다음, 절대값을 이진법으로 나타내면 1110110.101(2)이 된다.
+            - 소수점을 왼쪽으로 이동시켜, 왼쪽에는 1만 남게 만든다. 예를 들면 1110110.101(2)=1.110110101(2)×2⁶ 과 같다. 이것을 정규화된 부동소수점 수라고 한다.
+            - 가수부는 소수점의 오른쪽 부분으로, 부족한 비트 수 부분만큼 0으로 채워 23비트로 만든다. 결과는 11011010100000000000000 이 된다.
+            - 지수는 6이므로 Bias를 더해야 한다. 32비트 IEEE 754 형식에서는 Bias는 127이므로 6+127 = 133이 된다. 이진법으로 변환하면 10000101(2)이 된다.
+
+            이 결과를 정리하여 표시하면 다음과 같다.
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png)
+
+        출처: [https://ko.wikipedia.org/wiki/IEEE_754](https://ko.wikipedia.org/wiki/IEEE_754)
+
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png)
+
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png)
+
+    - 부동소수점이란 아래와 같이 구성된다.
+    - 부호부 (1비트) : 양수일 때는 0, 음수일 때는 1
+    - 지수부 (부호가 있는 정수, 7비트) : 제일 앞의 1비트는 부호를 정하고, 나머지 6비트로 표시
+    - 정규화된 가수부 (부호가 없는 정수, 24비트) : 제일 앞의 비트는 정규화되었으므로 1이다.
+
+        출처: [https://zeddios.tistory.com/481](https://zeddios.tistory.com/481)
+
+    - 컴퓨터에서 사용하는 부동소수점 숫자는 기본적으로 근사값이다. 컴퓨터는 내부적으로 모든 데이터를 이진수로 표현한다. 
+    정수나 자연수에 있어서 진법은 특정한 값을 표시하기 위해 필요한 숫자의 개수만 달라지지만, 소수점 이하의 값에 대해서는 그 사정이 다르다.
+
+        대략 소수점 11자리까지의 정밀도로 표현하면 십진수 0.1은 이진수로 0.0001100110011(2) 쯤 되고, 이 값을 다시 십진수로 변환하면 0.0999755859375 정도가 된다. 즉 엄밀하게 0.1이 아닌 것이다. 2진법으로 표현했을 때 딱 떨어지는 값이 아닌 이상, 많은 실수값들이 컴퓨터에서는 실질적으로 근사값을 사용하고 있는 셈이다.
+
+        수학에서 근사값을 표현하는 방식으로 가수부와 지수부를 나눠서 표시하는 방식이 있다. 예를 들어 12500 이라는 값이 있을 때, 이를 1.25 * 10^4 으로 표현하는 것이다. 이 때 1.25를 가수부라 하고 10^4을 지수부라 한다. 이 표현을 사용하면 12500은 1.25 * 10^4 으로 나타낼 수도 있고, 1.250 * 10^4 으로 나타낼 수도 있다. 둘 다 같은 값 처럼 보이지만, 후자의 표현은 10의 자리 숫자 0까지 신뢰할 수 있는 유효숫자라는 것을 알려주는 표기방법이다.
+
+        많은 프로그래밍 언어에서 실수를 표현하는 타입들은 이 표현을 데이터를 저장하는 구조에 그대로 반영한다. 즉 부호, 가수부, 실수부로 값이 이루어진다고 보고, 그것들을 메모리에 잘 정돈해 넣어두는 것이다. 
+
+        [https://soooprmx.com/swift-float-타입-사용법/](https://soooprmx.com/swift-float-%ED%83%80%EC%9E%85-%EC%82%AC%EC%9A%A9%EB%B2%95/)
+
+    - Float 및 Double의 차이
+
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png)
 
 - Any, AnyObject, nil
     - 설명
@@ -2215,20 +2292,20 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     B) 부모 클래스가 가진 기능을 수정할 수 있다. (재정의/덮어쓰기, Overriding) - ex. minus
     - 장점 : 가독성, 유지보수, 코드 재사용, 중복 최소화
 
-        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
 
     - 참고 - overriding vs overloading
         - overloading : 기존의 함수 (sum)과 동일한 함수명을 사용하면서 형태를 변형한 경우 - ex. parameter 1개를 추가
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
 
     - this vs super
         - this : 자기 자신
         - super : 부모 클래스
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
 
     - 생성자 (constructor) : 부모 클래스에서 정의한 생성자들을 자식 클래스에서 그대로 사용할 수 있는 기능
     - Polymorphism (다형성)
@@ -2440,7 +2517,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - Quiz
             - [ ]  plus는 매개변수가 있어야하는데 어떻게 가능한거지?
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
 
     - 추가 예시 (교재)
 
@@ -2928,7 +3005,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             - [x]  var center의 type이 왜 Point? 단지 좌표 형태라서?
               print(square.center)  // Point(x: 5.0, y: 5.0) - 출력
 
-                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
+                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png)
 
         - Read-only computed properties (읽기전용 연산 프로퍼티) : with a getter but no setter. 
         A read-only computed property always returns a value, and can be accessed through dot syntax, but cannot be set to a different value.
@@ -3993,7 +4070,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - Class 초기화
         - 초기화 위임 규칙
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png)
 
             1. 자식의 모든 지정init은 부모의 지정init을 반드시 호출해야 한다.
             2. 편의init은 자신이 속한 Class의 다른 init을 반드시 호출해야 한다. (부모의 init 호출 불가)
@@ -4383,22 +4460,42 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             ```
 
 - 요구 init
-    - 
+    - 자식클래스에서 반드시 구현 (및 재정의???) 해야 하는 이니셜라이저는 `required` 키워드를 사용한다. (L/G - 필수 이니셜라이저 (Required Initializers))
+
+        ```swift
+        class Person {
+            var name: String
+            
+            required init() {  // 요구이니셜라이저 정의
+                self.name = "Unkown-name"
+            }
+        }
+
+        class Student: Person {
+            var major: String = "Unknown-major"
+        }
+        // 자식클래스에 상속받은 요구 이니셜라이저를 구현하지 않아도 에러가 발생하지 않았다.
+        // 자동상속 가정 및 규칙1을 만족하므로 부모의 이니셜라이저가 자동상속 됐기 떄문이다.
+
+        let kevin: Student = Student()
+        print("\(kevin.name), \(kevin.major)") // Unkown-name, Unknown-major
+        ```
+
+        ```swift
+
+        ```
 
 # 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
 
 - L/G - initializer
     - Initializers 상속 2가지 방법
         - Designated initializers (지정 초기자) : the primary initializers for a class. A designated initializer fully initializes all properties introduced by that class and calls an appropriate superclass initializer to continue the initialization process up the superclass chain.
-        Every class must have at least one designated initializer. ???
+        Every class must have at least one designated initializer. (모든 프로퍼티에 대해 기본값을 지정하지 않은 경우)
         - Convenience Initializers (편리한 초기자) : convenience init. You can define a convenience initializer to call a designated initializer from the same class as the convenience initializer with some of the designated initializer’s parameters set to default values.
-    - 필수 초기자 (Required Initializers)
-        - 모든 subclass에서 반드시 구현해야 하는 Initializers에는 required 키워드를 붙여 줍니다. (required init())
-    - subclass에서 superclass로 이니셜라이저를 default로 상속하지 않습니다. 이유는 superclass의 이니셜라이저가 무분별하게 상속되면 복잡해져서 subclass에서 이것들이 잘못 초기화 되는 것을 막기 위함입니다. (override는 가능함)
-    하지만 특정 상황에서 자동으로 상속 받습니다. ??? 사실 많은 상황에서 직접 초기자를 오버라이드 할 필요가 없습니다. subclass에서 새로 추가한 모든 프로퍼티에 기본 값을 제공하면 다음 두가지 규칙이 적용됩니다. 
+    - superclass에서 subclass로 이니셜라이저를 default로 상속하지 않습니다. 이유는 superclass의 이니셜라이저가 무분별하게 상속되면 복잡해져서 subclass에서 이것들이 잘못 초기화 되는 것을 막기 위함입니다. (override는 가능함)
+    하지만 특정 상황에서 '자동상속'을 받습니다. 사실 많은 상황에서 직접 초기자를 오버라이드 할 필요가 없습니다. subclass에서 새로 추가한 모든 프로퍼티에 기본 값을 제공하면 다음 두가지 규칙이 적용됩니다. 
     - 규칙1. subclass가 지정초기자를 정의하지 않으면 자동으로 수퍼클래스의 모든 지정초기자를 상속합니다. 
     - 규칙2. subclass가 superclass의 지정초기자를 모두 구현한 경우 (규칙 1의 경우 혹은 모든 지정초기자를 구현한 경우) 자동으로 superclass의 편리한 초기자를 추가합니다.
-        - [ ]  // Every class must have at least one designated initializer. ??? -> 여기는 init이 없는데??
         - [ ]  // var jam = Hoverboard()  // 오류 발생 왜지? superclass init 형태 암시적으로 상속해서 가능한거 아니었나?
 
         ```swift
@@ -4484,7 +4581,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
         RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png)
 
 - 기본 이니셜라이저 (Default Initializers)
     - 모든 인스턴스는 초기화와 동시에 모든 저장 프로퍼티에 유효한 값이 할당되어 있어야 한다. (Class는 Class 선언 시 기본값이나 초기값을 할당하지 않으면 오류 발생)
@@ -7305,12 +7402,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
         - grid 배열은 서브스크립트에 의해 아래와 같이 row와 column을 갖는 행렬도 동작한다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png)
 
         - row/column에 값을 할당한 결과이다.
             - [ ]  행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png)
 
 - 서브스크립트 (Subscript) : Collection, List, Sequence 등 타입의 element에 접근하는 '단축 문법'이다.
     - Class, Struct, Enum에 서브스크립트를 구현 가능하다.
@@ -7649,5 +7746,3 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 - 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
 
 - Contents-2
-
-    
