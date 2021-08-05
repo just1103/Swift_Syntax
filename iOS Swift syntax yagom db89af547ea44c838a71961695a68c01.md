@@ -490,14 +490,72 @@ Type: 언어
 
     ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2011.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2011.png)
 
-- Any, AnyObject, nil
-    - 설명
-        - Any : 모든 type을 할당 가능함
-        - AnyObject : 클래스의 인스턴스만 할당 가능 (모든 클래스 타입을 지칭하는 프로토콜)
+- Any, AnyObject, nil (+L/R)
+    - Data Type을 명시하는 것이 유리하므로 Any, AnyObject 사용은 지양하는 것이 좋다.
+    - Any
 
-            *type을 명시하는 것이 유리하므로 Any, AnyObject 사용을 지양
+        Swift의 모든 Data Type을 할당 가능하다. (A class, structure, or enumeration / A metatype, such as `Int.self` / A tuple / A Closure type 모두 가능하다.) 
+        *Metatype Type : Notion 3. Data Type-L/R 참고
 
-        - nil : 값이 없음
+        ```swift
+        let mixed: [Any] = ["one", 2, true, (4, 5.3), { () -> Int in return 6 }]
+        ```
+
+        When you use Any type as a concrete type (구체적인 type) for an instance, you need to cast the instance to a known type before you can access its properties or methods. Instances with a concrete type of Any maintain their original dynamic type and can be cast to that type using one of the type-cast operators—as, as?, or as!.
+
+        - [ ]  Array의 element를 instance라고 부르나???
+        - [ ]  dynamic type?
+
+        ```swift
+        if let first = mixed.first as? String { // Use as? to conditionally downcast the first object in a heterogeneous array to a String
+            print("The first item, '\(first)', is a string.")
+        }
+        // Prints "The first item, 'one', is a string."
+        ```
+
+    - AnyObject
+
+        클래스의 인스턴스를 할당 가능하다. (모든 클래스 타입을 지칭하는 프로토콜)
+
+        AnyObject는 프로토콜이다.
+
+        - Swift Language Guide>Reference Manual - [https://docs.swift.org/swift-book/ReferenceManual/Types.html](https://docs.swift.org/swift-book/ReferenceManual/Types.html)
+
+            The AnyObject protocol is similar to the Any type. All classes implicitly conform to AnyObject. 
+            Unlike Any, which is defined by the language, AnyObject is defined by the Swift standard library. → 이게 왜 중요???
+
+        - Swift Documentation, AnyObject로 구글 검색 - [https://developer.apple.com/documentation/swift/anyobject](https://developer.apple.com/documentation/swift/anyobject)
+
+            You use AnyObject when you need the flexibility of an untyped object (type이 정해지지 않은 객체) or when you use bridged Objective-C methods and properties that return an untyped result. AnyObject can be used as the concrete type for 1) an instance of any class, 2) class type, 3) class-only protocol. 
+
+            - [ ]  bridged Objective-C methods and properties?
+
+            ```swift
+            class FloatRef {
+                let value: Float
+                init(_ value: Float) {
+                    self.value = value
+                }
+            }
+
+            let x = FloatRef(2.3)
+            let y: AnyObject = x
+            let z: AnyObject = FloatRef.self
+            ```
+
+            - You can limit protocol adoption to class types (and not structures or enumerations) by adding the AnyObject protocol to a protocol’s inheritance list.
+
+                ```swift
+                protocol SomeClassOnlyProtocol: AnyObject, SomeInheritedProtocol {
+                    // class-only protocol definition goes here
+                }
+                ```
+
+    - nil
+
+        Data Type이 아니며, "없음"을 의미하는 키워드이다. (옵셔널 type에만 할당 가능하다. Any에도 할당 불가하다.)
+
+        단, Empty와는 다르다. 예를 들어 `var array1: [Int] = []` 는 변수 array1에 메모리가 할당되고, Empty Array가 들어있는 상태이다. 반면 nil은 메모리 할당이 되어있지 않은 상태이다.
 
         ```swift
         // Any
