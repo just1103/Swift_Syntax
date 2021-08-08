@@ -2,97 +2,12 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 4, 2021 11:32 PM
+Last Edited Time: August 6, 2021 12:42 PM
 Property: Yagom
 Type: 언어
 
 - Contents
 - xcode>file>new>playground>black에서 코드 입력
-
-# 0. CS 기초
-
-- 객체지향 프로그래밍
-    - 객체지향 프로그래밍 패러다임
-
-        - 컴퓨터 프로그램을 명령어의 목록으로 보는 시각에서 벗어나 여러 개의 독립된 단위, 즉 "객체"들의 모임으로 파악하여, 객체 간의 *상호작용으로 프로그램의 동작을 구현하는 것이다.
-        - 기존의 계산기처럼 컴퓨터에 명령만 시키겠다는 관점에서 벗어나서, 세상의 모든 것을 객체로 표현하여 문제해결을 하겠다는 관점을 택한 것이다.
-        - 객체는 특성 (프로퍼티)와 행위 (메서드)를 가지는 것을 말한다.
-        - UpDown Game 스토리보드에서 만든 레이블, 버튼, 슬라이드, 배경 등도 모두 각각 하나의 객체이다! 이러한 객체 간의 상호작용을 통해 프로그램이 실행되는 것을 객체지향 프로그래밍이라고 한다!
-        *이때 상호작용이란 예를 들어 사용자가 화면을 드래그하는 이벤트를 발생시켰을 때 슬라이드의 값을 변경한다, 특정 슬라이드의 값이 변경되었을 때 정답과 비교하는 동작을 실행한다, 등이 있다.
-
-    - 클래스와 객체
-        - Class : 설계도. 문제해결을 위한 특성과 행위를 1개의 틀 내부에 정의한다. 객체 간의 공통점/차이점을 일반화시킨다. (객체지향 프로그램의 기본 data type)
-        - Class 외에 구조체 등으로도 객체를 생성할 수 있지만, 객체지향 프로그래밍에서는 Class를 주로 사용한다.
-        - Object(객체) : Class의 Instance (실제 메모리에 할당되어 동작하는 것). Instance는 고유 속성을 가지며, 클래스에서 정의한 것을 실행한다.
-        - iOS 환경에서 버튼이라는 객체를 사용할 수 있는 것은 애플이 Class UIButton을 정의했기 때문이다.
-        - Method / Message : 객체를 실질적으로 동작시키는 함수. 메서드를 통해 객체에 명령을 전달한다. 객체 간 명령 전달이나 데이터 전달 ("메서드를 호출", "메시지를 전달")은 메서드를 통해 이루어진다.
-
-            ```swift
-            class Person { // 사람이라는 객체의 공통점인 성별, 이름, 나이를 일반화시켜서 프로퍼티로 나타낸다. 공통적인 행위인 먹기, 자기는 함수로 나타낸다.
-            		var gender // 프로퍼티 - 특성
-            		var name 
-            		var age 
-            		
-            		func eat() {} // 함수 - 행위
-            		func sleep() {}
-            }
-            ```
-
-    - 클래스 상속
-        - 상속의 장점 : Bus, Truck, SportCar Class들의 공통적인 기능을 따로 빼서 부모클래스로 만들고, 상속시킬 수 있다. 따라서 코드의 중복을 최소화한다!
-        - Swift 상속의 특징 : 단일 상속 (부모클래스는 1개만 가질 수 있다.)
-
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled.png)
-
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%201.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%201.png)
-
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%202.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%202.png)
-
-- JSON (Javascript Object Notation)
-
-    내가 만든 객체는 내 컴퓨터 메모리에 0&1의 형태로 저장되어 있는데, 이 객체를 다른 컴퓨터에서 그대로 실행되기 어렵다. 프로그래밍 언어나 OS가 다르면 0&1을 해석하는 기준이 다르기 떄문이다.
-    따라서 컴퓨터 간에 통용되는 규칙을 만들었는데 이게 JSON이다. 내 객체를 JSON 규칙에 따라 작성해서 다른 컴퓨터로 보내면, 해당 컴퓨터가 JSON을 해석해서 동일한 기능을 수행하는 고유의 객체를 생성하는 것이다.
-    그런데 JSON은 문자열로 되어있어서 컴퓨터 뿐만 아니라 사람도 메모리에 들어있는 객체를 읽을 수 있다. (단, JSON도 네트워크상 전달될 때는 0&1의 형태인 데이터 type이다.)
-    *스위프트에서는 어딘가에 저장/전송되는 바이트의 모음 (0&1 형태)을 '데이터 type'이라고 한다.
-
-    `{} 객체 (딕셔너리), [] 배열, "" 문자열, 문자열 외-숫자`
-
-    ```json
-    { // 객체
-    "이름" : "홍길동"
-    "나이" : 150 // String : 숫자
-    "성별" : "남"
-    }
-
-    [{...}, {...}, {...}] // 객체의 배열
-    ```
-
-- MVC 디자인패턴
-
-    객체지향 프로그래밍에서 너무 많은 객체를 만들면, 객체들이 무슨 기능을 수행할 지 알수 없게 되는 상황이 발생한다.
-    따라서 프로그램이 효율적으로 실행되도록 MVC (Model View Controller) 3가지로 객체의 역할과 책임을 나눈 것이다. 
-
-    - Model : 데이터 관리 (3. 사용자가 원하는 데이터를 처리하고 다시 Controller에게 알려줌)
-    - View : 사용자에게 보여지는 역할 (1. 사용자가 버튼을 터치, 5. 사용자가 원하는 결과를 화면에 보여줌) - iOS View (UIView를 상속받은 모든 것)
-    - Controller : Model과 View의 중간다리 역할 (2. User Action 이벤트를 받아서 Model에게 작업을 시킴, 4. View에게 사용자가 원하는 것을 보여주게 함) - iOS ViewController (소스코드, 사용자에게 안보임)
-
-    ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%203.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%203.png)
-
-    View나 Model을 개별적으로 동작하게 해서 간섭을 없애면, 부분 기능의 수정이 용이하다.
-
-- MVVM
-    - MVC : 1979년 최초 공개. 파생 변형이 많아졌고, View와 Model의 의존성 문제가 발생했다. (코드 재사용성이 낮아짐)
-    - MVP : Presenter가 중간다리 역할을 하고, View와 1:1 관계이다. View와 Presenter의 의존성 문제가 발생했다. (Resenter의 과도한 역할, 코드 재사용성이 낮아짐)
-
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%204.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%204.png)
-
-    - MVVM : View Model을 통해 한 방향으로 전달. Command 패턴 (실선) 및 Data Binding (점선)을 이용하여 View와 View Model 사이의 의존성을 제거했다.
-    - Model은 데이터를 변경하고 Model→VM에 알려주면서 VM→View로 Binding이 작동한다.
-    - Binding : View가 VM을 관찰하다가 VM의 값이 바뀌면, 사용자에게 보이는 화면을 업데이트한다. (RX - View=Subscribe, VM=Observable)
-    - Binding을 위헤 Rx 라이브러리, Combine 프레임워크 등을 사용한다.
-    - RxCocoa-UI Kit을 reactive하게 활용하기 위해, RxSwift-Binding을 쉽게 하기 위해 사용한다. Combine은 Swift UI에 사용하기 좋다.
-
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%205.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%205.png)
 
 # 1. Swift 특징
 
@@ -156,7 +71,7 @@ Type: 언어
 - 명령형, 객체지향 (자료 추상화, 상속, 다형성, 동적 바인딩) 프로그래밍 패러다임을 기반으로 한 함수형 프로그래밍 (함수가 일급객체, 대규모 병렬처리용) 패러다임, 프로토콜 지향 프로그래밍 패러다임을 지향함 (Notion 0. CS 기초-객체지향 프로그래밍 패러다임 참고)
 - 표현력 풍부
 
-    ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%206.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%206.png)
+    ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png)
 
 - MarkUp Syntax
     - 특정 기능에 대해 MarkUp 주석을 작성하면 Custom Quick Help를 통해 확인이 가능함
@@ -210,28 +125,157 @@ Type: 언어
 
 # 3. Data Type
 
-- Swift는 Data Type에 엄격함. Type은 Upper Camel Case로 표현함
-- 기본 Data Type 모두 Struct을 기반으로 하며, 추가 기능 (Extension, Generic 등)을 사용함
-- Type inference / Type annotation / Type alias
-    - You can provide a `type annotation` when you declare a constant or variable, to be clear about the kind of values the constant or variable can store. 
-    Write a type annotation by placing a colon after the constant or variable name, followed by a space, followed by the name of the type to use.
-    - `Type inference` enables a compiler to deduce the type of a particular expression automatically when it compiles your code, simply by examining the values you provide.
-    It’s rare that you need to write type annotations in practice. If you provide an initial value  (*literal value or literal) for a constant or variable at the point that it’s defined, Swift can almost always infer the type to be used for that constant or variable, as described in Type Safety and Type Inference. 
-    (변수 선언 시 초기값을 할당하면, type annotation을 하지 않아도 Swift가 알아서 type을 추론해준다.) - 단, type 명시해야 버그 대응이 쉬움
+### L/R - Type (정리 덜함)
+
+- Type 구분 - Named Type / Compound Type
+
+    Swift는 전체 Type을 두 가지로 구분한다. 또한 Type 앞뒤로 ()를 붙일 수 있고, 아무런 효과가 없다.
+
+    - Named Type (명명된 타입) : 정의할 때 특정한 이름을 붙여서 선언하는 타입이다. Swift standard library에서 정의한, Structure 기반의 기본 Data Type (Int, String 등), 사용자-정의-Type (Class, Structure, Enumeration, Protocol) 그리고 Swift standard library에서 정의한 Arrays, Dictionaries, and Optional 등이 속한다. 
+    예를 들어 사용자 정의 Class type인 MyClass의 인스턴스가 있다면, 해당 인스턴스의 타입 이름은 MyClass 타입이다. 
+    Extension을 사용하여 기능을 확장 가능하다.
+    - Compound Type (복합 타입) : 별도의 명명 없이 Swift 언어로 정의되는 타입이다. Function type과 Tuple type이 속한다.
+    Named Type 또는 다른 Compound Type을 포함할 수 있다. 
+    예를 들어 Tuple type의 (Int, (Int, Int))이 있다. (첫번째 element는 Int type, 두번째 element는 다른 Compound Type인 (Int, Int)이다.)
+- Type Annotation / Type Identifier / Type Inference
+    - Type Annotation
+
+        A `type annotation` explicitly specifies the type of a variable or expression.
+        Write a type annotation by placing a colon(:) after the constant/variable name, followed by the type name.
+
+        Type annotations can contain an optional list of type attributes before the type. `: attributes opt inoutopt type`
+
+        - [x]  Type Attribute?
+            - An attribute provides additional information about the 1) declaration or 2) type. (2가지 Attribute가 있음)
+
+                1) Declaration - Specify an attribute by the attribute’s name (and any arguments that the attribute accepts). `@attribute name(attribute arguments)`
+
+                2) Type Attribute - 예를 들어 `@autoclosure`
+
+    - Type Identifier
+
+        A `type identifier` refers to either a named type or a type alias of a named or compound type.
 
         ```swift
-        let meaningOfLife = 42  // meaningOfLife is inferred to be of type Int (왜냐하면 소수점이 없으니까!)
+        // ex-1. named type을 refer하는 경우
+        var exam1a: Int = 0
+        var exam1b: Dictionary<String, Int> = ["key1":100]
 
-        let pi = 3.14159  // pi is inferred to be of type Double
-        If you don’t specify a type for a floating-point literal, Swift infers that you want to create a Double:
-        Swift always chooses Double (rather than Float) when inferring the type of floating-point numbers.
+        // ex-2. type alias를 refer하는 경우 
+        typealias Point = (Int, Int)  // tuple type의 type alias
+        let origin: Point = (0, 0)
 
-        typealias MyNewInt = Int  // Type Alias (타입 별칭)을 활용 가능함 (Int의 별칭을 지정한 것과 같음)
-        var age: MyNewInt = 20    // Int로 Type 을 지정한 것과 동일함
-        var year: Int = 100 // 기존 Int도 사용 가능
-        age = year
+        // ex-3. named types declared in other modules or nested within other types를 refer하는 경우 
+        var someValue: ExampleModule.MyType  // the named type MyType that’s declared in the ExampleModule module을 refer함
         ```
 
+    - Type Inference
+        - L/G
+
+            `Type inference` enables a compiler to deduce the type of a particular expression automatically when it compiles your code, simply by examining the values you provide.
+            It’s rare that you need to write type annotations in practice. If you provide an initial value (*literal value or literal) for a constant or variable at the point that it’s defined, Swift can almost always infer the type to be used for that constant or variable, as described in Type Safety and Type Inference. 
+            (변수 선언 시 초기값을 할당하면, type annotation을 하지 않아도 Swift가 알아서 type을 추론해준다.) - 단, type을 명시해야 버그 대응이 쉽다.
+
+            ```swift
+            let meaningOfLife = 42  // meaningOfLife is inferred to be of type Int (왜냐하면 소수점이 없으니까!)
+
+            let pi = 3.14159  // pi is inferred to be of type Double
+            If you don’t specify a type for a floating-point literal, Swift infers that you want to create a Double:
+            Swift always chooses Double (rather than Float) when inferring the type of floating-point numbers.
+
+            typealias MyNewInt = Int  // Type Alias (타입 별칭)을 활용 가능함 (Int의 별칭을 지정한 것과 같음)
+            var age: MyNewInt = 20    // Int로 Type 을 지정한 것과 동일함
+            var year: Int = 100 // 기존 Int도 사용 가능
+            age = year
+            ```
+
+        - L/R
+
+            Swift uses `type inference` extensively, allowing you to omit the type or part of the type of many variables and expressions in your code.
+            you can omit part of a type when the full type can be inferred from context.
+
+            타입 추론은 잎에서 루트 방향으로 이루어질 수도 있고, 루트에서 잎 방향으로 이루어질 수도 있다.
+
+            - 잎→루트
+
+                `var x: Int = 0` // the type of x is inferred by first checking the type of 0 and then passing this type information up to the root (the variable x).
+
+            - 루트→잎
+
+                the explicit type annotation (: Float) on the constant eFloat causes the numeric literal 2.71828 to have an inferred type of Float instead of Double. ???
+
+                - [ ]  Double.???
+
+                ```swift
+                let e = 2.71828 // The type of e is inferred to be Double.???
+                let eFloat: Float = 2.71828 // The type of eFloat is Float. 
+                ```
+
+            Type inference operates at the level of a single expression or statement. (단일 표현식 또는 단일 구문 수준에서 작동한다.)
+            This means that all of the information needed to infer an omitted type or part of a type in an expression must be accessible from type-checking the expression or one of its subexpressions. (타입 유추에 필요한 정보는 표현식, 또는 하위 표현식 중 하나를 type-checking하여 접근 가능해야 한다.)
+
+- Tuple Type
+    - A tuple type is a comma-separated list of types, enclosed in parentheses.
+    All tuple types contain two or more types, except for `Void` which is a type alias for the empty tuple type, (). ← Void는 Tuple type이다!
+    - When an element of a tuple type has a name, that name is part of the type.
+
+        ```swift
+        var someTuple = (top: 10, bottom: 12)  // someTuple is of Tuple type (top: Int, bottom: Int)
+        someTuple = (top: 4, bottom: 42) // OK: names match
+        someTuple = (9, 99)              // OK: names are inferred
+        someTuple = (left: 5, right: 5)  // Error: names don't match
+        ```
+
+- Function Type (밑으로 더 추가 필요)
+    - A function type represents the type of a function/method/closure and consists of a parameter and return type separated by an arrow (->) `(parameter type) -> return type`
+    - A parameter of the function type `() -> T` (where T is any type) can apply the autoclosure attribute to implicitly create a closure at its call sites.
+        - [ ]  autoclosure attribute?
+- Metatype Type (밑으로 더 추가 필요)
+
+    A *metatype type* refers to the type of any type, including class types, structure types, enumeration types, and protocol types.
+
+    ... 지금은 이해 안감
+
+- Self Type (해석 필요)
+
+    cf. self 프로퍼티와 다름
+
+    - The `Self` type isn’t a specific type, but rather lets you conveniently refer to the current type without repeating or knowing that type’s name.
+        1. In a protocol declaration or a protocol member declaration, the `Self` type refers to the eventual type that conforms to the protocol. (프로토콜도 타입이다.)
+        2. In a structure/class/enumeration declaration, the `Self` type refers to the type introduced by the declaration. 
+    - Inside the declaration for a member of a type, the `Self` type refers to that type. (member = 해당 타입의 프로퍼티 및 메서드)
+    In the members of a class declaration, `Self` can appear only as follows:
+    - As the return type of a method 
+    - As the return type of a read-only subscript
+    - As the type of a read-only computed property
+    - In the body of a method
+        - [ ]  type(of:) ?
+
+        ```swift
+        class Superclass {
+            func f() -> Self { return self } // f 메소드의 return type은 Self이다. self (Class 인스턴스 자기 자신)를 return 한다.
+        }
+
+        let x = Superclass()  // 인스턴스 생성
+        print(type(of: x.f())) // Prints "Superclass"
+
+        class Subclass: Superclass { }  // Superclass의 자식클래스 Subclass 정의
+
+        let y = Subclass()  // 인스턴스 생성
+        print(type(of: y.f())) // Prints "Subclass"
+
+        let z: Superclass = Subclass()  // 인스턴스 생성
+        print(type(of: z.f())) // Prints "Subclass"
+        ```
+
+        The last part of the example above shows that Self refers to the runtime type Subclass of the value of z, not the compile-time type Superclass of the variable itself.
+
+        Inside a nested type declaration, the Self type refers to the type introduced by the innermost type declaration.
+
+        The Self type refers to the same type as the type(of:) function in the Swift standard library. Writing Self.someStaticMember to access a member of the current type is the same as writing type(of: self).someStaticMember. ??????????
+
+- Swift는 Data Type에 엄격함. Type은 Upper Camel Case로 표현함
+- 기본 Data Type 모두 Struct을 기반으로 하며, 추가 기능 (Extension, Generic 등)을 사용함
 - Type conversion (type이 다른 값 연산)
     - 한번 선언된 변수는 타입을 바꿀 수 없지만, conversion 은 가능하다.
     To convert one specific number type to another, you `initialize` a new number of the desired type with the existing value.
@@ -327,6 +371,177 @@ Type: 언어
         특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 100 해보세요
         ```
 
+- Any, AnyObject, nil (+L/R)
+    - Data Type을 명시하는 것이 유리하므로 Any, AnyObject 사용은 지양하는 것이 좋다.
+    - Any
+
+        Swift의 모든 Data Type을 할당 가능하다. (A class, structure, or enumeration / A metatype, such as `Int.self` / A tuple / A Closure type 모두 가능하다.) 
+        *Metatype Type : Notion 3. Data Type-L/R 참고
+
+        ```swift
+        let mixed: [Any] = ["one", 2, true, (4, 5.3), { () -> Int in return 6 }]
+        ```
+
+        When you use Any type as a concrete type (구체적인 type) for an instance, you need to cast the instance to a known type before you can access its properties or methods. Instances with a concrete type of Any maintain their original dynamic type and can be cast to that type using one of the type-cast operators—as, as?, or as!.
+
+        - [ ]  Array의 element를 instance라고 부르나???
+        - [ ]  dynamic type?
+
+        ```swift
+        if let first = mixed.first as? String { // Use as? to conditionally downcast the first object in a heterogeneous array to a String
+            print("The first item, '\(first)', is a string.")
+        }
+        // Prints "The first item, 'one', is a string."
+        ```
+
+    - AnyObject
+
+        클래스의 인스턴스를 할당 가능하다. (모든 클래스 타입을 지칭하는 프로토콜)
+
+        AnyObject는 프로토콜이다.
+
+        - Swift Language Guide>Reference Manual - [https://docs.swift.org/swift-book/ReferenceManual/Types.html](https://docs.swift.org/swift-book/ReferenceManual/Types.html)
+
+            The AnyObject protocol is similar to the Any type. All classes implicitly conform to AnyObject. 
+            Unlike Any, which is defined by the language, AnyObject is defined by the Swift standard library. → 이게 왜 중요???
+
+        - Swift Language Guide - [https://docs.swift.org/swift-book/LanguageGuide/Protocols.html#ID281](https://docs.swift.org/swift-book/LanguageGuide/Protocols.html#ID281)
+            - You can limit protocol adoption to class types (and not structures or enumerations) by adding the AnyObject protocol to a protocol’s inheritance list. (AnyObject를 상속 목록에 추가하면, Protocol Adoption을 할 수 있는 대상을 Class type으로 제한한다.) (L/G - Class-Only Protocols)
+
+                ```swift
+                protocol SomeClassOnlyProtocol: AnyObject, SomeInheritedProtocol {
+                    // class-only protocol definition goes here
+                }
+                ```
+
+        - Swift Documentation, AnyObject로 구글 검색 - [https://developer.apple.com/documentation/swift/anyobject](https://developer.apple.com/documentation/swift/anyobject)
+
+            You use AnyObject when you need the flexibility of an untyped object (type이 정해지지 않은 객체) or when you use bridged Objective-C methods and properties that return an untyped result. 
+
+            AnyObject can be used as the concrete type for 1) an instance of any class, 2) class type, 3) class-only protocol. 
+
+            AnyObject can also be used as the concrete type for an instance of a type that bridges to an Objective-C class. Many value types in Swift bridge to Objective-C counterparts (대응), like String and Int. (Objective-C class로 연결되는 타입의 인스턴스를 할당 가능하다. String, Int 등 Swift의 값 타입은 Objective-C에 대응하는 부분???이 있고 그것에 연결 가능하다.)
+            - The flexible behavior of the AnyObject protocol is similar to Objective-C’s id type. For this reason, imported Objective-C types frequently use AnyObject as the type for properties, method parameters, and return values. ???
+
+            - 타입 확인방법 
+            - type(of:) : type을 반환한다.
+            - is : 일치 여부를 Bool type을 반환한다.
+            - [ ]  bridged Objective-C methods and properties?
+            - [ ]  let z: AnyObject = FloatRef.self // ???
+            - [ ]  concrete type? (구글: A concrete class is a class that has an implementation for all of its methods.)
+
+            ```swift
+            class FloatRef {
+                let value: Float
+                init(_ value: Float) {
+                    self.value = value
+                }
+            }
+
+            let x = FloatRef(2.3) // Class 인스턴스 생성
+            let y: AnyObject = x  // AnyObject에 할당 가능하다.
+
+            let z: AnyObject = FloatRef.self // ??? Class type???
+
+            //
+
+            let s: AnyObject = "This is a bridged string." as NSString // Objective-C .......? 를 할당 가능하다.
+            print(s is NSString) // Prints "true" - NSString type이다. AnyObject가 아니다. (type이 아니라 protocol이므로)
+
+            let v: AnyObject = 100 as NSNumber
+            print(type(of: v)) // Prints "__NSCFNumber"
+            ```
+
+            Objects with a concrete type of AnyObject maintain a specific dynamic type and can be cast to that type using one of the type-cast operators (as, as?, or as!).
+
+            - [ ]  String type의 인스턴스???
+
+            ```swift
+            // Casting AnyObject Instances ??? to a Known Type
+
+            let s: AnyObject = "This is a bridged string." as NSString
+
+            if let message = s as? String {  // as?를 사용하여 상수 s를 Swift String type의 인스턴스로 Casting 했다.
+                print("Successful cast to String: \(message)")
+            }
+            // Prints "Successful cast to String: This is a bridged string."
+            ```
+
+    - nil
+
+        Data Type이 아니며, "없음"을 의미하는 키워드이다. (옵셔널 type에만 할당 가능하다. Any에도 할당 불가하다.)
+
+        단, Empty와는 다르다. 예를 들어 `var array1: [Int] = []` 는 변수 array1에 메모리가 할당되고, Empty Array가 들어있는 상태이다. 반면 nil은 메모리 할당이 되어있지 않은 상태이다.
+
+        ```swift
+        // Any
+        var someAny: Any = 100
+        someAny = "어떤 타입도 수용 가능함"
+        someAny = 123.12
+
+        let someDouble: Double = someAny // 오류 발생 (실수값이지만 Double에 할당할 수 없다. type이 다르므로)
+        // cannot convert value of type 'Any' to specified type 'Double'
+
+        // AnyObject
+        class SomeClass {}
+        var someAnyObject: AnyObject = SomeClass()  // class SomeClass type의 인스턴스를 변수 someAnyObject에 할당/initialize 했음
+
+        // nil
+        someAny = nil  // 오류 발생 (어떤 데이터 타입도 할당할수 있지만 nil은 할당 불가함)
+        someAnyObject = nil  // 마찬가지로 오류 발생
+
+        var possibleNil: Int? = 1
+        possibleNil = nil  // You set an optional variable to a valueless state by assigning it <nil>.
+        ```
+
+- Never
+    - 비반환 함수 (Nonreturning function)의 반환 type으로 사용한다. (Function 항목 참고)
+- Tuple Type (L/R)
+    - 지정 데이터의 묶음, Type 이름이 따로 없음
+
+        ```swift
+        // String, Int, Double - Type의 Tuple을 선언
+        var person: (String, Int, Double) = ("yagom", 100, 182.5)
+
+        // index를 통해 값을 추출/할당 가능
+        print("이름: \(person.0), 나이: \(person.1), 키: \(person.2)")
+        person.1 = 90
+        ```
+
+        ```swift
+        let http404Error = (404, "Not Found")  // http404Error is a tuple of type (Int, String)
+        let (statusCode, statusMessage) = http404Error
+        // You can decompose a tuple’s contents into separate constants or variables, which you then access as usual.
+
+        print("The status code is \(statusCode)")  // Prints "The status code is 404"
+
+        -
+        let http200Status = (statusCode: 200, description: "OK")  // tuple의 각 elements에 name을 부여할 수 있음
+
+        print(http200Status.0)  // prints 200 (index 0번의 값을 불러옴)
+        print(http200Status.description)  // prints OK (element name으로 값을 불러옴
+        ```
+
+    - Tuple의 element 별 이름을 지정 가능함
+
+        ```swift
+        var person: (name: String, age: Int, height: Double) = ("yagom", 100, 182.5)
+
+        // element 별 이름을 통해 추출/할당 가능
+        print("이름: \(person.name), 나이: \(person.age), 키: \(person.height)")
+        person.age = 90
+        person.1 = 80  // index 도 사용 가능
+        ```
+
+    - Tuple의 Type Alias가 가능함 (반복 사용할 때)
+
+        ```swift
+        typealias PersonTuple = (name: String, age: Int, height: Double)
+
+        var yagom: PersonTuple = ("yagom", 100, 182.5)
+        var eric: PersonTuple = ("eric", 150, 190.5)
+        ```
+
 ### Floating Point (부동소수점)
 
 - 근사값 - 컴퓨터가 부동소수점을 처리하는 방법
@@ -356,14 +571,14 @@ Type: 언어
 
         2의 거듭제곱으로 나누어 떨어지지 않는 2진무한소수점수의 예는 10진수 0.1을 2진수로 표현한 것이다. 0.00011001100... → 이것을 컴퓨터에 저장하면?
 
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%207.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%207.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%201.png)
 
     - 컴퓨터의 한계
 
         컴퓨터는 유한한 저장공간을 가지고 있으므로 2진무한소수점수를 저장할 수 없다! 
         따라서 일반적으로 32비트의 저장공간에 이 무한소수점수를 우겨넣고, 나머지 뒷자리는 생략한다.
 
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%208.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%208.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%202.png)
 
         ```c
         int main() {
@@ -382,7 +597,7 @@ Type: 언어
             Float은 32비트 중에서 23비트를 소수점수를 표현하는 데에 사용한다. 소수점 아래 (소수점 기준 오른쪽)부터 기입하되 첫번째로 나오는 1은 생략 가능하므로 생략한다. (아래에서 설명)
             나머지 비트는 부호 (Sign)와 지수부 (Exponent)에 사용한다.
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%209.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%209.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%203.png)
 
         따라서 10진수 0.1이 2진수로 변환된 23비트 짜리 이진소수점수 0.00011001100...를 다시 10진수로 변환하면 0.10000000149011611938이 된다. 
         즉, 컴퓨터는 2진무한소수점수인 "10진수 0.1"을 정확히 표현할 수 없다. 그러므로 근사값을 사용한다.
@@ -460,7 +675,7 @@ Type: 언어
 
     - 32비트 부동소수점수 (Float type)이 메모리에 저장되는 과정
 
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2010.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2010.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%204.png)
 
         ⛳️⛳️⛳️ 즉, Normalized Significand 인 `1.xxx *2^n` 형태를 보면, 여기서 1.xxx이 fraction이고, 2^n이 exponent이다.
 
@@ -488,143 +703,7 @@ Type: 언어
 
 - Float 및 Double의 차이
 
-    ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2011.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2011.png)
-
-- Any, AnyObject, nil (+L/R)
-    - Data Type을 명시하는 것이 유리하므로 Any, AnyObject 사용은 지양하는 것이 좋다.
-    - Any
-
-        Swift의 모든 Data Type을 할당 가능하다. (A class, structure, or enumeration / A metatype, such as `Int.self` / A tuple / A Closure type 모두 가능하다.) 
-        *Metatype Type : Notion 3. Data Type-L/R 참고
-
-        ```swift
-        let mixed: [Any] = ["one", 2, true, (4, 5.3), { () -> Int in return 6 }]
-        ```
-
-        When you use Any type as a concrete type (구체적인 type) for an instance, you need to cast the instance to a known type before you can access its properties or methods. Instances with a concrete type of Any maintain their original dynamic type and can be cast to that type using one of the type-cast operators—as, as?, or as!.
-
-        - [ ]  Array의 element를 instance라고 부르나???
-        - [ ]  dynamic type?
-
-        ```swift
-        if let first = mixed.first as? String { // Use as? to conditionally downcast the first object in a heterogeneous array to a String
-            print("The first item, '\(first)', is a string.")
-        }
-        // Prints "The first item, 'one', is a string."
-        ```
-
-    - AnyObject
-
-        클래스의 인스턴스를 할당 가능하다. (모든 클래스 타입을 지칭하는 프로토콜)
-
-        AnyObject는 프로토콜이다.
-
-        - Swift Language Guide>Reference Manual - [https://docs.swift.org/swift-book/ReferenceManual/Types.html](https://docs.swift.org/swift-book/ReferenceManual/Types.html)
-
-            The AnyObject protocol is similar to the Any type. All classes implicitly conform to AnyObject. 
-            Unlike Any, which is defined by the language, AnyObject is defined by the Swift standard library. → 이게 왜 중요???
-
-        - Swift Documentation, AnyObject로 구글 검색 - [https://developer.apple.com/documentation/swift/anyobject](https://developer.apple.com/documentation/swift/anyobject)
-
-            You use AnyObject when you need the flexibility of an untyped object (type이 정해지지 않은 객체) or when you use bridged Objective-C methods and properties that return an untyped result. AnyObject can be used as the concrete type for 1) an instance of any class, 2) class type, 3) class-only protocol. 
-
-            - [ ]  bridged Objective-C methods and properties?
-
-            ```swift
-            class FloatRef {
-                let value: Float
-                init(_ value: Float) {
-                    self.value = value
-                }
-            }
-
-            let x = FloatRef(2.3)
-            let y: AnyObject = x
-            let z: AnyObject = FloatRef.self
-            ```
-
-            - You can limit protocol adoption to class types (and not structures or enumerations) by adding the AnyObject protocol to a protocol’s inheritance list.
-
-                ```swift
-                protocol SomeClassOnlyProtocol: AnyObject, SomeInheritedProtocol {
-                    // class-only protocol definition goes here
-                }
-                ```
-
-    - nil
-
-        Data Type이 아니며, "없음"을 의미하는 키워드이다. (옵셔널 type에만 할당 가능하다. Any에도 할당 불가하다.)
-
-        단, Empty와는 다르다. 예를 들어 `var array1: [Int] = []` 는 변수 array1에 메모리가 할당되고, Empty Array가 들어있는 상태이다. 반면 nil은 메모리 할당이 되어있지 않은 상태이다.
-
-        ```swift
-        // Any
-        var someAny: Any = 100
-        someAny = "어떤 타입도 수용 가능함"
-        someAny = 123.12
-
-        let someDouble: Double = someAny // 오류 발생 (실수값이지만 Double에 할당할 수 없다. type이 다르므로)
-        // cannot convert value of type 'Any' to specified type 'Double'
-
-        // AnyObject
-        class SomeClass {}
-        var someAnyObject: AnyObject = SomeClass()  // class SomeClass type의 인스턴스를 변수 someAnyObject에 할당/initialize 했음
-
-        // nil
-        someAny = nil  // 오류 발생 (어떤 데이터 타입도 할당할수 있지만 nil은 할당 불가함)
-        someAnyObject = nil  // 마찬가지로 오류 발생
-
-        var possibleNil: Int? = 1
-        possibleNil = nil  // You set an optional variable to a valueless state by assigning it <nil>.
-        ```
-
-- Never
-    - 비반환 함수 (Nonreturning function)의 반환 type으로 사용한다. (Function 항목 참고)
-- Tuple
-    - 지정 데이터의 묶음, Type 이름이 따로 없음
-
-        ```swift
-        // String, Int, Double - Type의 Tuple을 선언
-        var person: (String, Int, Double) = ("yagom", 100, 182.5)
-
-        // index를 통해 값을 추출/할당 가능
-        print("이름: \(person.0), 나이: \(person.1), 키: \(person.2)")
-        person.1 = 90
-        ```
-
-        ```swift
-        let http404Error = (404, "Not Found")  // http404Error is a tuple of type (Int, String)
-        let (statusCode, statusMessage) = http404Error
-        // You can decompose a tuple’s contents into separate constants or variables, which you then access as usual.
-
-        print("The status code is \(statusCode)")  // Prints "The status code is 404"
-
-        -
-        let http200Status = (statusCode: 200, description: "OK")  // tuple의 각 elements에 name을 부여할 수 있음
-
-        print(http200Status.0)  // prints 200 (index 0번의 값을 불러옴)
-        print(http200Status.description)  // prints OK (element name으로 값을 불러옴
-        ```
-
-    - Tuple의 element 별 이름을 지정 가능함
-
-        ```swift
-        var person: (name: String, age: Int, height: Double) = ("yagom", 100, 182.5)
-
-        // element 별 이름을 통해 추출/할당 가능
-        print("이름: \(person.name), 나이: \(person.age), 키: \(person.height)")
-        person.age = 90
-        person.1 = 80  // index 도 사용 가능
-        ```
-
-    - Tuple의 Type alias 가 가능함 (반복 사용할 때)
-
-        ```swift
-        typealias PersonTuple = (name: String, age: Int, height: Double)
-
-        var yagom: PersonTuple = ("yagom", 100, 182.5)
-        var eric: PersonTuple = ("eric", 150, 190.5)
-        ```
+    ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%205.png)
 
 ## 3-2. Operator
 
@@ -2529,20 +2608,20 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     B) 부모 클래스가 가진 기능을 수정할 수 있다. (재정의/덮어쓰기, Overriding) - ex. minus
     - 장점 : 가독성, 유지보수, 코드 재사용, 중복 최소화
 
-        ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2012.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2012.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
 
     - 참고 - overriding vs overloading
         - overloading : 기존의 함수 (sum)과 동일한 함수명을 사용하면서 형태를 변형한 경우 - ex. parameter 1개를 추가
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2013.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2013.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
 
     - this vs super
         - this : 자기 자신
         - super : 부모 클래스
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2014.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2014.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2015.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2015.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
 
     - 생성자 (constructor) : 부모 클래스에서 정의한 생성자들을 자식 클래스에서 그대로 사용할 수 있는 기능
     - Polymorphism (다형성)
@@ -2754,7 +2833,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - Quiz
             - [ ]  plus는 매개변수가 있어야하는데 어떻게 가능한거지?
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2016.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2016.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
 
     - 추가 예시 (교재)
 
@@ -3059,6 +3138,11 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         ```
 
 - 자동 클로저
+    - L/R
+
+        `@autoclosure` : Apply this attribute to delay the evaluation of an expression (argument로 전달되는 구문을 closure로 전달하지 않고, 예를 들어 실행결과인 String이 전달되고???) by automatically wrapping that expression in a closure with no arguments. (해당 String을 ()→String type의 클로저로 자동변환시켜준다.???) 
+        You apply it to a parameter’s type in a function declaration, for a parameter whose type is a function type that takes no arguments and that returns a value of the type of the expression. (함수 선언 시, 함수의 parameter type이 함수 type (()→String type)인 경우 사용한다.)
+
     - 자동클로저 (Auto Closure) : 함수의 argument로 전달하는 표현을 자동으로 변환해주는 클로저이다.
     - `@autoclosure`로 명시한다. (`@noescape` 속성이 암시적으로 부여된다. 따라서 자동클로저를 탈출 클로저로 사용한다면, `@autoclosure @noescape` 으로 명시한다.)
     - 자동클로저는 argument를 갖지 않는다. 자동클로저는 호출되었을 때 자신이 감싸고 있는 코드의 결과값을 반환한다.
@@ -3242,7 +3326,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             - [x]  var center의 type이 왜 Point? 단지 좌표 형태라서?
               print(square.center)  // Point(x: 5.0, y: 5.0) - 출력
 
-                ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2017.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2017.png)
+                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png)
 
         - Read-only computed properties (읽기전용 연산 프로퍼티) : with a getter but no setter. 
         A read-only computed property always returns a value, and can be accessed through dot syntax, but cannot be set to a different value.
@@ -4184,8 +4268,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - static은 원래 재정의 불가하다. (static 타입 메서드 또는 static 타입 프로퍼티)
     - Class 자체를 상속하지 못하게 하려면 `final class`로 명시한다.
 
-## Class 이니셜라이저의 상속/재정의
-
 ## Class 이니셜라이저
 
 - 값 타입과 달리, Class 이니셜라이저는 이니셜라이저 위임을 위해 '지정 이니셜라이저(Designated Initializer)' 및 '편의 이니셜라이저(Convenience Initializer)'로 역할을 구분한다.
@@ -4307,7 +4389,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - Class 초기화
         - 초기화 위임 규칙
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2018.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2018.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png)
 
             1. 자식의 모든 지정init은 부모의 지정init을 반드시 호출해야 한다.
             2. 편의init은 자신이 속한 Class의 다른 init을 반드시 호출해야 한다. (부모의 init 호출 불가)
@@ -4317,7 +4399,12 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             - 누군가는 지정init에게 초기화를 반드시 위임한다.
             - 편의init은 초기화를 반드시 누군가에 위임한다. (다른 지정init 또는 다른 편의init)
 
+            다른 버전으로 보면,
+            - 지정init은 반드시 위임을 superclass로 해야하고
+            - 편리init은 반드시 위임을 같은 레벨에서 해야한다.
+
         - 초기화 과정 (2단계)
+            - Swift 컴파일러는 초기화를 에러 없이 완료하기 위해 4단계 안전확인(safety-check)을 한다.
             - 안전확인 이후 초기화 1단계/2단계를 진행한다. 맞나?????
             - 초기화 안전확인 (safty-checks)
                 1. 자식의 지정init은 부모의 init을 호출하기 이전에 "자신의 프로퍼티"를 모두 초기화했는지 확인한다. 
@@ -4696,8 +4783,9 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             print(chope.description) // Unknown-name, Unknown-major, A
             ```
 
-- 요구 init
-    - 자식클래스에서 반드시 구현 (및 재정의???) 해야 하는 이니셜라이저는 `required` 키워드를 사용한다. (L/G - 필수 이니셜라이저 (Required Initializers))
+- 요구init
+    - 자식클래스에서 반드시 구현해야 하는 이니셜라이저는 `required` 키워드를 사용한다. (L/G - 필수 이니셜라이저 (Required Initializers))
+    이때, 재정의하더라도 override를 쓰지 않고 `required` 만 사용한다. (이유는 아래 참고)
 
         ```swift
         class Person {
@@ -4765,6 +4853,68 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
         uni = University(grade: "A++")
         print("\(uni.name), \(uni.major), \(uni.grade)") // 자식의 init 사용 - Unkown-name, Unknown-major1, A++
+        ```
+
+    - 부모의 일반init (required가 아닌)을 자식클래스부터 요구init으로 변경할 경우, `required override`로 명시한다. (재정의함과 동시에 요구init가 될 것임을 표현)
+    이때, 부모의 편의init도 요구init으로 변경 가능하며, `required convenience`로 명시한다.
+
+        자식클래스에서 편의init을 요구init으로 정의할 때에도 `required convenience`로 명시한다.
+
+        ```swift
+        class Person {
+            var name: String
+            
+            init() {
+                self.name = "Unkown-name"
+            }
+        }
+
+        class Student: Person {
+            var major: String = "Unknown-major1"
+            
+            init(major: String) { // 자식클래스 자신의 지정init을 구현 (=> 자동상속 조건 불만족)
+                self.major = major
+                super.init()
+            }
+            
+            required override init() { // 부모의 일반 init을 요구init으로 변경함과 동시에 재정의 (!= 재정의만 할때는 required)
+                self.major = "Unknown-major2"
+                super.init()
+            }
+            
+            required convenience init(name: String) { // 편의init을 요구init으로 정의 (상속과 상관 없음)
+                self.init()
+                self.name = name
+            }
+        }
+
+        class University: Student {
+            var grade: String
+            
+            init(grade: String) { // 자식클래스 자신의 지정init을 구현 (=> 자동상속 조건 불만족)
+                self.grade = grade
+                super.init()
+            }
+            
+            required init() { // Student Class에서 요구했으므로 구현해야 한다.
+                self.grade = "A" // 내용을 추가하여 재정의했지만 required override를 쓰지 않는다.
+                super.init()
+            }
+            
+            required convenience init(name: String) { // Student Class에서 요구했으므로 구현해야 한다.
+                self.init()
+                self.name = name // 부모의 init과 동일한 내용
+            }
+        }
+
+        var uni: University = University()
+        print("\(uni.name), \(uni.major), \(uni.grade)") // Unkown-name, Unknown-major1, A
+
+        uni = University(grade: "A++")
+        print("\(uni.name), \(uni.major), \(uni.grade)") // Unkown-name, Unknown-major2, A++
+
+        uni = University(name: "uniuni")
+        print("\(uni.name), \(uni.major), \(uni.grade)") // uniuni, Unknown-major2, A
         ```
 
 # 15. Initializer / de-Initializer (인스턴스의 생성과 소멸)
@@ -4863,7 +5013,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
         RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2019.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2019.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png)
 
 - 기본 이니셜라이저 (Default Initializers)
     - 모든 인스턴스는 초기화와 동시에 모든 저장 프로퍼티에 유효한 값이 할당되어 있어야 한다. (Class는 Class 선언 시 기본값이나 초기값을 할당하지 않으면 오류 발생)
@@ -7684,12 +7834,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
         - grid 배열은 서브스크립트에 의해 아래와 같이 row와 column을 갖는 행렬도 동작한다.
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2020.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2020.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png)
 
         - row/column에 값을 할당한 결과이다.
             - [ ]  행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
 
-            ![Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2021.png](Swift%20syntax%20b599224bce2940e3bcd91193bc030bbf/Untitled%2021.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png)
 
 - 서브스크립트 (Subscript) : Collection, List, Sequence 등 타입의 element에 접근하는 '단축 문법'이다.
     - Class, Struct, Enum에 서브스크립트를 구현 가능하다.
