@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 6, 2021 12:42 PM
+Last Edited Time: August 9, 2021 6:30 PM
 Property: Yagom
 Type: 언어
 
@@ -289,7 +289,7 @@ Type: 언어
         intA = Int(doubleB)  // 200 <- 소수점 삭제 (0.1 이든 0.9 이든 상관 없이) *truncated
         ```
 
-- Bool, Int, UInt, Float, Double, Character, String
+- Bool, Int, UInt, Float, Double, Character, String & 특수문자
     - 설명
 
         ```swift
@@ -347,13 +347,33 @@ Type: 언어
         print(someBool) // true
         ```
 
-    - 특수문자
+        - String은 a collection of Character이다.
 
-        \n  줄바꿈
+            ```swift
+            let str = "Hello"
+            for c in str {
+                print("element : \(c), type: \(type(of: c))")
+            }
+
+            // element : H, type: Character
+            // element : e, type: Character
+            // element : l, type: Character
+            // element : l, type: Character
+            // element : o, type: Character
+            ```
+
+        - <문자열 다루기> 관련 내용은 아래 참고
+
+            [https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9#ec0151b021f74383a90a59babfba3f9f](https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9)
+
+    - #특수문자# (Special String for Escape sequence)
+
+        \n  줄바꿈(line feed) - 커서를 현재 행의 다음 행으로 내리기
         \\  String 내 백슬래쉬를 표현 
         \"  String 내부의 "를 표현 
         \t  탭 문자
-        \0  String 종료를 나타내는 null 문자
+        \0  String 종료를 나타내는 null 문자(null character)
+        \r carriage return - 커서를 현재 행의 맨 좌측으로 옮기기 (현재 컴파일러는 \n으로 \r,\n 기능을 대체하므로 \r를 사용할 일이 없다.)
 
         ```swift
         // String 내부에 위의 특수문자를 사용하지 않는 방법
