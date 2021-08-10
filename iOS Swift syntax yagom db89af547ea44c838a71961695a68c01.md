@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 9, 2021 6:30 PM
+Last Edited Time: August 11, 2021 2:12 AM
 Property: Yagom
 Type: 언어
 
@@ -783,7 +783,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 - Set : 순서가 없고, 중복되는 멤버가 없는 컬렉션 (집합)
     - 설명
         - Array 설명 [Array]
-            - Array Handling
+            - Array Handling :
 
                 ```swift
                 var arrayControl: [Int] = [1,2,3,4,5]
@@ -837,7 +837,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
             ```swift
             // **빈** Int Array 생성
-            var integers: Array<Int> = Array<Int>**()**
+            var integers: Array<Int> = [Int]() // 축약 리터럴 등 리터럴 설명은 아래 참고 🎃
             integers.append(1)  // -> [1] *append method : 요소를 맨 뒤에 추가한다.
             integers.append(100)  // -> [1, 100]
             // integers.append(100.1)  // 오류 발생
@@ -855,22 +855,19 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
             // integers[0]  // 오류 발생. 다 제거해서 요소가 없으므로
 
-            // 빈 Double Array 생성
-            // *Array<Double>과 [Double]은 동일한 표현이다. 축약 리터럴 (Double type의 Array라는 의미)
-            var doubles: Array<Double> = [Double]()
-            var doubles: [Double] = [Double]()
-
-            // 빈 String Array 생성
-            var strings: [String] = [String]()
-
-            // 빈 Character Array 생성
-            // *[] : 새로운 빈 Array
-            var chracters: [Character] = []  // type을 명시했다면 []으로 빈 배열 생성 가능함
-
             // let으로 Array를 선언하면 불변 Array
             let immutableArray = [1,2,3]
             // immutableArray.append(4)  // 오류 발생
-            // immutableArray.removeAll()  // 오류 발생
+            ```
+
+            ```swift
+            var integers: [Int] = [1, 50, 100]
+
+            integers[0] = 20 // 기존의 element 변경
+            print(integers)  // [20, 50, 100]
+
+            integers[3] = 300 // 런타임 에러 발생 (컴파일 에러는 아님) - Fatal error: Index out of range
+            //print(integers)
             ```
 
         - Dictionary 설명 [key: value]
@@ -880,27 +877,30 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
                 ```swift
                 var dicCtl: [String: Int] = [:]
-                dicCtl.isEmpty
+                dicCtl.isEmpty // true
 
                 dicCtl["key1"] = 100 // key:value 추가 (순서 X)
                 dicCtl["key2"] = 200
                 dicCtl["key3"] = 300
                 // dicCtl["key3"] = 300, 310, 320 // 오류 발생
-                dicCtl // ["key1": 100, "key2": 200, "key3": 300]
+                print(dicCtl) // ["key1": 100, "key2": 200, "key3": 300]
 
                 dicCtl.count // 3
 
                 dicCtl["key1"] // 100
                 dicCtl["key4"] // nil (Array와 달리 에러 발생 안하지만, nil return)
 
-                dicCtl.removeValue(forKey: "key1") // 특정 key:value pair 삭제
+                dicCtl.removeValue(forKey: "key1") // 특정 key:value pair 삭제 
                 // dicCtl.removeValue(forKey: "key2","key3") // 오류 발생
-                dicCtl
+                dicCtl["key3"] = nil // 특정 key:value pair 삭제 
 
-                print(dicCtl["key2"]) // Optional(200) -> 왜지?
-                print(dicCtl["key2", default: 0]) // 200 -> ?
+                print(dicCtl["key2"]) // Optional(200) -> Dictionary key 중에서 "key2"에 해당하는 것이 없으면 nil 발생 가능성이 있으므로 Optional 이다.
+                print(dicCtl["key2", default: 0]) // 200 -> ? 왜 이건 Optional이 아니지?
+
                 dicCtl.removeValue(forKey: "key2")
                 print(dicCtl["key2", default: 0]) // 0 (nil이면 default로 정해둔 값이 출력됨)
+
+                print(dicCtl) // 모두 삭제하면 [:] empty Dictionary가 출력된다. (nil이 아님)
                 ```
 
             ```swift
@@ -937,9 +937,9 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
             var integers: Array<Int> = Array<Int>()
 
-            // var integers: Array<Int> = Array<Int>()
+            // var integers: Array<Int> = Array<Int>()  // 타입 & 생성
             // var integers: Array<Int> = [Int]()
-            // var integers: Array<Int> = []       // type을 명시했다면 []으로 빈 배열 생성 가능함
+            // var integers: Array<Int> = []  // type을 명시했다면 []으로 빈 배열 생성 가능함
             // var integers: [Int] = Array<Int>()
             // var integers: [Int] = [Int]()
             // var integers: [Int] = []
@@ -985,33 +985,36 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             integerSet.count
 
             // 집합 개념으로 접근하기
-            let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 [] 형태로 입력하지? Set 니까 {} 형태로 할당이 될텐데??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
+            let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 [] 형태로 입력하지? Set 니까 {} 형태로 저장되어 있을텐데??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
             let setB: Set<Int> = [3,4,5,6,7]  // {6,3,4,5,7}
             // let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 -> 왜?
-            print(setA)  // [4,1,3,2,5] (순서 랜덤하게 나옴)
+            print(setA)  // [4,1,3,2,5] (순서 랜덤)
 
             // 합집합
             let union: Set<Int> = setA.union(setB) // {4,1,3,2,6,7,5}
-            print(union) // [4, 1, 3, 2, 6, 7, 5] 출력
+            print(union) // [4, 1, 3, 2, 6, 7, 5] 출력 (순서 랜덤)
 
-            // 동일한 타입의 Array로 변환하는 method
-            let sortedUnion: [Int] = union.sorted() // [1,2,3,4,5,6,7]
+            // 합집합 오름차순 정렬 - 동일한 타입의 Array로 변환하는 method
+            let sortedUnion: [Int] = union.sorted() // [1,2,3,4,5,6,7] - 오름차순(<, ascending order)으로 정렬된다. descending order로 정렬하려면 sorted(by: >) 메서드를 사용한다.
             // let sortedUnion: Array<Int> = union.sorted()
-            print(union) // [4, 1, 3, 2, 6, 7, 5] 출력
+            print(sortedUnion) // [1, 2, 3, 4, 5, 6, 7] 출력 - 순서 고정!
 
             // 교집합
             let intersection: Set<Int> = setA.intersection(setB) // {5,3,4}
-            print(intersection) // [5, 4, 3] 출력
+            print(intersection) // [5, 4, 3] 출력 (순서 랜덤)
 
             // 차집합
             let subtracting: Set<Int> = setA.subtracting(setB) // {2,1}
-            print(subtracting) // [2, 1] 출력
+            print(subtracting) // [2, 1] 출력 (순서 랜덤)
             ```
 
-            - [ ]  Set 순서가 없다는게 무슨 뜻?
-            integerSet.removeFirst() // 99 삭제 (???순서가 없다며)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
+
+            - [ ]  Declaration에 보면 sorted 메서드의 return type이 [Int]인데, Discussion의 상수 sortedStudent를 보면 [String] type으로 return 됨 ???
+        - [ ]  Set 순서가 없다는게 무슨 뜻?
+        integerSet.removeFirst() // 99 삭제 (???순서가 없다며)
         - [ ]  // 집합 개념으로 접근하기
-        let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 []로 입력했는데 {} 형태로 할당이 됐지??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
+        let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 []로 입력했는데 {} 형태로저장되어 있을텐데??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
         - [ ]  let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 -> 왜?
 
 # 5. Function
@@ -2628,20 +2631,20 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     B) 부모 클래스가 가진 기능을 수정할 수 있다. (재정의/덮어쓰기, Overriding) - ex. minus
     - 장점 : 가독성, 유지보수, 코드 재사용, 중복 최소화
 
-        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
 
     - 참고 - overriding vs overloading
         - overloading : 기존의 함수 (sum)과 동일한 함수명을 사용하면서 형태를 변형한 경우 - ex. parameter 1개를 추가
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%207.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
 
     - this vs super
         - this : 자기 자신
         - super : 부모 클래스
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%208.png)
-
             ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%209.png)
+
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
 
     - 생성자 (constructor) : 부모 클래스에서 정의한 생성자들을 자식 클래스에서 그대로 사용할 수 있는 기능
     - Polymorphism (다형성)
@@ -2853,7 +2856,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - Quiz
             - [ ]  plus는 매개변수가 있어야하는데 어떻게 가능한거지?
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2010.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png)
 
     - 추가 예시 (교재)
 
@@ -3346,7 +3349,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             - [x]  var center의 type이 왜 Point? 단지 좌표 형태라서?
               print(square.center)  // Point(x: 5.0, y: 5.0) - 출력
 
-                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2011.png)
+                ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png)
 
         - Read-only computed properties (읽기전용 연산 프로퍼티) : with a getter but no setter. 
         A read-only computed property always returns a value, and can be accessed through dot syntax, but cannot be set to a different value.
@@ -4409,7 +4412,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     - Class 초기화
         - 초기화 위임 규칙
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2012.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png)
 
             1. 자식의 모든 지정init은 부모의 지정init을 반드시 호출해야 한다.
             2. 편의init은 자신이 속한 Class의 다른 init을 반드시 호출해야 한다. (부모의 init 호출 불가)
@@ -5033,7 +5036,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - 수퍼클래스의 init(name: name) initializer를 상속받아 지정초기자를 생성하고 그 지정초기자를 convenience init(name: String)에서 오버라이딩해 사용합니다. 
         RecipeIngredient에서 initializer가 사용되는 구조를 표현하면 다음 그림과 같습니다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2013.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png)
 
 - 기본 이니셜라이저 (Default Initializers)
     - 모든 인스턴스는 초기화와 동시에 모든 저장 프로퍼티에 유효한 값이 할당되어 있어야 한다. (Class는 Class 선언 시 기본값이나 초기값을 할당하지 않으면 오류 발생)
@@ -7854,12 +7857,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
         - grid 배열은 서브스크립트에 의해 아래와 같이 row와 column을 갖는 행렬도 동작한다.
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2014.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png)
 
         - row/column에 값을 할당한 결과이다.
             - [ ]  행렬의 왼쪽 상단부터 순서대로 index 0,1,2,3 인가???
 
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2015.png)
+            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2016.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%2016.png)
 
 - 서브스크립트 (Subscript) : Collection, List, Sequence 등 타입의 element에 접근하는 '단축 문법'이다.
     - Class, Struct, Enum에 서브스크립트를 구현 가능하다.
