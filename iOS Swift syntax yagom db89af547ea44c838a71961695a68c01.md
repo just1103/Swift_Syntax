@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 11, 2021 2:12 AM
+Last Edited Time: August 12, 2021 11:03 PM
 Property: Yagom
 Type: 언어
 
@@ -781,9 +781,22 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 - Array : 멤버의 순서 (index)가 있는 리스트 컬렉션
 - Dictionary : 순서가 없고, [key: value]의 쌍으로 구성된 컬렉션 (key는 중복 불가)
 - Set : 순서가 없고, 중복되는 멤버가 없는 컬렉션 (집합)
+
+    ```swift
+    // Mutability of Collections
+    var varArray: [Int] = [1, 2, 3] 
+    varArray[0] = 100 // [100, 2, 3, 4] - mutable
+
+    let letArray: [Int] = [1, 2, 3] 
+    //letArray.append(4) // 컴파일 에러 발생  - immutable 
+
+    var someVariable = letArray // 변수에 let 선언 collection을 할당하면
+    someVariable.append(4) // [1, 2, 3, 4] - mutable
+    ```
+
     - 설명
         - Array 설명 [Array]
-            - Array Handling :
+            - Array Handling
 
                 ```swift
                 var arrayControl: [Int] = [1,2,3,4,5]
@@ -870,10 +883,20 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             //print(integers)
             ```
 
+            Dictionary와 달리 Array는 invalid index를 넣는 경우, 새로운 item이 추가되지 않는다.
+            `shoppingList[100]= "new item"` // 런타임 에러 발생
+
+            - [x]  컴파일 에러
+                - Compilation error 
+                프로그램의 실행을 막는 오류이다. 컴파일러가 이해하지 못하는 코드가 발견되면 컴파일 오류가 발생한다. 보통 문법적 오류에 기인한다.
+            - [x]  런타임 에러
+                - Run-time error
+                프로그램 실행 중에 발생하는 오류이다. 프로그램이 수행 불가한 작업을 시도하면 발생한다. 설계 미숙에 기인한다. 
+                ex. 무한루프, 0으로 나누기, 생성되지 않은 객체를 참조 (존재하지 않는 메모리 위치에 접근) 등
         - Dictionary 설명 [key: value]
             - Dictionary Control
-                - [ ]  print(dicCtl["key2"]) // Optional(200) -> 왜지?
-                print(dicCtl["key2", default: 0]) // 200 -> ?
+                - [ ]  print(dicCtl["key2"]) // Optional(200) 
+                print(dicCtl["key2", default: 0]) // 200 → nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
 
                 ```swift
                 var dicCtl: [String: Int] = [:]
@@ -895,13 +918,67 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 dicCtl["key3"] = nil // 특정 key:value pair 삭제 
 
                 print(dicCtl["key2"]) // Optional(200) -> Dictionary key 중에서 "key2"에 해당하는 것이 없으면 nil 발생 가능성이 있으므로 Optional 이다.
-                print(dicCtl["key2", default: 0]) // 200 -> ? 왜 이건 Optional이 아니지?
+                print(dicCtl["key2", default: 0]) // 200 -> ? 왜 이건 Optional이 아니지? nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
 
                 dicCtl.removeValue(forKey: "key2")
                 print(dicCtl["key2", default: 0]) // 0 (nil이면 default로 정해둔 값이 출력됨)
 
                 print(dicCtl) // 모두 삭제하면 [:] empty Dictionary가 출력된다. (nil이 아님)
                 ```
+
+                - Dictionary의 `updateValue(_:forKey:)` method를 통해 특정 key에 대한 value를 설정(set)하거나 업데이트(update)한다. 해당 key가 기존 key에 없으면 value를 설정하고, 있으면 value를 업데이트한다.
+                단, updateValue 메서드는 업데이트 이후 old value (기존의 값)을 반환한다.
+
+                    ```swift
+                    var airports: [String: String] = ["YYZ": "Toronto Pearson", "DUB": "Dublin"]
+
+                    if let oldValue = airports.updateValue("Dublin Airport", forKey: "DUB") {
+                        print("The old value for DUB was \(oldValue).")
+                    } // Prints "The old value for DUB was Dublin." - 기존 값이 반환된다.
+
+                    print(airports) // ["LHR": "London Heathrow", "DUB": "Dublin Airport", "YYZ": "Toronto Pearson"] // key DUB에 대한 value는 업데이트 되었다.
+                    ```
+
+                ```swift
+                var anyDic: [String: Int] = [:]
+
+                anyDic["1"] = 1
+                anyDic.removeAll()
+
+                print(anyDic) // [:] 출력 - nil이 아님
+
+                anyDic["1"] = 1
+                anyDic["2"] = 2
+                anyDic["1"] = nil
+                anyDic["2"] = nil
+
+                print(anyDic) // [:] 출력 - nil이 아님 ["1": nil, "2": nil] X
+                ```
+
+                - [ ]  왜 nil이 아니라 empty Dictionary가 출력되지?
+                print(anyDic) // [:] 출력 - ["1": nil, "2": nil] 이 아닌 이유는?
+
+                    ```swift
+                    var d = ["foo": nil] as [String: Any?]
+
+                    d["foo"] = nil // d is now [:]
+                    print(d)
+
+                    let y: String? = nil
+                    d["foo"] = y // d is now [:]
+                    print(d)
+
+                    let x: Any? = nil
+                    d["foo"] = x // d is ["foo": nil]
+                    print(d)
+
+                    d.removeValue(forKey: "foo")
+                    print(d) // [:]
+                    ```
+
+                    [https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion](https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion)
+
+                    - A-1 : If you assign 'nil' as the value for the given key, the dictionary removes that key and its associated value.
 
             ```swift
             // key가 String 타입이고, value가 Any 타입인 빈 Dictionary 생성
@@ -916,9 +993,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             anyDictionary.removeValue(forKey: "anotherKey") // *특정 key:value pair를 제거한다.
             anyDictionary["someKey"] = nil // 특정 key에 nil을 할당할 수 있다.
             anyDictionary // -> [:]
-
-            // *[:] : 새로운 빈 dictionary
-            let emptyDictionary: [String: String] = [:]
 
             // 선언할 때 값을 할당해줌
             let initializedDictionary: [String: String] = ["name": "yagom", "gender": "male"]
@@ -980,14 +1054,14 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             integerSet.contains(2) // -> false
 
             integerSet.remove(100)   // 100 삭제
-            integerSet.removeFirst() // 99 삭제 (???순서가 없다며)
+            integerSet.removeFirst() // 1 or 99 삭제 (순서가 없으므로 랜덤으로 삭제된다.)
 
             integerSet.count
 
             // 집합 개념으로 접근하기
-            let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 [] 형태로 입력하지? Set 니까 {} 형태로 저장되어 있을텐데??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
+            let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} - [Array element]와 {Set elements}를 구분하기 위해 {}로 쓰는듯
             let setB: Set<Int> = [3,4,5,6,7]  // {6,3,4,5,7}
-            // let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 -> 왜?
+            // let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 
             print(setA)  // [4,1,3,2,5] (순서 랜덤)
 
             // 합집합
@@ -1011,11 +1085,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
 
             - [ ]  Declaration에 보면 sorted 메서드의 return type이 [Int]인데, Discussion의 상수 sortedStudent를 보면 [String] type으로 return 됨 ???
-        - [ ]  Set 순서가 없다는게 무슨 뜻?
-        integerSet.removeFirst() // 99 삭제 (???순서가 없다며)
-        - [ ]  // 집합 개념으로 접근하기
-        let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} 왜 []로 입력했는데 {} 형태로저장되어 있을텐데??? [Array]가 {Set}에 들어가면 순서가 없어지는건가?
-        - [ ]  let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 -> 왜?
 
 # 5. Function
 
