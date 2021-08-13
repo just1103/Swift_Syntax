@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 12, 2021 11:03 PM
+Last Edited Time: August 13, 2021 11:12 PM
 Property: Yagom
 Type: 언어
 
@@ -1088,6 +1088,9 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 # 5. Function
 
+함수 호출 시, argument 앞에 있는 것이 무조건 argument label이다!
+함수 선언 시, argument label을 따로 정의하지 않으면, default로 parameter name을 argument label로 사용한다!
+
 - 함수 선언 및 호출
 
     ```swift
@@ -1151,9 +1154,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     // 2. 전달인자 레이블 (Argument Label)
     // 함수를 호출할 때 함수 사용자의 입장에서 매개변수의 역할을 명확하게 표현할 때 사용함
-    // 전달인자 레이블은 변경하여 동일한 이름의 함수를 중복으로 생성가능함 ?
-    // *to/from을 통해 함수 이름을 바꿔주는 효과가 있음 (greeting => greeting(to, from) 다른 함수처럼 취급된다)
-    // *left/right 등도 가능
+    // 전달인자 레이블을 지정하면, 함수명을 변경하는 효과를 가지므로 중복정의 (overload) 역할을 수행함 *overload : 함수이름은 동일하나 매개변수 (전달인자 레이블만 다르더라도 가능), 반환타입 등을 다르게 하여 함수를 중복 선언 가능함 (함수, 서브스크립트, 생성자)
 
     func greeting(to friend: String, from me: String) {
     		 print("Hello \(friend)! I'm \(me)")  // *함수 내부에서는 매개변수이름을 사용
@@ -1163,8 +1164,14 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     greeting(to: "hana", from: "yagom") // Hello hana! I'm yagom *함수 외부에서는 전달인자 레이블을 사용
     // greeting(friend: "Why", me: "not") // 오류 발생
 
+    // overload test
+    func greeting(to friend: String, from me: String = "kevin") {
+             print("Hello \(friend)! I'm \(me)")  
+    }
+    greeting(to: "hana") // Hello hana! I'm kevin - overload 했으므로 I'm yagom이 아님!
+
     // 전달인자 레이블을 사용하고 싶지 않은 경우 와일드카드 식별자 사용 가능
-    // 전달인자 레이블 변경 시, 함수 중복 정의 (Overload)로 동작 가능 *Overload : 함수이름은 동일하나 매개변수 (전달인자 레이블만 다르더라도 가능), 반환타입 등을 다르게 하여 함수를 중복 선언 가능함 (함수, 서브스크립트, 생성자)
+    // 와일드카드 식별자를 사용하는 것도 런달인자 레이블을 설정하는 것에 속하므로 overload 이다.
     func greeting(_ friend: String, _ me: String) {
     		 print("Hello \(friend)! I'm \(me)")  
     }
@@ -1189,22 +1196,22 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     // 가변매개변수를 생략하고 함수를 호출할 수 있음 (friends: nil은 불가함)
     print(sayHelloToFriends(me: "yagom"))
-    // Hello []! I'm yagom!
+    // Hello []! I'm yagom! // empty array 형태로 출력됨
 
     // 참고 - inout 키워드를 통해 입출력 매개변수 사용 가능 (매개변수 기본값 지정 불가, 가변 매개변수로 사용 불가)
     var numbers: [Int] = [1,2,3]
 
     func nonReferenceParameter(_ arr: [Int]) { // 함수 내부/외부 단절 (내부 이벤트가 함수 외부에 영향을 주지 않음)
     		var copiedArr: [Int] = arr // 함수에 arguments를 전달할 때, 복사된 값이 전달됨 (CS50-메모리 교환 참고)
-    		copiedArr[1] = 1
+    		copiedArr[1] = 1 // 결과적으로 index 1의 값이 변경되지 않음
     }
 
-    func referenceParameter(_ arr: inout [Int]) { // 함수 내부에서 수정된 매개변수를 함수 외부에서 사용 가능
-    		arr[1] = 1 // 값이 아닌 주소가 전달됨
+    func referenceParameter(_ arr: inout [Int]) { // in-out parameters - 함수 내부에서 수정된 매개변수를 함수 외부에서 사용 가능
+    		arr[1] = 1 // 값이 아닌 주소가 전달됨, 결과적으로 index 1의 값이 변경됨
     }
 
     nonReferenceParameter(numbers)
-    print(numbers[1]) // 2
+    print(numbers[1]) // 2 
 
     referenceParameter(&numbers) // & : 주소 추출 연산자 
     print(numbers[1]) // 1
@@ -1231,7 +1238,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     ```swift
     // 함수의 타입 표현
-    // 반환타입 생략불가
+    // 변수에 함수 할당 시, 반환타입 생략불가
     var 변수이름: (매개변수1타입, 매개변수2타입) -> 반환타입 = 함수이름(매개변수1:매개변수2:)
 
     -
@@ -1277,8 +1284,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     var mathFunc: CalculateTwoInts = addTwoInts // 변수 type 생략 가능 (전달인자 레이블 유무와 관계없이 가능)
     print(mathFunc(1,2))
 
-    func printMathResult(_ hereMathFunc: CalculateTwoInts, _ a: Int, _ b: Int) { // 
-        print("Result: \(hereMathFunc(a, b))")
+    func printMathResult(_ hereMathFunc: CalculateTwoInts, _ a: Int, _ b: Int) { 
+        print("Result: \(hereMathFunc(a, b))")  // \()으로 이런 것도 가능하다.
     }
     printMathResult(addTwoInts, 3, 4) // Result: 7 출력 - 함수 자체를 argument로 전달함
 
@@ -1289,17 +1296,17 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     printMathResult(chooseMathFunc(true), 4, 5) // Result: 9 출력 - chooseMathFunc(true) 결과로 addTwoInts 함수가 반환됨
     ```
 
-    - [ ]  다시 이해하기
+    - [x]  다시 이해하기
     runAnother(myParameters: greeting(friend:me:)) // 매개변수 myParameters를 다른 함수에 직접 넘겨줄 수 있다. *greeting 함수에 매개변수 "jenny", "mike"를 넣어주는 효과 (???)
     // Hello jenny! I'm mike
 
         ```swift
-        func sumA(a: Int, b: Int) {
+        func sumA(a: Int, b: Int) { // 함수의 type : (Int, Int) -> Void
             print(a + b)
         }
         sumA(a: 1,b: 2)  // 3 출력
 
-        func multA(a: Int, b: Int) {
+        func multA(a: Int, b: Int) { // 함수의 type : (Int, Int) -> Void
         		print(a * b)
         }
         multA(a: 3, b: 4)  // 12 출력
@@ -1314,8 +1321,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         // sumA(testParameters)  // 이건 불가
         // sumA(parametersDataTypeFunc(testParameters: <#T##(Int, Int) -> Void#>))  // 이것도 불가 sumA의 매개변수 type은 Int 여야 하므로
 
-        //
-        parametersDataTypeFunc 함수의 매개변수 testParameters는 Data Type이 함수이다.
+        // 설명
+        parametersDataTypeFunc 함수의 testParameters라는 parameter의 Data Type이 함수이다. 
         그래서 매개변수 자체가 함수처럼 "함수명()"을 통해 실행된다.
 
         원래는 매개변수를 각각 sumA(a:10, b:20) 이렇게 써줘야 하는데,
