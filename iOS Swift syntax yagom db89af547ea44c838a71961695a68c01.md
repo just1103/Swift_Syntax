@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 13, 2021 11:12 PM
+Last Edited Time: August 17, 2021 9:44 PM
 Property: Yagom
 Type: 언어
 
@@ -1179,7 +1179,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     // 3. 가변 매개변수...
     // 전달 받을 값의 개수를 알기 어려울 때 사용함
-    // 함수당 하나만 가질 수 있음
+    // 함수는 여러 개의 가변 매개변수를 가질 수 있음 (Swift 버전 5.4 이후부터)
 
     func 함수이름(매개변수1이름: 타입, 매개변수2이름: 타입...) -> 반환타입 {
     	   함수구현부
@@ -1198,7 +1198,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     print(sayHelloToFriends(me: "yagom"))
     // Hello []! I'm yagom! // empty array 형태로 출력됨
 
-    // 참고 - inout 키워드를 통해 입출력 매개변수 사용 가능 (매개변수 기본값 지정 불가, 가변 매개변수로 사용 불가)
+    // 4. in-out 매개변수
+    // inout 키워드를 통해 입출력 매개변수 사용 가능 (매개변수 기본값 지정 불가, 가변 매개변수로 사용 불가)
     var numbers: [Int] = [1,2,3]
 
     func nonReferenceParameter(_ arr: [Int]) { // 함수 내부/외부 단절 (내부 이벤트가 함수 외부에 영향을 주지 않음)
@@ -1217,9 +1218,27 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     print(numbers[1]) // 1
     ```
 
-    - [x]  print(sayHelloToFriends(me: "yagom", friends: "hana", "eric", "wing"))
-    // Hello ["hana", "eric", "wing"]! I'm yagom! // 문자 형태만 들어가는게 아니라 [Array] 전체가 출력되네?
-        - 가변 매개변수로 들어온 arguments 값은 Array 처럼 사용됨
+    ```swift
+    func arrayParameter(a numbers: [Double]) -> String {
+        return "\(numbers)"
+    }
+
+    func variadicParameter(b numbers: Double...) -> String {
+        return "\(numbers)"
+    }
+
+    print(arrayParameter(a: [1, 2, 3, 100])) // [1.0, 2.0, 3.0, 100.0]
+    print(variadicParameter(b: 3.5, 4.5, 4.5)) // [3.5, 4.5, 4.5]
+
+    print(arrayParameter(a: [])) // []
+    print(variadicParameter(b: )) // (Function)
+
+    //print(arrayParameter()) // 컴파일 에러 발생 - Missing argument for parameter #1 in call  <- array는 parameter 생략이 불가하다.
+    print(variadicParameter()) // []  <- 가변 매개변수는 parameter 생략이 가능하다.
+    ```
+
+    - [x]  가변 매개변수는 함수당 하나만 가질 수 있음? 여러 개 되는데?
+        - *Swift 버전 5.4 이후부터 여러 개의 가변 매개변수를 가질 수 있도록 변경되었다.
 
 - data type으로서의 함수 (변수에 함수 할당, 전달인자/반환 값으로 전달)
     - 스위프트는 함수형 프로그래밍 패러다임을 포함하는 다중 패러다임 언어이므로 스위프트의 함수는 일급객체이다. 
@@ -2279,7 +2298,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     	case name3, name4, name5  // 한 줄에 여러 개도 정의할 수 있다.
     	// ...
     }
-    -
 
     enum Weekday {
         case mon  // String 데이터가 아닌 case 자체의 이름이므로 case "mon" 형태로 쓰지 않음
@@ -2294,8 +2312,6 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     day = .tue  // 위와 같이 day의 타입을 명시한 이후로 .case명 처럼 축약하여도 무방하다. (참고 1)
 
     print(day) // tue 출력
-
-    -
 
     // You can match individual enumeration values with a switch statement:
     switch day {   // switch의 비교값에 열거형 타입이 위치할 때, 모든 열거형 case를 포함한다면 default를 작성할 필요가 없다. (단, case 중 하나라도 빠지면 경고 뜸)
@@ -2329,16 +2345,17 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         } // coffee, tea, juice - 출력
         ```
 
-- raw value (원시값)
+- raw value (원시값) - 모두 동일한 type
     - 원시값 지정은 Enum 선언 시에만 가능하다. (아마도????)
-    - As an alternative to associated values, enumeration cases can come prepopulated with default values (called raw values), which are all of the same type.
-    If a value (known as a raw value) is provided for each enumeration case, the value can be a string, a character, or a value of any integer or floating-point type.
+    - 연관값 대신에 enumeration cases can come prepopulated with default values (called raw values), which are all of the same type.
+    If a raw value is provided for each enumeration case, the value can be a string, a character, or a value of any integer or floating-point type.
+    즉, 함수 type은 원시값이 될 수 없다. (단, 연관값은 될 수 있다.)
     - you don’t have to explicitly assign a raw value for each case. When you don’t, Swift automatically assigns the values for you. 
     For example, when integers are used for raw values, the implicit value for each case is one more than the previous case. If the first case doesn’t have a value set, its value is 0.
     - When strings are used for raw values, the implicit value for each case is the text of that case’s name.
-    Swift enumeration cases don’t have an integer value set by default, unlike languages like C and Objective-C. In the CompassPoint example above, north, south, east and west don’t implicitly equal 0, 1, 2 and 3. Instead, the different enumeration cases are values in their own right (north, south, east and west).
+    Swift enumeration cases don’t have an integer value set by default, unlike languages like C and Objective-C. In the CompassPoint example, north, south, east and west don’t implicitly equal 0, 1, 2 and 3. Instead, the different enumeration cases are values in their own right (north, south, east and west).
     - rawValue는 case별로 각각 다른 값을 가져야한다.
-    - case 마다 자동으로 1이 증가된 값이 할당됩니다. when integers are used for raw values, the implicit value for each case is one more than the previous case.
+    - case 마다 자동으로 1이 증가된 값이 할당된다. when integers are used for raw values, the implicit value for each case is one more than the previous case.
     - rawValue를 반드시 지닐 필요가 없다면 굳이 만들지 않아도 된다.
     - rawValue를 지정한 경우 nil 가능성이 있으므로 Enum의 인스턴스는 항상 optional type이다. (실패가능한 이니셜라이저 참고)
 
@@ -2374,101 +2391,100 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     // 열거형의 원시값 타입이 String일 때, 원시값이 지정되지 않았다면 "case명"을 원시값으로 사용함
     ```
 
-- Associated Values (연관값)
+- Associated Values (연관값) - 다른 type도 가능
     - it’s sometimes useful to be able to store values of other types alongside these case values. This additional information is called an `associated value`, and it varies each time you use that case as a value in your code.
 
-    ```swift
-    enum Barcode {
-        case upc(Int, Int, Int, Int)  // case upc(numberSystem: Int, manufacturer: Int, product: Int, check: Int) 형태로도 연관값 표현 가능함
-        case qrCode(String)
-    }
-    // This can be read as: 
-    “Define an enumeration type called Barcode, which can take either a value of upc with an associated value of type (Int, Int, Int, Int), 
-    or a value of qrCode with an associated value of type String.”
-    This definition doesn’t provide any actual Int or String values—it just defines the type of associated values that Barcode constants and variables 
-    can store when they are equal to Barcode.upc or Barcode.qrCode.
-    -
+        ```swift
+        enum Barcode {
+            case upc(Int, Int, Int, Int)  // case upc(numberSystem: Int, manufacturer: Int, product: Int, check: Int) 형태로도 연관값을 표현 가능함
+            case qrCode(String)
+        }
+        // This can be read as: 
+        //“Define an enumeration type called Barcode, which can take either a value of upc with an associated value of type (Int, Int, Int, Int), 
+        //or a value of qrCode with an associated value of type String.”
+        //This definition doesn’t provide any actual Int or String values — it just defines the type of associated values 
+        //that Barcode constants and variables can store when they are equal to Barcode.upc or Barcode.qrCode
 
-    var productBarcode = Barcode.upc(8, 85909, 51226, 3)
-    productBarcode = .qrCode("ABCDEFGHIJKLMNOP")  // 변수의 값 변경
-    -
+        var productBarcode = Barcode.upc(8, 85909, 51226, 3)
+        productBarcode = .qrCode("ABCDEFGHIJKLMNOP")  // 변수의 값 변경
 
-    switch productBarcode {
-    case .upc(let numberSystem, let manufacturer, let product, let check):
-        print("UPC: \(numberSystem), \(manufacturer), \(product), \(check).")
-    case .qrCode(let productCode):
-        print("QR code: \(productCode).")
-    } // Prints "QR code: ABCDEFGHIJKLMNOP."
-    // You extract each associated value as a constant (with the let prefix) or a variable (with the var prefix) for use within the switch case’s body
-    or 
+        // You extract 1) each associated value as a constant (with the let prefix) or a variable (with the var prefix) for use within the switch case’s body
+        switch productBarcode {
+        case .upc(let numberSystem, let manufacturer, let product, let check):
+            print("UPC: \(numberSystem), \(manufacturer), \(product), \(check).")
+        case .qrCode(let productCode):
+            print("QR code: \(productCode).")
+        } // Prints "QR code: ABCDEFGHIJKLMNOP."
 
-    If all of the associated values for an enumeration case are extracted, you can place a single var or let annotation before the case name, for brevity:
+        // or If 2) all of the associated values for an enumeration case are extracted, you can place a single var or let annotation before the case name
+        switch productBarcode {
+        case let .upc(numberSystem, manufacturer, product, check):
+            print("UPC : \(numberSystem), \(manufacturer), \(product), \(check).")
+        case let .qrCode(productCode):
+            print("QR code: \(productCode).")
+        } // Prints "QR code: ABCDEFGHIJKLMNOP."
+        ```
 
-    switch productBarcode {
-    case let .upc(numberSystem, manufacturer, product, check):
-        print("UPC : \(numberSystem), \(manufacturer), \(product), \(check).")
-    case let .qrCode(productCode):
-        print("QR code: \(productCode).")
-    } // Prints "QR code: ABCDEFGHIJKLMNOP."
-    ```
+    - rawValue와 달리 Associate Value에는 함수 type 할당이 가능하다.
+
+        ```swift
+        enum SomeEnum {
+            case closureOne (String, Double -> Double)
+            case closureTwo (String, (Double, Double) -> Double)
+        }
+        ```
 
 - Initializing from a Raw Value / 원시값을 통한 초기화
     - If you define an enumeration with a raw-value type, the enumeration automatically receives an initializer that takes a value of the raw value’s type (as a parameter called rawValue) and returns either an enumeration case or nil. You can use this initializer to try to create a new instance of the enumeration.
-    - however, *Not all possible Int values will find a matching planet. Because of this, the raw value initializer always returns an optional enumeration case. 
-    (The raw value initializer is a `failable initializer.`)
+    - however, *Not all possible Int values will find a matching planet. Because of this, the raw value initializer always returns an optional enumeration case. (The raw value initializer is a `failable initializer.`)
 
-    ```swift
-    enum Planet: Int {
-        case mercury = 1, venus, earth, mars, jupiter, saturn, uranus, neptune
-    }
+        ```swift
+        enum Planet: Int {
+            case mercury = 1, venus, earth, mars, jupiter, saturn, uranus, neptune
+        } // This example identifies Uranus from its raw value of 7:
 
-    -
-    // This example identifies Uranus from its raw value of 7:
-     
-    let possiblePlanet = Planet(rawValue: 7)
-    // possiblePlanet is of type Planet? (optional Planet) and equals Planet.uranus
+        let possiblePlanet = Planet(rawValue: 7)
+        // possiblePlanet is of type Planet? (optional Planet) and equals Planet.uranus
 
-    -
-    //If you try to find a planet with a position of 11, the optional Planet value returned by the raw value initializer will be nil:
+        //If you try to find a planet with a position of 11, the optional Planet value returned by the raw value initializer will be nil
+        let positionToFind = 11
+        if let somePlanet = Planet(rawValue: positionToFind) {  // This statement creates an optional Planet, and sets somePlanet to the value. (여기서는 nil)
+            switch somePlanet {
+            case .earth:
+                print("Mostly harmless")
+            default:
+                print("Not a safe place for humans")
+            }
+        } else {
+            print("There isn't a planet at position \(positionToFind)")
+        } // Prints "There isn't a planet at position 11"
 
-    let positionToFind = 11
-    if let somePlanet = Planet(rawValue: positionToFind) {  // This statement creates an optional Planet, and sets somePlanet to the value. (여기서는 nil)
-        switch somePlanet {
-        case .earth:
-            print("Mostly harmless")
-        default:
-            print("Not a safe place for humans")
-        }
-    } else {
-        print("There isn't a planet at position \(positionToFind)")
-    } // Prints "There isn't a planet at position 11"
+        // This example uses optional binding to try to access a planet with a raw value of 11. 
+        // In this case, it isn’t possible to retrieve a planet with a position of 11 (=> nil), and so the else branch is executed instead.
+        ```
 
-    // This example uses optional binding to try to access a planet with a raw value of 11. 
-    // In this case, it isn’t possible to retrieve a planet with a position of 11 (=> nil), and so the else branch is executed instead.
-    ```
+    - *rawValue가 case에 해당하지 않을 수 있으므로, rawValue를 통해 초기화 한 인스턴스는 항상 옵셔널 타입이다. (nil의 가능성 때문)
 
-    - *rawValue가 case에 해당하지 않을 수 있으므로, rawValue를 통해 초기화 한 인스턴스는 항상 옵셔널 타입입니다. (nil의 가능성 때문)
+        ```swift
+        enum Fruit: Int {  
+            case apple = 0
+            case grape = 1 
+            case peach
 
-    ```swift
-    enum Fruit: Int {  
-        case apple = 0
-        case grape = 1 
-        case peach
+        // rawValue를 통해 초기화 한 열거형 값은 옵셔널 타입이다.
+        // let apple: Fruit = Fruit(rawValue: 0)
+        let apple: Fruit? = Fruit(rawValue: 0)  // 즉, apple은 optional Fruit 타입 (type Fruit?)이다. (rawValue에 대한 해당 case가 없거나, type이 달라서 nil 가능성이 있으므로???)
 
-    // rawValue를 통해 초기화 한 열거형 값은 옵셔널 타입이다.
-    // let apple: Fruit = Fruit(rawValue: 0)
-    let apple: Fruit? = Fruit(rawValue: 0)  // 즉, apple은 optional Fruit 타입 (type Fruit?)이다. (rawValue에 대한 해당 case가 없거나, type이 달라서 nil 가능성이 있으므로???)
+        // 옵셔널 타입이므로 if let 구문을 사용하면 rawValue에 해당하는 케이스를 곧바로 사용 가능하다.
+        if let orange: Fruit = Fruit(rawValue: 5) {   // optional enum type인 Fruit을 일반적인 enum type Fruit 으로 바꿔주는/unwrapped 해주는 과정
+            print("rawValue 5에 해당하는 케이스는 \(orange)입니다")
+        } else {
+            print("rawValue 5에 해당하는 케이스가 없습니다")
+        } // rawValue 5에 해당하는 케이스가 없습니다 - 출력 (case 원시값은 0~2 밖에 없으므로)
 
-    // 옵셔널 타입이므로 if let 구문을 사용하면 rawValue에 해당하는 케이스를 곧바로 사용 가능하다.
-    if let orange: Fruit = Fruit(rawValue: 5) {   // optional enum type인 Fruit을 일반적인 enum type Fruit 으로 바꿔주는/unwrapped 해주는 과정
-        print("rawValue 5에 해당하는 케이스는 \(orange)입니다")
-    } else {
-        print("rawValue 5에 해당하는 케이스가 없습니다")
-    } // rawValue 5에 해당하는 케이스가 없습니다 - 출력 (case 원시값은 0~2 밖에 없으므로)
-
-    *참고 (Optional)
-    if let name: String = myName {   // Optional String (myName)을 일반적인 String type (name)으로 바꿔주는/unwrapped 해주는 과정
-    ```
+        *참고 (Optional)
+        if let name: String = myName {   // Optional String (myName)을 일반적인 String type (name)으로 바꿔주는/unwrapped 해주는 과정
+        ```
 
 - Recursive Enum (순환 열거형)
     - 열거형 case의 연관값이 열거형 자신이고자 할 때 사용한다. 이진 탐색 트리 등 순환 알고리즘 구현에 사용 가능하다.
@@ -2476,36 +2492,34 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     You indicate that an enumeration case is recursive by writing `indirect` before it, which tells the compiler to insert the necessary layer of indirection. (indirect 키워드를 enum명 앞에 붙이거나, 특정 case에만 한정할 때는 case 앞에 붙임) 
     *Arithmetic Expression: 산술 연산
 
-    ```swift
-    indirect enum ArithmeticExpression {
-        case number(Int) // number case의 연관값의 type이 Int이다.
-        case addition(ArithmeticExpression, ArithmeticExpression) // addition case의 연관값 type이 enum ArithmeticExpression 이다.
-        case multiplication(ArithmeticExpression, ArithmeticExpression)
-    }
-    -
-
-    let five = ArithmeticExpression.number(5) // number case의 연관값으로 5를 할당
-    let four = ArithmeticExpression.number(4)
-    let sum = ArithmeticExpression.addition(five, four) // 연관값 5를 addition case의 연관값 중 하나로 할당 (상수 five가 enum type이므로 가능)-연관값이 case number이므로 enum type 인건가???
-    let product = ArithmeticExpression.multiplication(sum, ArithmeticExpression.number(2))
-    -
-
-    func evaluate(_ expression: ArithmeticExpression) -> Int {  // evaluate : Recursive Function(순환 함수)
-        switch expression {
-        case let .number(value):
-            return value
-        case let .addition(left, right):
-            return evaluate(left) + evaluate(right)
-        case let .multiplication(left, right):
-            return evaluate(left) * evaluate(right)
+        ```swift
+        indirect enum ArithmeticExpression {
+            case number(Int) // number case의 연관값의 type이 Int이다.
+            case addition(ArithmeticExpression, ArithmeticExpression) // addition case의 연관값 type이 enum ArithmeticExpression 이다.
+            case multiplication(ArithmeticExpression, ArithmeticExpression)
         }
-    }
 
-    print(evaluate(product))  // Prints "18"
-    ```
+        let five = ArithmeticExpression.number(5) // number case의 연관값으로 5를 할당
+        let four = ArithmeticExpression.number(4)
+        let sum = ArithmeticExpression.addition(five, four) // 연관값 5를 addition case의 연관값 중 하나로 할당 (상수 five가 enum type이므로 가능)
+        let product = ArithmeticExpression.multiplication(sum, ArithmeticExpression.number(2))
+
+        func evaluate(_ expression: ArithmeticExpression) -> Int {  // evaluate : Recursive Function(순환 함수)
+            switch expression {
+            case let .number(value):
+                return value
+            case let .addition(left, right):
+                return evaluate(left) + evaluate(right)
+            case let .multiplication(left, right):
+                return evaluate(left) * evaluate(right)
+            }
+        }
+
+        print(evaluate(product))  // Prints "18"
+        ```
 
 - Comparable Enum (비교 가능한 열거형)
-    - Comparable 프로토콜을 adapt하면 case를 비교 가능하다. (단, 프로토콜을 conform 하는 연관값만 갖거나, 연관 값이 없는 열거형만 비교 가능하다.)
+    - Comparable 프로토콜을 adapt하면, case를 비교 가능하다. (단, 프로토콜을 conform 하는 연관값만 갖거나, 연관 값이 없는 열거형만 비교 가능하다.)
 
         ```swift
         enum Condition: Comparable { 
