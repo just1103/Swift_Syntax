@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 17, 2021 9:44 PM
+Last Edited Time: August 18, 2021 2:50 PM
 Property: Yagom
 Type: 언어
 
@@ -2278,7 +2278,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         }
         ```
 
-# 11. enum (열거형)
+# 11. Enum (열거형)
 
 - L/G
     - An enumeration defines a common type for a group of related values. 
@@ -2434,6 +2434,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         }
         ```
 
+        - [ ]  이걸 어떻게 활용?
 - Initializing from a Raw Value / 원시값을 통한 초기화
     - If you define an enumeration with a raw-value type, the enumeration automatically receives an initializer that takes a value of the raw value’s type (as a parameter called rawValue) and returns either an enumeration case or nil. You can use this initializer to try to create a new instance of the enumeration.
     - however, *Not all possible Int values will find a matching planet. Because of this, the raw value initializer always returns an optional enumeration case. (The raw value initializer is a `failable initializer.`)
@@ -2563,6 +2564,43 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     }
 
     Month.mar.printMessage()  // 따스한 봄~ - 출력
+    ```
+
+    ```swift
+    func funcA(numbers: [Double]) -> Double {
+        var sum: Double = 0
+        for number in numbers {
+            sum += number
+        }
+        return sum
+    }
+
+    func funcB(numbers: [Double]) -> Double {
+        let sum = funcA(numbers: numbers)
+        return sum / Double(numbers.count)
+    }
+
+    enum Choose {
+        case doA
+        case doB
+
+        func calculateOperation(numbers: [Double]) -> Double {
+            switch self {
+                case Choose.doA:
+                    return funcA(numbers: numbers)
+                case Choose.doB:
+                    return funcB(numbers: numbers)
+            }
+        }
+    }
+
+    func perform(numbers: [Double], as method: Choose = Choose.doA) -> Double {
+        return method.calculateOperation(numbers: numbers)
+    }
+
+    perform(numbers: [1, 2, 3, 4, 5], as: .doB) // 함수 B 실행
+    perform(numbers: [1, 2, 3, 4, 5], as: .doA) // 함수 A 실행
+    perform(numbers: [1, 2, 3, 4, 5])  // 함수 A 실행
     ```
 
 ## 11-2. Class & Stucture & Enum 의 차이
