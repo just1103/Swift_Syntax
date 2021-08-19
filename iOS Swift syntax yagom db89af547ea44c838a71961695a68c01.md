@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 18, 2021 2:50 PM
+Last Edited Time: August 19, 2021 4:54 PM
 Property: Yagom
 Type: 언어
 
@@ -124,155 +124,6 @@ Type: 언어
             - 지역변수 (메모리 stack에 저장) : 함수 내부에서 선언된 변수로, 함수가 실행되면 만들어지고 함수가 종료되면 소멸하는 변수입니다. 함수 외부에서는 접근할 수 없습니다
 
 # 3. Data Type
-
-### L/R - Type (정리 덜함)
-
-- Type 구분 - Named Type / Compound Type
-
-    Swift는 전체 Type을 두 가지로 구분한다. 또한 Type 앞뒤로 ()를 붙일 수 있고, 아무런 효과가 없다.
-
-    - Named Type (명명된 타입) : 정의할 때 특정한 이름을 붙여서 선언하는 타입이다. Swift standard library에서 정의한, Structure 기반의 기본 Data Type (Int, String 등), 사용자-정의-Type (Class, Structure, Enumeration, Protocol) 그리고 Swift standard library에서 정의한 Arrays, Dictionaries, and Optional 등이 속한다. 
-    예를 들어 사용자 정의 Class type인 MyClass의 인스턴스가 있다면, 해당 인스턴스의 타입 이름은 MyClass 타입이다. 
-    Extension을 사용하여 기능을 확장 가능하다.
-    - Compound Type (복합 타입) : 별도의 명명 없이 Swift 언어로 정의되는 타입이다. Function type과 Tuple type이 속한다.
-    Named Type 또는 다른 Compound Type을 포함할 수 있다. 
-    예를 들어 Tuple type의 (Int, (Int, Int))이 있다. (첫번째 element는 Int type, 두번째 element는 다른 Compound Type인 (Int, Int)이다.)
-- Type Annotation / Type Identifier / Type Inference
-    - Type Annotation
-
-        A `type annotation` explicitly specifies the type of a variable or expression.
-        Write a type annotation by placing a colon(:) after the constant/variable name, followed by the type name.
-
-        Type annotations can contain an optional list of type attributes before the type. `: attributes opt inoutopt type`
-
-        - [x]  Type Attribute?
-            - An attribute provides additional information about the 1) declaration or 2) type. (2가지 Attribute가 있음)
-
-                1) Declaration - Specify an attribute by the attribute’s name (and any arguments that the attribute accepts). `@attribute name(attribute arguments)`
-
-                2) Type Attribute - 예를 들어 `@autoclosure`
-
-    - Type Identifier
-
-        A `type identifier` refers to either a named type or a type alias of a named or compound type.
-
-        ```swift
-        // ex-1. named type을 refer하는 경우
-        var exam1a: Int = 0
-        var exam1b: Dictionary<String, Int> = ["key1":100]
-
-        // ex-2. type alias를 refer하는 경우 
-        typealias Point = (Int, Int)  // tuple type의 type alias
-        let origin: Point = (0, 0)
-
-        // ex-3. named types declared in other modules or nested within other types를 refer하는 경우 
-        var someValue: ExampleModule.MyType  // the named type MyType that’s declared in the ExampleModule module을 refer함
-        ```
-
-    - Type Inference
-        - L/G
-
-            `Type inference` enables a compiler to deduce the type of a particular expression automatically when it compiles your code, simply by examining the values you provide.
-            It’s rare that you need to write type annotations in practice. If you provide an initial value (*literal value or literal) for a constant or variable at the point that it’s defined, Swift can almost always infer the type to be used for that constant or variable, as described in Type Safety and Type Inference. 
-            (변수 선언 시 초기값을 할당하면, type annotation을 하지 않아도 Swift가 알아서 type을 추론해준다.) - 단, type을 명시해야 버그 대응이 쉽다.
-
-            ```swift
-            let meaningOfLife = 42  // meaningOfLife is inferred to be of type Int (왜냐하면 소수점이 없으니까!)
-
-            let pi = 3.14159  // pi is inferred to be of type Double
-            If you don’t specify a type for a floating-point literal, Swift infers that you want to create a Double:
-            Swift always chooses Double (rather than Float) when inferring the type of floating-point numbers.
-
-            typealias MyNewInt = Int  // Type Alias (타입 별칭)을 활용 가능함 (Int의 별칭을 지정한 것과 같음)
-            var age: MyNewInt = 20    // Int로 Type 을 지정한 것과 동일함
-            var year: Int = 100 // 기존 Int도 사용 가능
-            age = year
-            ```
-
-        - L/R
-
-            Swift uses `type inference` extensively, allowing you to omit the type or part of the type of many variables and expressions in your code.
-            you can omit part of a type when the full type can be inferred from context.
-
-            타입 추론은 잎에서 루트 방향으로 이루어질 수도 있고, 루트에서 잎 방향으로 이루어질 수도 있다.
-
-            - 잎→루트
-
-                `var x: Int = 0` // the type of x is inferred by first checking the type of 0 and then passing this type information up to the root (the variable x).
-
-            - 루트→잎
-
-                the explicit type annotation (: Float) on the constant eFloat causes the numeric literal 2.71828 to have an inferred type of Float instead of Double. ???
-
-                - [ ]  Double.???
-
-                ```swift
-                let e = 2.71828 // The type of e is inferred to be Double.???
-                let eFloat: Float = 2.71828 // The type of eFloat is Float. 
-                ```
-
-            Type inference operates at the level of a single expression or statement. (단일 표현식 또는 단일 구문 수준에서 작동한다.)
-            This means that all of the information needed to infer an omitted type or part of a type in an expression must be accessible from type-checking the expression or one of its subexpressions. (타입 유추에 필요한 정보는 표현식, 또는 하위 표현식 중 하나를 type-checking하여 접근 가능해야 한다.)
-
-- Tuple Type
-    - A tuple type is a comma-separated list of types, enclosed in parentheses.
-    All tuple types contain two or more types, except for `Void` which is a type alias for the empty tuple type, (). ← Void는 Tuple type이다!
-    - When an element of a tuple type has a name, that name is part of the type.
-
-        ```swift
-        var someTuple = (top: 10, bottom: 12)  // someTuple is of Tuple type (top: Int, bottom: Int)
-        someTuple = (top: 4, bottom: 42) // OK: names match
-        someTuple = (9, 99)              // OK: names are inferred
-        someTuple = (left: 5, right: 5)  // Error: names don't match
-        ```
-
-- Function Type (밑으로 더 추가 필요)
-    - A function type represents the type of a function/method/closure and consists of a parameter and return type separated by an arrow (->) `(parameter type) -> return type`
-    - A parameter of the function type `() -> T` (where T is any type) can apply the autoclosure attribute to implicitly create a closure at its call sites.
-        - [ ]  autoclosure attribute?
-- Metatype Type (밑으로 더 추가 필요)
-
-    A *metatype type* refers to the type of any type, including class types, structure types, enumeration types, and protocol types.
-
-    ... 지금은 이해 안감
-
-- Self Type (해석 필요)
-
-    cf. self 프로퍼티와 다름
-
-    - The `Self` type isn’t a specific type, but rather lets you conveniently refer to the current type without repeating or knowing that type’s name.
-        1. In a protocol declaration or a protocol member declaration, the `Self` type refers to the eventual type that conforms to the protocol. (프로토콜도 타입이다.)
-        2. In a structure/class/enumeration declaration, the `Self` type refers to the type introduced by the declaration. 
-    - Inside the declaration for a member of a type, the `Self` type refers to that type. (member = 해당 타입의 프로퍼티 및 메서드)
-    In the members of a class declaration, `Self` can appear only as follows:
-    - As the return type of a method 
-    - As the return type of a read-only subscript
-    - As the type of a read-only computed property
-    - In the body of a method
-        - [ ]  type(of:) ?
-
-        ```swift
-        class Superclass {
-            func f() -> Self { return self } // f 메소드의 return type은 Self이다. self (Class 인스턴스 자기 자신)를 return 한다.
-        }
-
-        let x = Superclass()  // 인스턴스 생성
-        print(type(of: x.f())) // Prints "Superclass"
-
-        class Subclass: Superclass { }  // Superclass의 자식클래스 Subclass 정의
-
-        let y = Subclass()  // 인스턴스 생성
-        print(type(of: y.f())) // Prints "Subclass"
-
-        let z: Superclass = Subclass()  // 인스턴스 생성
-        print(type(of: z.f())) // Prints "Subclass"
-        ```
-
-        The last part of the example above shows that Self refers to the runtime type Subclass of the value of z, not the compile-time type Superclass of the variable itself.
-
-        Inside a nested type declaration, the Self type refers to the type introduced by the innermost type declaration.
-
-        The Self type refers to the same type as the type(of:) function in the Swift standard library. Writing Self.someStaticMember to access a member of the current type is the same as writing type(of: self).someStaticMember. ??????????
 
 - Swift는 Data Type에 엄격함. Type은 Upper Camel Case로 표현함
 - 기본 Data Type 모두 Struct을 기반으로 하며, 추가 기능 (Extension, Generic 등)을 사용함
@@ -735,8 +586,20 @@ Type: 언어
         - 삼항 조건 A ? B : C
         - 범위 ...<
         - 부울 (Bool) && ||
+
+            ```swift
+            print(true || false) // true
+            print(true && false) // false
+            ```
+
         - 비트 논리 연산
-            - [ ]  ?
+
+            ```swift
+            // 2진법 등 0&1의 비트 단위로 연산할 때 사용한다.
+            true & true  // 이 연산은 불가하다. Swift에서 true == 1이 아니므로 Bool type은 2진법으로 나타낼 수 없기 때문이다.
+            true | true
+            ```
+
         - 복합할당 A += B (A와 B의 합을 A에 할당 A = A + B)
         - 오버플로 &+ &- &*(UInt 등 연산 시 오버플로를 자동처리 해줌)
         - 기타 (?? nil 병합 연산자, A? 옵셔널 연산자, A! 옵셔널 강제추출 연산자, -A 부호변경 연산자 등)
@@ -955,8 +818,8 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 print(anyDic) // [:] 출력 - nil이 아님 ["1": nil, "2": nil] X
                 ```
 
-                - [ ]  왜 nil이 아니라 empty Dictionary가 출력되지?
-                print(anyDic) // [:] 출력 - ["1": nil, "2": nil] 이 아닌 이유는?
+                - [ ]  왜 nil이 아니라 empty Dictionary가 출력되지? print(anyDic) 결과로 [:]이 출력되는데 ["1": nil, "2": nil] 이 아닌 이유는?
+                    - Dictionary의 type이 Optional이 아니라서???!!!!
 
                     ```swift
                     var d = ["foo": nil] as [String: Any?]
