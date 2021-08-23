@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 19, 2021 4:54 PM
+Last Edited Time: August 23, 2021 11:22 PM
 Property: Yagom
 Type: 언어
 
@@ -1333,6 +1333,23 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
                 @속성이름
                 @속성이름(매개변수)
                 ```
+
+- 자주 혼동하는 내용
+
+    ```swift
+    func test() -> Int {
+        print(1)
+        print(2)
+        print(3)
+        return -4
+    }
+
+    test() // 1 2 3
+    print(test()) // 1 2 3 -4 <- print 뿐만 아니라 반환값도 출력된다. 왜지???
+    var var1 = test() // 1 2 3 <- 함수의 반환값이 할당됨과 동시에 함수가 실행된다. (함수 내부의 print 함수가 실행됨)
+    ```
+
+    '함수의 반환 값'을 상수에 할당하면, 그 과정에서 함수가 호출된다!
 
 ## 5-2. Method
 
