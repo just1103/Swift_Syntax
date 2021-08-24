@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 23, 2021 1:47 PM
+Last Edited Time: August 25, 2021 2:08 AM
 Property: Official
 
 - Contents
@@ -194,6 +194,8 @@ let http404Error = (404, "Not Found") // http404Error is of type (Int, String). 
 
 You use optionals in situations where a value may be absent. 
 An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
+
+Note: 
 
 - nil
 - If Statements and Forced Unwrapping
@@ -1619,6 +1621,11 @@ Swift provides two ways to add conditional branches to your code: the `if` sta
 
 - Typically, you use the `if` statement to evaluate simple conditions with only a few possible outcomes.
 - The `switch` statement is better suited to more complex conditions with multiple possible permutations and is useful in situations where pattern matching can help select an appropriate code branch to execute.
+    - 참고 if/switch 차이점
+
+        컴파일할 때 동작에 차이가 있다.
+        if-else문은 true가 나올 때까지 순차적으로 모든 조건을 확인하고,
+        switch문은 조건문에 해당하는 case로 바로 이동 (jump 기반)한다. → 따라서 둘다 적절한 경우, switch문을 사용하는 게 성능 측면에서 좋다.
 
 ### If
 
@@ -1637,6 +1644,12 @@ if temperatureInFahrenheit <= 32 {
 
 ### *Switch
 
+A switch statement considers a value and compares it against several possible matching patterns. It then executes an appropriate block of code, based on the first pattern that matches successfully.
+
+a switch statement compares a value against one or more values of the same type. In addition to comparing against specific values, Swift provides several ways for each case to specify more complex matching patterns. (아래 참고)
+
+each case is a separate branch of code execution. The switch statement determines which branch(case) should be selected. ← This procedure is known as *switching* on the value that’s being considered.
+
 - [x]  왜 switch문의 case는 들여쓰기를 안할까? switch indentation style swift / why switch case should be indented swift
     - (여러 가지 설이 있음)
     - Backing the cases to the same indentation level as the "switch" is a common style for all C-inspired languages.
@@ -1651,12 +1664,6 @@ if temperatureInFahrenheit <= 32 {
         ```
 
     - 원하면 Xcode setting을 변경 가능함 - [https://stackoverflow.com/questions/42376988/xcode-changing-the-indentation-rules-for-switch-statements](https://stackoverflow.com/questions/42376988/xcode-changing-the-indentation-rules-for-switch-statements)
-
-A switch statement considers a value and compares it against several possible matching patterns. It then executes an appropriate block of code, based on the first pattern that matches successfully.
-
-a switch statement compares a value against one or more values of the same type. In addition to comparing against specific values, Swift provides several ways for each case to specify more complex matching patterns. (아래 참고)
-
-each case is a separate branch of code execution. The switch statement determines which branch(case) should be selected. ← This procedure is known as *switching* on the value that’s being considered.
 
 ```swift
 switch some value to consider {
@@ -1707,7 +1714,7 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     } // This will report a compile-time error.
     ```
 
-    To make a switch with a single case that matches both "a" and "A", combine the two values into a compound case. For readability, a compound case can also be written over multiple lines.
+    To make a switch with a single case that matches both "a" and "A", combine the two values into a compound case. 
 
     ```swift
     let anotherCharacter: Character = "a"
@@ -1831,7 +1838,6 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     default:
         print("Not on an axis")
     }
-
     ```
 
 ## Control Transfer Statements
@@ -1922,7 +1928,7 @@ Swift has five control transfer statements:
     - With a conditional statement, you can use a statement label with the break statement to end the execution of the labeled statement.
     - With a loop statement, you can use a statement label with the break or continue statement to end or continue the execution of the labeled statement.
 
-    즉, break 또는 continue를 적용할 대상은 labeled statement 이다.
+    즉, break 또는 continue를 적용할 대상이 labeled statement 이다.
 
     ```swift
     label name: while condition {  // the principle is the same for all loops and switch statements.
@@ -3582,3 +3588,7 @@ unconstrained polymorphism의 예는 Any, AnyObject, and unconstrained generic p
     ```
 
 - 참고 - [https://gist.github.com/godrm/d07ae33973bf71c5324058406dfe42dd](https://www.notion.so/d07ae33973bf71c5324058406dfe42dd)
+
+---
+
+- Contents
