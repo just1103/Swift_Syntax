@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 25, 2021 2:08 AM
+Last Edited Time: August 25, 2021 7:38 AM
 Property: Official
 
 - Contents
@@ -2579,6 +2579,83 @@ moveNearerToZero가 상수이지만 함수 stepForward의 참조를 할당했으
 ⇒ 아니구나. 함수 stepForward의 참조를 할당했으니까, 해당 주소에서 뭔가가 바뀌면 그걸 반영할 수 있다는 뜻이구나. 참조니까 다른 함수의 참조를 가르키도록 변경 가능한게 아니라!
 
 ***그렇다면, 상수 moveNearerToZero를 초기화할 때, 그 "초기화하는 시점"에서 할당한 함수의 참조를 계속해서 저장하고 있는건가? 변수 currentValue의 값에 상관 없이?
+
+# 8. Enumerations -
+
+# 9. Structures and Classes -
+
+Structures and classes are general-purpose, flexible constructs that become the building blocks of your program’s code. You define properties and methods to add functionality to your structures and classes.
+
+Unlike other programming languages, Swift doesn’t require you to create separate interface and implementation files for custom structures and classes. (다른 언어는 별도의 인터페이스 및 실행파일을 생성해야 한다.) In Swift, you define a structure or class in a single file, and the external interface to that class or structure is automatically made available for other code to use.
+
+- [ ]  external interface? 예를 들면?
+
+Note: An instance of a class is traditionally known as an *object.* However, Swift structures and classes are much closer in functionality than in other languages, and much of this chapter describes functionality that applies to instances of either a class or a structure type. Because of this, the more general term *instance* is used.
+(통상적으로 클래스의 인스턴스를 객체 (object)라고 하지만, Swift에서는 다른 언어에 비해 구조체와 클래스의 기능이 유사하다. 따라서 객체보다 포괄적으로 구조체의 인스턴스, 클래스의 인스턴스 등으로 사용되는 용어인 인스턴스 (instance)라는 표현을 사용한다.)
+
+- [ ]  Swift의 object는 'class의 인스턴스'를 말하는 게 아니었나? structure 및 class의 instance를 통칭하는 거였나?
+    - Swift에서 객체가 될 수 있는 존재는 3가지이다. struct, class, enum 이다. ?????
+    (objective-c에서는 class 또는 class 인스턴스만 객체이다.)
+        - [ ]  서브스크립트 설명의 객체도 다시 확인하자...
+    - 야곰님 책 <스위프트 프로그래밍>
+
+        "객체라는 표현 대신 인스턴스라는 표현을 사용한다. 인스턴스는 구조체의 인스턴스, 열거형의 인스턴스도 있을 수 있기 때문에 객체와 인스턴스는 같은 표현이 아니다. 클래스의 인스턴트를 객체라고 부른다. 객체는 클래스의 인스턴스만을 가리키는 한정적인 의미이다."
+
+## Comparing Structures and Classes
+
+Structures and classes have many things in common. Both can:
+
+- Define properties to store values
+- Define methods to provide functionality (보통 다른 언어에서는 구조체에 메서드를 생성할 수 없다.)
+- Define subscripts to provide access to their values using subscript syntax
+- Define initializers to set up their initial state
+- Be extended to expand their functionality beyond a default implementation - Extension 기능
+- Conform to protocols to provide standard functionality of a certain kind
+
+Classes have additional capabilities that structures don’t have:
+
+- Inheritance enables one class to inherit the characteristics of another.
+- Type casting enables you to check and interpret the type of a class instance at runtime. ???
+- Deinitializers enable an instance of a class to free up any resources it has assigned.
+- Reference counting allows more than one reference to a class instance. ???
+    - [ ]  Automatic Reference Counting - [https://docs.swift.org/swift-book/LanguageGuide/AutomaticReferenceCounting.html](https://docs.swift.org/swift-book/LanguageGuide/AutomaticReferenceCounting.html)
+
+Class에 추가 기능이 있는 만큼 프로그램의 복잡성이 증가한다. 따라서 일반적인 상황에는 추론하기 쉬운 structure를 사용하고, 꼭 필요할 때만 class를 사용한다.
+실질적으로 사용자정의 type의 대부분이 structure 및 enumeration 이다.
+
+- [ ]  Choosing Between Structures and Classes - [https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes](https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes)
+
+Note: Classes and actors (행위자) share many of the same characteristics and behaviors. For information about actors, see Concurrency (동시성).
+
+- [ ]  Concurrency - [https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)
+
+- Definition Syntax
+
+    structure 및 class를 정의하는 것은 새로운 Swift type을 정의하는 것이므로 UpperCamelCase에 따라 이름을 짓는다. (type이름은 항상 대문자로 시작)
+
+    ```swift
+    struct Resolution {
+        var width = 0
+        var height = 0
+    }
+    class VideoMode {
+        var resolution = Resolution()
+        var interlaced = false
+        var frameRate = 0.0
+        var name: String?
+    }
+    ```
+
+- Structure and Class Instances
+- Accessing Properties
+- Memberwise Initializers for Structure Types
+
+## Structures and Enumerations Are Value Types
+
+## Classes Are Reference Types
+
+- Identity Operators
+- Pointers
 
 ---
 
