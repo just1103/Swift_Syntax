@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 25, 2021 7:38 AM
+Last Edited Time: August 27, 2021 3:45 AM
 Property: Official
 
 - Contents
@@ -2582,7 +2582,7 @@ moveNearerToZero가 상수이지만 함수 stepForward의 참조를 할당했으
 
 # 8. Enumerations -
 
-# 9. Structures and Classes -
+# 9. Structures and Classes (90%)
 
 Structures and classes are general-purpose, flexible constructs that become the building blocks of your program’s code. You define properties and methods to add functionality to your structures and classes.
 
@@ -2593,13 +2593,14 @@ Unlike other programming languages, Swift doesn’t require you to create separa
 Note: An instance of a class is traditionally known as an *object.* However, Swift structures and classes are much closer in functionality than in other languages, and much of this chapter describes functionality that applies to instances of either a class or a structure type. Because of this, the more general term *instance* is used.
 (통상적으로 클래스의 인스턴스를 객체 (object)라고 하지만, Swift에서는 다른 언어에 비해 구조체와 클래스의 기능이 유사하다. 따라서 객체보다 포괄적으로 구조체의 인스턴스, 클래스의 인스턴스 등으로 사용되는 용어인 인스턴스 (instance)라는 표현을 사용한다.)
 
-- [ ]  Swift의 object는 'class의 인스턴스'를 말하는 게 아니었나? structure 및 class의 instance를 통칭하는 거였나?
+- [ ]  Swift의 object는 'class의 인스턴스'를 말하는 게 아니었나? structure 및 class의 instance를 통칭하는 거였나? ← 프리코스 과제 참고
     - Swift에서 객체가 될 수 있는 존재는 3가지이다. struct, class, enum 이다. ?????
     (objective-c에서는 class 또는 class 인스턴스만 객체이다.)
-        - [ ]  서브스크립트 설명의 객체도 다시 확인하자...
     - 야곰님 책 <스위프트 프로그래밍>
 
         "객체라는 표현 대신 인스턴스라는 표현을 사용한다. 인스턴스는 구조체의 인스턴스, 열거형의 인스턴스도 있을 수 있기 때문에 객체와 인스턴스는 같은 표현이 아니다. 클래스의 인스턴트를 객체라고 부른다. 객체는 클래스의 인스턴스만을 가리키는 한정적인 의미이다."
+
+- [ ]  서브스크립트 설명의 객체도 다시 확인하자...
 
 ## Comparing Structures and Classes
 
@@ -2624,6 +2625,10 @@ Class에 추가 기능이 있는 만큼 프로그램의 복잡성이 증가한�
 실질적으로 사용자정의 type의 대부분이 structure 및 enumeration 이다.
 
 - [ ]  Choosing Between Structures and Classes - [https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes](https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes)
+    - Use structures by default.
+    - Use classes when you need Objective-C interoperability.
+    - Use classes when you need to control the identity of the data you're modeling.
+    - Use structures along with protocols to adopt behavior by sharing implementations.
 
 Note: Classes and actors (행위자) share many of the same characteristics and behaviors. For information about actors, see Concurrency (동시성).
 
@@ -2634,28 +2639,173 @@ Note: Classes and actors (행위자) share many of the same characteristics and 
     structure 및 class를 정의하는 것은 새로운 Swift type을 정의하는 것이므로 UpperCamelCase에 따라 이름을 짓는다. (type이름은 항상 대문자로 시작)
 
     ```swift
-    struct Resolution {
+    struct Resolution {  // describe a pixel-based display resolution.
         var width = 0
         var height = 0
     }
-    class VideoMode {
-        var resolution = Resolution()
+    class VideoMode {  // describe a specific video mode for video display.
+        var resolution = Resolution() // initialized with a new Resolution structure instance // var resolution: Resolution 이랑 다른가?
         var interlaced = false
         var frameRate = 0.0
-        var name: String?
+        var name: String? // name property is automatically given a default value of nil, or “no name value”, because it’s of an optional type.
     }
     ```
 
 - Structure and Class Instances
+
+    The Resolution structure definition and the VideoMode class definition only describe what a Resolution or VideoMode will look like. In order to describe a specific resolution or video mode. To do that, you need to create an instance of the structure/class.
+
+    ```swift
+    let someResolution = Resolution()  // both use initializer syntax for new instances.
+    let someVideoMode = VideoMode()
+    ```
+
+    The simplest form of initializer syntax uses the type name of the class/structure followed by empty parentheses, such as Resolution() or VideoMode(). This creates a new instance of the class/structure, with any properties initialized to their default values. (프로퍼티 기본값으로 초기화된다.)
+
 - Accessing Properties
+
+    You can access the properties of an instance using *dot syntax.*
+
+    You can drill down into subproperties, such as the width property in the resolution property of a VideoMode:
+
+    ```swift
+    print("The width of someResolution is \(someResolution.width)") // refers to the width property of someResolution, and returns its default initial value of 0.
+    // Prints "The width of someResolution is 0"
+
+    print("The width of someVideoMode is \(someVideoMode.resolution.width)")
+    // Prints "The width of someVideoMode is 0"
+    ```
+
 - Memberwise Initializers for Structure Types
+
+    All structures have an automatically generated *memberwise initializer.* (클래스는 아님 - Unlike structures, class instances don’t receive a default memberwise initializer.)
+
+    Initial values for the properties of the new instance can be passed to the memberwise initializer by name:
+
+    ```swift
+    let vga = Resolution(width: 640, height: 480)
+    // Resolution structure는 모든 프로퍼티에 기본값이 있다. -> initializer는 () 그리고 (width: , height: ) 모두 사용 가능하다.
+    ```
 
 ## Structures and Enumerations Are Value Types
 
-## Classes Are Reference Types
+A *value type* is a type whose value is *copied* when it’s assigned to a variable/constant, or when it’s passed to a function.
+
+all of the basic types in Swift—integers, floating-point numbers, Booleans, strings, arrays and dictionaries—are value types, and are implemented as structures behind the scenes. 
+(Swift의 기본 data type은 structure로 구현되었으므로)
+
+All structures and enumerations are value types in Swift. This means that any structure and enumeration instances you create—and any value types they have as properties—are always *copied* when they’re passed around in your code.
+
+Note: Collections defined by the standard library (like arrays, dictionaries), and strings use an optimization to reduce the performance cost of copying. Instead of making a copy immediately, these collections share the memory where the elements are stored between the original instance and any copies. If one of the copies of the collection is modified, the elements are copied just before the modification. (Collection 및 String type의 경우, 복사로 인한 성능 손실을 최소화하고자 최적화 기능를 사용한다. 처음부터 복사본을 위한 메모리를 새로 할당하지 않고, 일단 원본의 메모리를 공유한다. 그러다가 복사본이 수정되는 상황이 발생하면, 수정 직전에 복사본에 새로운 메모리를 할당한다!)
+
+값 type을 상수/변수에 할당할 때
+
+```swift
+let hd = Resolution(width: 1920, height: 1080) // declares a constant called hd, sets it to a Resolution instance initialized with the width/height of full HD video.
+var cinema = hd // declares a variable called cinema, sets it to the current value of hd. (*Resolution이 값 type이므로 -> 상수 hd의 현재 값이 할당된다.)
+// Because Resolution is a structure, a copy of the existing instance is made, and this new copy is assigned to cinema.
+```
+
+When cinema was given the current value of hd, the values stored in hd were copied into the new cinema instance.
+Even though hd and cinema have the same width/height, they’re two completely different instances.
+
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2013.png)
+
+cinema는 변수이므로 Resolution 프로퍼티를 변경 가능하다. cinema는 값이 복사되면서 생성된 새로운 인스턴스를 담고 있으므로 hd의 인스턴스에 아무 영향을 미치지 않는다.
+(참고 - hd는 상수이므로 변경 불가하다.)
+
+```swift
+cinema.width = 2048
+
+print("hd is still \(hd.width) pixels wide") // Prints "hd is still 1920 pixels wide"
+print("cinema is now \(cinema.width) pixels wide") // Prints "cinema is now 2048 pixels wide"
+```
+
+Enum도 동일하게 작동한다.
+
+```swift
+enum CompassPoint {
+    case north, south, east, west
+    mutating func turnNorth() {
+        self = .north
+    }
+}
+var currentDirection = CompassPoint.west
+let rememberedDirection = currentDirection // When rememberedDirection is assigned the value of currentDirection, it’s actually set to a copy of that value.
+currentDirection.turnNorth() // currentDirection의 case가 변경되는 것은 복사본의 원본인 rememberedDirection에 아무런 영향이 없다.
+
+print("The current direction is \(currentDirection)") // Prints "The current direction is north"
+print("The remembered direction is \(rememberedDirection)") // Prints "The remembered direction is west"
+```
+
+## ***Classes Are Reference Types
+
+*reference types* are *not copied* when they’re assigned to a variable/constant, or when they’re passed to a function. 
+Rather than a copy, a reference to the same existing instance is used.
+
+참조 type을 상수/변수에 할당할 때
+
+```swift
+let tenEighty = VideoMode() // declares a constant called tenEighty, sets it to refer to a VideoMode instance. - 클래스 인스턴스의 참조가 할당되었다. (클래스는 참조 type이므로)
+tenEighty.resolution = hd  // Now it’s set to be interlaced (전체 프로퍼티가 변경됨)
+tenEighty.interlaced = true
+tenEighty.name = "1080i"
+tenEighty.frameRate = 25.0
+
+// tenEighty is assigned to a new constant, called alsoTenEighty, and the frame rate of alsoTenEighty is modified:
+let alsoTenEighty = tenEighty // *tenEighty에 들어있던 클래스 인스턴스의 참조가 alsoTenEighty에 할당되었다. 동일한 참조를 공유하고 있다. 
+alsoTenEighty.frameRate = 30.0
+
+// 참조를 공유하므로 한 쪽에서 변경한 내용은 다른 쪽에서 확인해도 변경되어 있다.
+print("\(alsoTenEighty.frameRate)") // 30.0
+print("The frameRate property of tenEighty is now \(tenEighty.frameRate)") // Prints "The frameRate property of tenEighty is now 30.0"
+```
+
+```swift
+// 참고 - 비교용
+let hd = Resolution() // declares a constant called hd, sets it to a Resolution instance. - 구조체 인스턴스의 값이 할당되었다. (구조체는 값 type이므로)
+```
+
+Because classes are reference types, tenEighty and alsoTenEighty actually both refer to the same VideoMode instance. Effectively, they’re just two different names for the same single instance.
+
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2014.png)
+
+This example also shows how reference types can be harder to reason about. Wherever you use tenEighty, you also have to think about the code that uses alsoTenEighty, and vice versa. 
+(참조 type은 추론하기 어렵다. Class instance tenEighty를 쓸 때마다, (참조를 공유하고 있는) alsoTenEighty를 사용하는 코드에 대해서도 생각해야 하고, 그 반대도 동일하다.)
+
+클래스의 let 선언 인스턴스의 프로퍼티 값을 변경 가능한 이유는?
+
+(참고 - Class 인스턴스이므로 let으로 선언해도 '가변 프로퍼티' 값을 변경 가능하다. 단, 참조 정보는 변경 불가하다.)
+Note that tenEighty and alsoTenEighty are declared as constants, rather than variables. However, you can still change `tenEighty.frameRate` and `alsoTenEighty.frameRate` because the values of the tenEighty and alsoTenEighty constants themselves don’t actually change. tenEighty and alsoTenEighty themselves don’t “store” the VideoMode instance—instead, they both refer to a VideoMode instance behind the scenes. It’s the frameRate property of the underlying VideoMode that’s changed, not the values of the constant references to that VideoMode.
+(상수 tenEighty/alsoTenEighty는 인스턴스의 프로퍼티 값을 저장하고 있지 않다. 참조 (주소)를 가지고 있다.
+따라서 `tenEighty.frameRate`를 해도 참조 정보는 변하지 않는다. 변하는 것은 프로퍼티 값이다.)
 
 - Identity Operators
+
+    Because classes are reference types, it’s possible for multiple constants/variables to refer to the same single instance of a class. It can be useful to find out whether two constants/variables refer to exactly the same instance of a class.
+
+    identity operators: Identical to `===`, Not identical to `!==`
+
+    - [ ]  왜 !===가 아니지?
+
+    ```swift
+    if tenEighty === alsoTenEighty {
+        print("tenEighty and alsoTenEighty refer to the same VideoMode instance.")
+    } // Prints "tenEighty and alsoTenEighty refer to the same VideoMode instance."
+    ```
+
+    === : *Identical* to means that two instances (two constants/variables) of class type refer to exactly the same class instance. 
+    ==   : *Equal* to means that two instances are considered equal in value.
+
 - Pointers
+
+    If you have experience with C, C++, or Objective-C, you may know that these languages use pointers to refer to addresses in memory. 
+    A Swift constant/variable that refers to an instance of some reference type is similar to a pointer in C, but isn’t a direct pointer to an address in memory, and doesn’t require you to write an asterisk (*) to indicate that you are creating a reference. Instead, these references are defined like any other constant/variable in Swift. 
+
+    The standard library provides pointer and buffer types that you can use if you need to interact with pointers directly—see Manual Memory Management.
+
+    - [ ]  Swift에서 참조 type은 클래스 밖에 없는거 맞나?
+    - [ ]  Manual Memory Management - [https://developer.apple.com/documentation/swift/swift_standard_library/manual_memory_management](https://developer.apple.com/documentation/swift/swift_standard_library/manual_memory_management)
 
 ---
 
