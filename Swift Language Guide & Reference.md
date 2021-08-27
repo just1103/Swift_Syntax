@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 27, 2021 3:45 AM
+Last Edited Time: August 27, 2021 6:36 PM
 Property: Official
 
 - Contents
@@ -210,6 +210,8 @@ Note:
 - Enforcing Preconditions
 
 # 2. Basic Operators -
+
+## Nil-Coalescing Operator -
 
 # 3. Strings and Characters (90%)
 
@@ -2624,11 +2626,13 @@ Classes have additional capabilities that structures don’t have:
 Class에 추가 기능이 있는 만큼 프로그램의 복잡성이 증가한다. 따라서 일반적인 상황에는 추론하기 쉬운 structure를 사용하고, 꼭 필요할 때만 class를 사용한다.
 실질적으로 사용자정의 type의 대부분이 structure 및 enumeration 이다.
 
-- [ ]  Choosing Between Structures and Classes - [https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes](https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes)
-    - Use structures by default.
-    - Use classes when you need Objective-C interoperability.
-    - Use classes when you need to control the identity of the data you're modeling.
-    - Use structures along with protocols to adopt behavior by sharing implementations.
+- [x]  Choosing Between Structures and Classes - [https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes](https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes)
+    - Use structures by default. - structure는 인스턴스의 변경사항을 명시적으로 확인 가능하므로 추론하기 쉽다. 다른 언어 대비 메서드 구현, 프로토콜 채택 가능 등 structure 활용도가 높다.
+    - Use classes when you need Objective-C interoperability. - 데이터 처리를 위해 Objective-C API를 사용한다면, 또는 데이터 모델을 Objective-C framework에서 정의한 기존의 클래스 hierarchy에 맞춰야 하는 상황이라면, class를 써야할 수 있다.
+    - Use classes when you need to control the identity of the data you're modeling. - 코드 전체에서 변경사항이 즉각 반영되어야 하는 경우에 class를 사용한다.
+    - identity operator (===)로 동일해야 하는 경우에 사용한다.
+    - When you share a class instance across your app, changes you make to that instance are visible to every part of your code that holds a reference to that instance. Use classes when you need your instances to have this kind of identity. Common use cases are file handles, network connections, and shared hardware intermediaries.
+    - Use structures along with protocols to adopt behavior by sharing implementations. - 상속 hierarchy 구조는 protocol 상속을 통해 structure에서도 모델링 가능하다. (class는 class 끼리만 상속 가능하지만, protocol을 통한 상속은 class/enum/structure 모두에서도 가능하다는 장점이 있다.)
 
 Note: Classes and actors (행위자) share many of the same characteristics and behaviors. For information about actors, see Concurrency (동시성).
 
@@ -2804,8 +2808,43 @@ Note that tenEighty and alsoTenEighty are declared as constants, rather than var
 
     The standard library provides pointer and buffer types that you can use if you need to interact with pointers directly—see Manual Memory Management.
 
-    - [ ]  Swift에서 참조 type은 클래스 밖에 없는거 맞나?
+    - [ ]  Swift에서 참조 type은 클래스 밖에 없는거 맞나? 함수, 클로저도 참조 type 이구나...
     - [ ]  Manual Memory Management - [https://developer.apple.com/documentation/swift/swift_standard_library/manual_memory_management](https://developer.apple.com/documentation/swift/swift_standard_library/manual_memory_management)
+
+# 10. Properties -
+
+# 11. Methods -
+
+# 14. Initialization -
+
+# 15. Deinitialization -
+
+# 16. Optional Chaining -
+
+# 25. Automatic Reference Counting -
+
+Swift uses *Automatic Reference Counting (ARC)* to track and manage your app’s memory usage. ARC automatically frees up the memory used by class instances when those instances are no longer needed.
+
+## How ARC Works
+
+ARC in Action
+
+Strong Reference Cycles Between Class Instances
+
+Resolving Strong Reference Cycles Between Class Instances
+
+- Weak References
+- Unowned References
+- Unowned Optional References
+- Unowned References and Implicitly Unwrapped Optional Properties
+
+Strong Reference Cycles for Closures
+
+Resolving Strong Reference Cycles for Closures
+
+- Defining a Capture List
+- Weak and Unowned References
+- 
 
 ---
 
@@ -3815,6 +3854,35 @@ unconstrained polymorphism의 예는 Any, AnyObject, and unconstrained generic p
     ```
 
 - 참고 - [https://gist.github.com/godrm/d07ae33973bf71c5324058406dfe42dd](https://www.notion.so/d07ae33973bf71c5324058406dfe42dd)
+
+# 🦜 Coding Guidelines for Cocoa - Naming Methods -
+
+- [ ]  [https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingMethods.html)
+
+General Rules 
+
+- Start the name with a lowercase letter. Don’t use prefixes.
+- two specific exceptions: You may begin a method name with a well-known acronym in uppercase (such as TIFF or PDF)), 
+and you may use prefixes to group and identify private methods (see Private Methods).
+- For methods that represent actions an object takes, start the name with a verb:
+
+    Do not use “do” or “does” as part of the name because these auxiliary verbs rarely add meaning. Also, never use adverbs or adjectives before the verb.
+
+    ```swift
+    (void)invokeWithTarget:(id)target; ????
+
+    (void)selectTabViewItem:(NSTabViewItem *)tabViewItem
+    ```
+
+Accessor Methods
+
+Delegate Methods
+
+Collection Methods
+
+Method Arguments
+
+Private Methods
 
 ---
 
