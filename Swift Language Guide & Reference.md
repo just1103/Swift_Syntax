@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 27, 2021 6:36 PM
+Last Edited Time: August 29, 2021 1:27 AM
 Property: Official
 
 - Contents
@@ -2636,7 +2636,7 @@ Class에 추가 기능이 있는 만큼 프로그램의 복잡성이 증가한�
 
 Note: Classes and actors (행위자) share many of the same characteristics and behaviors. For information about actors, see Concurrency (동시성).
 
-- [ ]  Concurrency - [https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)
+- [ ]  Concurrency - [https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)  어렵다... 나중에
 
 - Definition Syntax
 
