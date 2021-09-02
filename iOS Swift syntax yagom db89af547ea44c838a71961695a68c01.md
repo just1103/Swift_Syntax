@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: August 23, 2021 11:22 PM
+Last Edited Time: September 3, 2021 4:00 AM
 Property: Yagom
 Type: 언어
 
@@ -68,7 +68,13 @@ Type: 언어
             let cat = "🐱"; print(cat)   // Prints "🐱"
             ```
 
-- 명령형, 객체지향 (자료 추상화, 상속, 다형성, 동적 바인딩) 프로그래밍 패러다임을 기반으로 한 함수형 프로그래밍 (함수가 일급객체, 대규모 병렬처리용) 패러다임, 프로토콜 지향 프로그래밍 패러다임을 지향함 (Notion 0. CS 기초-객체지향 프로그래밍 패러다임 참고)
+- 다중 패러다임 프로그래밍 언어
+
+    명령형, 객체지향 (자료 추상화, 상속, 다형성, 동적 바인딩) 프로그래밍 패러다임을 기반으로 
+    함수형 프로그래밍 (함수가 일급객체, 대규모 병렬처리용) 패러다임 및 프로토콜 지향 프로그래밍 패러다임을 지향한다.
+    (Notion-Swift/iOS History & CS의 객체지향 프로그래밍 패러다임 참고)
+    "Swift supports Multi-paradigm: protocol-oriented, object-oriented, functional, imperative, block structured, declarative"
+
 - 표현력 풍부
 
     ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled.png)
@@ -185,62 +191,73 @@ Type: 언어
         - [x]  실수
         - 실수 표현방식은 고정소수점, 부동소수점 (떠돌이 소수점)으로 나뉜다.
         [https://gsmesie692.tistory.com/94](https://gsmesie692.tistory.com/94)
-    - String 처리
+- String 처리
+
+    ```swift
+    var someString: String = "초기값"
+    someString.append("추가 문구-2")  // append 메서드를 통해 뒤로 문자열을 추가 가능
+    someString.count // 문자의 수
+    someString.isEmpty // 빈 문자열인 경우 true
+
+    var someBool: Bool = false  // 연산자를 통한 문자열 비교
+    someBool = hello == "hello" // 이것의 결과값을 someBool에 할당
+    print(someBool) // true
+    ```
+
+    - String은 a collection of Character이다.
 
         ```swift
-        var someString: String = "초기값"
-        someString.append("추가 문구-2")  // append 메서드를 통해 뒤로 문자열을 추가 가능
-        someString.count // 문자의 수
-        someString.isEmpty // 빈 문자열인 경우 true
+        let str = "Hello"
+        for c in str {
+            print("element : \(c), type: \(type(of: c))")
+        }
 
-        var someBool: Bool = false  // 연산자를 통한 문자열 비교
-        someBool = hello == "hello" // 이것의 결과값을 someBool에 할당
-        print(someBool) // true
+        // element : H, type: Character
+        // element : e, type: Character
+        // element : l, type: Character
+        // element : l, type: Character
+        // element : o, type: Character
         ```
 
-        - String은 a collection of Character이다.
-
-            ```swift
-            let str = "Hello"
-            for c in str {
-                print("element : \(c), type: \(type(of: c))")
-            }
-
-            // element : H, type: Character
-            // element : e, type: Character
-            // element : l, type: Character
-            // element : l, type: Character
-            // element : o, type: Character
-            ```
-
-        - <문자열 다루기> 관련 내용은 아래 참고
-
-            [https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9#ec0151b021f74383a90a59babfba3f9f](https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9)
-
-    - #특수문자# (Special String for Escape sequence)
-
-        \n  줄바꿈(line feed) - 커서를 현재 행의 다음 행으로 내리기
-        \\  String 내 백슬래쉬를 표현 
-        \"  String 내부의 "를 표현 
-        \t  탭 문자
-        \0  String 종료를 나타내는 null 문자(null character)
-        \r carriage return - 커서를 현재 행의 맨 좌측으로 옮기기 (현재 컴파일러는 \n으로 \r,\n 기능을 대체하므로 \r를 사용할 일이 없다.)
+    - 자주쓰는 메서드
 
         ```swift
-        // String 내부에 위의 특수문자를 사용하지 않는 방법
-        // print(#""#)
+        // .joined() 
+        // Returns a new string by concatenating the elements of the sequence, adding the given separator between each element.
+        set1.map{ String($0) }.joined(separator: "|") // Collection의 element를 [string]으로 변환한 뒤에 사용할 수도 있다. 3|2|1|4|5
 
-        print("문자열 내부에\n 이런 \"특수문자\"를\t사용하면 \\이런 놀라운 결과를 볼 수 있습니다")
-        print(#"문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요"#) // 백슬래쉬가 없어도 특수문자가 그대로 출력된다.
-        let number: Int = 100
-        print(#"특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 \#(number) 해보세요"#)
-
-        //출력
-        문자열 내부에
-         이런 "특수문자"를	사용하면 \이런 놀라운 결과를 볼 수 있습니다
-        문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요
-        특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 100 해보세요
+        print([2,3,4,5,11,3].map{ String($0) }) // ["2", "3", "4", "5", "11", "3"]
+        print(["2","3","4","5","11","3"].joined(separator: " ")) // 2 3 4 5 11 3 - Array에 든 String을 풀어서 하나의 String으로 만든다.
         ```
+
+    - <문자열 다루기> 관련 내용은 아래 참고
+
+        [https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9#ec0151b021f74383a90a59babfba3f9f](https://www.notion.so/Apple-Developer-Documentation-3b4983e7a71941fb8bbc531effdc16d9)
+
+- #특수문자# (Special String for Escape sequence)
+
+    \n  줄바꿈(line feed) - 커서를 현재 행의 다음 행으로 내리기
+    \\  String 내 백슬래쉬를 표현 
+    \"  String 내부의 "를 표현 
+    \t  탭 문자
+    \0  String 종료를 나타내는 null 문자(null character)
+    \r carriage return - 커서를 현재 행의 맨 좌측으로 옮기기 (현재 컴파일러는 \n으로 \r,\n 기능을 대체하므로 \r를 사용할 일이 없다.)
+
+    ```swift
+    // String 내부에 위의 특수문자를 사용하지 않는 방법
+    // print(#""#)
+
+    print("문자열 내부에\n 이런 \"특수문자\"를\t사용하면 \\이런 놀라운 결과를 볼 수 있습니다")
+    print(#"문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요"#) // 백슬래쉬가 없어도 특수문자가 그대로 출력된다.
+    let number: Int = 100
+    print(#"특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 \#(number) 해보세요"#)
+
+    //출력
+    문자열 내부에
+     이런 "특수문자"를	사용하면 \이런 놀라운 결과를 볼 수 있습니다
+    문자열 내부에 "나 /를 출력하고 싶지만, 특수문자를 사용하기 싫다면 문자열 앞뒤에 #을 붙여주세요
+    특수문자를 사용하지 않을 때도 문자열 보간법을 사용하고 싶다면 이렇게 100 해보세요
+    ```
 
 - Any, AnyObject, nil (+L/R)
     - Data Type을 명시하는 것이 유리하므로 Any, AnyObject 사용은 지양하는 것이 좋다.
@@ -657,297 +674,316 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     someVariable.append(4) // [1, 2, 3, 4] - mutable
     ```
 
-    - 설명
-        - Array 설명 [Array]
-            - Array Handling
+- 설명
+    - Array 설명 [Array]
+        - Array Handling
+
+            ```swift
+            var arrayControl: [Int] = [1,2,3,4,5]
+            arrayControl.isEmpty // false
+
+            arrayControl[1] // 2 (index 1의 위치의 값)
+
+            arrayControl[2] = 300
+            arrayControl
+
+            arrayControl.append(6) // 맨 뒤에 추가
+            arrayControl // [1,2,3,4,5,6]
+
+            arrayControl.append(7)
+            arrayControl.append(contentsOf: [8,9,10]) // 복수라서 [] 써준다
+
+            arrayControl.insert(400, at: 3) // 특정 위치에 추가
+            arrayControl.insert(contentsOf: [500,600], at: 4) // 복수라서 [] 써준다
+
+            arrayControl.first // 1
+            arrayControl.last  // 10
+            arrayControl[4]
+
+            arrayControl.firstIndex(of: 500) // element 500의 빠른 순서 index (동일한 값 500이 중복 존재할 수 있으므로 순서가 빠른 index를 반환함)
+            // arrayControl.index(of: 500) // element 500의 index (.index는 deprecated)
+
+            arrayControl.remove(at: 4) // 특정 위치 삭제
+            arrayControl
+
+            arrayControl.removeFirst()
+            arrayControl.removeLast()
+            arrayControl
+
+            var firstItem = arrayControl.removeFirst() // element를 삭제 후 return 함
+            var lastItem = arrayControl.removeLast()
+            arrayControl
+
+            print(firstItem, lastItem)
+            print(firstItem, lastItem, separator: "", terminator: "")
+
+            arrayControl[1...3] // 부분 출력
+            //arrayControl[0...arrayControl.count]
+
+            arrayControl
+            var number: Int = arrayControl.count
+            arrayControl[0...number-1]  
+
+            arrayControl[3...5] = [400,500,600] // 여러 개 element를 수정 가능
+            // arrayControl[3,4,5] = [4,5,6] // 오류 발생
+            ```
+
+        ```swift
+        // **빈** Int Array 생성
+        var integers: Array<Int> = [Int]() // 축약 리터럴 등 리터럴 설명은 아래 참고 🎃
+        integers.append(1)  // -> [1] *append method : 요소를 맨 뒤에 추가한다.
+        integers.append(100)  // -> [1, 100]
+        // integers.append(100.1)  // 오류 발생
+
+        integers.contains(100)  // -> true *contains method : 해당 요소를 포함하고 있는가?
+        integers.contains(99)  // -> false
+
+        integers[0] = 99  // index 0의 멤버 교체
+
+        integers.remove(at: 0)  // -> [99] 제거 *remove method : (0번 index의) 요소를 제거한다.
+        integers.removeLast()  // -> [100] 제거 *맨 뒤의 요소 삭제
+        integers.removeAll()  // -> [] *모든 요소 삭제
+
+        integers.count  // -> 다 제거해서 0 *요소의 개수를 확인한다.
+
+        // integers[0]  // 오류 발생. 다 제거해서 요소가 없으므로
+
+        // let으로 Array를 선언하면 불변 Array
+        let immutableArray = [1,2,3]
+        // immutableArray.append(4)  // 오류 발생
+        ```
+
+        ```swift
+        var integers: [Int] = [1, 50, 100]
+
+        integers[0] = 20 // 기존의 element 변경
+        print(integers)  // [20, 50, 100]
+
+        integers[3] = 300 // 런타임 에러 발생 (컴파일 에러는 아님) - Fatal error: Index out of range
+        //print(integers)
+        ```
+
+        Dictionary와 달리 Array는 invalid index를 넣는 경우, 새로운 item이 추가되지 않는다.
+        `shoppingList[100]= "new item"` // 런타임 에러 발생
+
+        - [x]  컴파일 에러
+            - Compilation error 
+            프로그램의 실행을 막는 오류이다. 컴파일러가 이해하지 못하는 코드가 발견되면 컴파일 오류가 발생한다. 보통 문법적 오류에 기인한다.
+        - [x]  런타임 에러
+            - Run-time error
+            프로그램 실행 중에 발생하는 오류이다. 프로그램이 수행 불가한 작업을 시도하면 발생한다. 설계 미숙에 기인한다. 
+            ex. 무한루프, 0으로 나누기, 생성되지 않은 객체를 참조 (존재하지 않는 메모리 위치에 접근) 등
+    - Dictionary 설명 [key: value]
+        - Dictionary Control
+            - [ ]  print(dicCtl["key2"]) // Optional(200) 
+            print(dicCtl["key2", default: 0]) // 200 → nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
+
+            ```swift
+            var dicCtl: [String: Int] = [:]
+            dicCtl.isEmpty // true
+
+            dicCtl["key1"] = 100 // key:value 추가 (순서 X)
+            dicCtl["key2"] = 200
+            dicCtl["key3"] = 300
+            // dicCtl["key3"] = 300, 310, 320 // 오류 발생
+            print(dicCtl) // ["key1": 100, "key2": 200, "key3": 300]
+
+            dicCtl.count // 3
+
+            dicCtl["key1"] // 100
+            dicCtl["key4"] // nil (Array와 달리 에러 발생 안하지만, nil return)
+
+            dicCtl.removeValue(forKey: "key1") // 특정 key:value pair 삭제 
+            // dicCtl.removeValue(forKey: "key2","key3") // 오류 발생
+            dicCtl["key3"] = nil // 특정 key:value pair 삭제 
+
+            print(dicCtl["key2"]) // Optional(200) -> Dictionary key 중에서 "key2"에 해당하는 것이 없으면 nil 발생 가능성이 있으므로 Optional 이다.
+            print(dicCtl["key2", default: 0]) // 200 -> ? 왜 이건 Optional이 아니지? nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
+
+            dicCtl.removeValue(forKey: "key2")
+            print(dicCtl["key2", default: 0]) // 0 (nil이면 default로 정해둔 값이 출력됨)
+
+            print(dicCtl) // 모두 삭제하면 [:] empty Dictionary가 출력된다. (nil이 아님)
+            ```
+
+            - Dictionary의 `updateValue(_:forKey:)` method를 통해 특정 key에 대한 value를 설정(set)하거나 업데이트(update)한다. 해당 key가 기존 key에 없으면 value를 설정하고, 있으면 value를 업데이트한다.
+            단, updateValue 메서드는 업데이트 이후 old value (기존의 값)을 반환한다.
 
                 ```swift
-                var arrayControl: [Int] = [1,2,3,4,5]
-                arrayControl.isEmpty // false
+                var airports: [String: String] = ["YYZ": "Toronto Pearson", "DUB": "Dublin"]
 
-                arrayControl[1] // 2 (index 1의 위치의 값)
+                if let oldValue = airports.updateValue("Dublin Airport", forKey: "DUB") {
+                    print("The old value for DUB was \(oldValue).")
+                } // Prints "The old value for DUB was Dublin." - 기존 값이 반환된다.
 
-                arrayControl[2] = 300
-                arrayControl
-
-                arrayControl.append(6) // 맨 뒤에 추가
-                arrayControl // [1,2,3,4,5,6]
-
-                arrayControl.append(7)
-                arrayControl.append(contentsOf: [8,9,10]) // 복수라서 [] 써준다
-
-                arrayControl.insert(400, at: 3) // 특정 위치에 추가
-                arrayControl.insert(contentsOf: [500,600], at: 4) // 복수라서 [] 써준다
-
-                arrayControl.first // 1
-                arrayControl.last  // 10
-                arrayControl[4]
-
-                arrayControl.firstIndex(of: 500) // element 500의 빠른 순서 index (동일한 값 500이 중복 존재할 수 있으므로 순서가 빠른 index를 반환함)
-                // arrayControl.index(of: 500) // element 500의 index (.index는 deprecated)
-
-                arrayControl.remove(at: 4) // 특정 위치 삭제
-                arrayControl
-
-                arrayControl.removeFirst()
-                arrayControl.removeLast()
-                arrayControl
-
-                var firstItem = arrayControl.removeFirst() // element를 삭제 후 return 함
-                var lastItem = arrayControl.removeLast()
-                arrayControl
-
-                print(firstItem, lastItem)
-                print(firstItem, lastItem, separator: "", terminator: "")
-
-                arrayControl[1...3] // 부분 출력
-                //arrayControl[0...arrayControl.count]
-
-                arrayControl
-                var number: Int = arrayControl.count
-                arrayControl[0...number-1]  
-
-                arrayControl[3...5] = [400,500,600] // 여러 개 element를 수정 가능
-                // arrayControl[3,4,5] = [4,5,6] // 오류 발생
+                print(airports) // ["LHR": "London Heathrow", "DUB": "Dublin Airport", "YYZ": "Toronto Pearson"] // key DUB에 대한 value는 업데이트 되었다.
                 ```
 
             ```swift
-            // **빈** Int Array 생성
-            var integers: Array<Int> = [Int]() // 축약 리터럴 등 리터럴 설명은 아래 참고 🎃
-            integers.append(1)  // -> [1] *append method : 요소를 맨 뒤에 추가한다.
-            integers.append(100)  // -> [1, 100]
-            // integers.append(100.1)  // 오류 발생
+            var anyDic: [String: Int] = [:]
 
-            integers.contains(100)  // -> true *contains method : 해당 요소를 포함하고 있는가?
-            integers.contains(99)  // -> false
+            anyDic["1"] = 1
+            anyDic.removeAll()
 
-            integers[0] = 99  // index 0의 멤버 교체
+            print(anyDic) // [:] 출력 - nil이 아님
 
-            integers.remove(at: 0)  // -> [99] 제거 *remove method : (0번 index의) 요소를 제거한다.
-            integers.removeLast()  // -> [100] 제거 *맨 뒤의 요소 삭제
-            integers.removeAll()  // -> [] *모든 요소 삭제
+            anyDic["1"] = 1
+            anyDic["2"] = 2
+            anyDic["1"] = nil
+            anyDic["2"] = nil
 
-            integers.count  // -> 다 제거해서 0 *요소의 개수를 확인한다.
-
-            // integers[0]  // 오류 발생. 다 제거해서 요소가 없으므로
-
-            // let으로 Array를 선언하면 불변 Array
-            let immutableArray = [1,2,3]
-            // immutableArray.append(4)  // 오류 발생
+            print(anyDic) // [:] 출력 - nil이 아님 ["1": nil, "2": nil] X
             ```
 
-            ```swift
-            var integers: [Int] = [1, 50, 100]
-
-            integers[0] = 20 // 기존의 element 변경
-            print(integers)  // [20, 50, 100]
-
-            integers[3] = 300 // 런타임 에러 발생 (컴파일 에러는 아님) - Fatal error: Index out of range
-            //print(integers)
-            ```
-
-            Dictionary와 달리 Array는 invalid index를 넣는 경우, 새로운 item이 추가되지 않는다.
-            `shoppingList[100]= "new item"` // 런타임 에러 발생
-
-            - [x]  컴파일 에러
-                - Compilation error 
-                프로그램의 실행을 막는 오류이다. 컴파일러가 이해하지 못하는 코드가 발견되면 컴파일 오류가 발생한다. 보통 문법적 오류에 기인한다.
-            - [x]  런타임 에러
-                - Run-time error
-                프로그램 실행 중에 발생하는 오류이다. 프로그램이 수행 불가한 작업을 시도하면 발생한다. 설계 미숙에 기인한다. 
-                ex. 무한루프, 0으로 나누기, 생성되지 않은 객체를 참조 (존재하지 않는 메모리 위치에 접근) 등
-        - Dictionary 설명 [key: value]
-            - Dictionary Control
-                - [ ]  print(dicCtl["key2"]) // Optional(200) 
-                print(dicCtl["key2", default: 0]) // 200 → nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
+            - [ ]  왜 nil이 아니라 empty Dictionary가 출력되지? print(anyDic) 결과로 [:]이 출력되는데 ["1": nil, "2": nil] 이 아닌 이유는?
+                - Dictionary의 type이 Optional이 아니라서???!!!!
 
                 ```swift
-                var dicCtl: [String: Int] = [:]
-                dicCtl.isEmpty // true
+                var d = ["foo": nil] as [String: Any?]
 
-                dicCtl["key1"] = 100 // key:value 추가 (순서 X)
-                dicCtl["key2"] = 200
-                dicCtl["key3"] = 300
-                // dicCtl["key3"] = 300, 310, 320 // 오류 발생
-                print(dicCtl) // ["key1": 100, "key2": 200, "key3": 300]
+                d["foo"] = nil // d is now [:]
+                print(d)
 
-                dicCtl.count // 3
+                let y: String? = nil
+                d["foo"] = y // d is now [:]
+                print(d)
 
-                dicCtl["key1"] // 100
-                dicCtl["key4"] // nil (Array와 달리 에러 발생 안하지만, nil return)
+                let x: Any? = nil
+                d["foo"] = x // d is ["foo": nil]
+                print(d)
 
-                dicCtl.removeValue(forKey: "key1") // 특정 key:value pair 삭제 
-                // dicCtl.removeValue(forKey: "key2","key3") // 오류 발생
-                dicCtl["key3"] = nil // 특정 key:value pair 삭제 
-
-                print(dicCtl["key2"]) // Optional(200) -> Dictionary key 중에서 "key2"에 해당하는 것이 없으면 nil 발생 가능성이 있으므로 Optional 이다.
-                print(dicCtl["key2", default: 0]) // 200 -> ? 왜 이건 Optional이 아니지? nil이면 default로 설정한 값 0이 출력되므로 nil 발생 가능성이 없어서?
-
-                dicCtl.removeValue(forKey: "key2")
-                print(dicCtl["key2", default: 0]) // 0 (nil이면 default로 정해둔 값이 출력됨)
-
-                print(dicCtl) // 모두 삭제하면 [:] empty Dictionary가 출력된다. (nil이 아님)
+                d.removeValue(forKey: "foo")
+                print(d) // [:]
                 ```
 
-                - Dictionary의 `updateValue(_:forKey:)` method를 통해 특정 key에 대한 value를 설정(set)하거나 업데이트(update)한다. 해당 key가 기존 key에 없으면 value를 설정하고, 있으면 value를 업데이트한다.
-                단, updateValue 메서드는 업데이트 이후 old value (기존의 값)을 반환한다.
+                [https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion](https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion)
 
-                    ```swift
-                    var airports: [String: String] = ["YYZ": "Toronto Pearson", "DUB": "Dublin"]
+                - A-1 : If you assign 'nil' as the value for the given key, the dictionary removes that key and its associated value.
 
-                    if let oldValue = airports.updateValue("Dublin Airport", forKey: "DUB") {
-                        print("The old value for DUB was \(oldValue).")
-                    } // Prints "The old value for DUB was Dublin." - 기존 값이 반환된다.
+        ```swift
+        // key가 String 타입이고, value가 Any 타입인 빈 Dictionary 생성
+        // *마찬가지로 축약 리터럴로 Dictionary<String,Any>와 [String: Any]는 동일한 표현이다. 
 
-                    print(airports) // ["LHR": "London Heathrow", "DUB": "Dublin Airport", "YYZ": "Toronto Pearson"] // key DUB에 대한 value는 업데이트 되었다.
-                    ```
+        var anyDictionary: Dictionary<String,Any> = [String: Any]()
+        anyDictionary["someKey"] = "value" // "someKey"라는 key에 할당한 값이 "value"이다.
+        anyDictionary["anotherKey"] = 100
 
-                ```swift
-                var anyDic: [String: Int] = [:]
+        anyDictionary // ->["someKey": "value", "anotherKey": 100]
 
-                anyDic["1"] = 1
-                anyDic.removeAll()
+        anyDictionary.removeValue(forKey: "anotherKey") // *특정 key:value pair를 제거한다.
+        anyDictionary["someKey"] = nil // 특정 key에 nil을 할당할 수 있다.
+        anyDictionary // -> [:]
 
-                print(anyDic) // [:] 출력 - nil이 아님
+        // 선언할 때 값을 할당해줌
+        let initializedDictionary: [String: String] = ["name": "yagom", "gender": "male"]
 
-                anyDic["1"] = 1
-                anyDic["2"] = 2
-                anyDic["1"] = nil
-                anyDic["2"] = nil
+        let someValue: String = initializedDictionary["name"] // 오류 발생
+        // 원래는 key name에 해당하는 값인 yagom -> someValue 값으로 할당
+        // 사람 입장에서는 이 과정이 가능할 것으로 보이지만, yagom이 없을 수도 있다는 불확실성 때문에 안된다.
+        => optional 개념 배운 이후
+        let someValue: String? = initializedDictionary["name"]  // 이렇게 하면 가능함
+        ```
 
-                print(anyDic) // [:] 출력 - nil이 아님 ["1": nil, "2": nil] X
-                ```
+    - 🎃 참고 - 리터럴
 
-                - [ ]  왜 nil이 아니라 empty Dictionary가 출력되지? print(anyDic) 결과로 [:]이 출력되는데 ["1": nil, "2": nil] 이 아닌 이유는?
-                    - Dictionary의 type이 Optional이 아니라서???!!!!
+        ```swift
+        동일한 표현
 
-                    ```swift
-                    var d = ["foo": nil] as [String: Any?]
+        var integers: Array<Int> = Array<Int>()
 
-                    d["foo"] = nil // d is now [:]
-                    print(d)
+        // var integers: Array<Int> = Array<Int>()  // 타입 & 생성
+        // var integers: Array<Int> = [Int]()
+        // var integers: Array<Int> = []  // type을 명시했다면 []으로 빈 배열 생성 가능함
+        // var integers: [Int] = Array<Int>()
+        // var integers: [Int] = [Int]()
+        // var integers: [Int] = []
+        // var integers = Array<Int>()
+        // var integers = [Int]()
+        // var integers = [1,2,3]   
+        // var integers = []  // 불가 (Empty collection literal requires an explicit type)
+        // var integers = [1.1, 2.2, 3.3]  // 불가 (Cannot convert value of type 'Double' to expected element type 'Array<Int>.ArrayLiteralElement' (aka 'Int'))
 
-                    let y: String? = nil
-                    d["foo"] = y // d is now [:]
-                    print(d)
+        // *Array Init
+        var integers = [Int](1...3)  // [1,2,3] 생성
+        var integers = Array(1...3)  // [1,2,3] 생성
+        var integers = Array(repeating: 1, count: 5)  // [1,1,1,1,1] 생성  
 
-                    let x: Any? = nil
-                    d["foo"] = x // d is ["foo": nil]
-                    print(d)
+        var anyDictionary: Dictionary<String, Any> = Dictionary<String, Any>() 
 
-                    d.removeValue(forKey: "foo")
-                    print(d) // [:]
-                    ```
+        // var anyDictionary: Dictionary <String, Any> = Dictionary<String, Any>() 
+        // var anyDictionary: Dictionary <String, Any> = [String: Any]()
+        // var anyDictionary: Dictionary <String, Any> = [:] 
+        // var anyDictionary: [String: Any] = Dictionary<String, Any>() 
+        // var anyDictionary: [String: Any] = [String: Any]() 
+        // var anyDictionary: [String: Any] = [:] 
+        // var anyDictionary = Dictionary<String, Any>() 
+        // var anyDictionary = [String: Any]()
+        // var anyDictionary = ["HJ": 20, "SB": 23]
+        // var anyDictionary = [:]  // 불가 (Empty collection literal requires an explicit type)
+        ```
 
-                    [https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion](https://stackoverflow.com/questions/39630322/swift-setting-dictionary-value-to-nil-confusion)
+    - Set 설명 {Set}
 
-                    - A-1 : If you assign 'nil' as the value for the given key, the dictionary removes that key and its associated value.
+        ```swift
+        // 빈 Int Set 생성
+        // *축약 리터럴 없음, 순서 (index) 없음
+        var integerSet: Set<Int> = Set<Int>()
+        integerSet.insert(1)  // *요소 추가 method 
+        integerSet.insert(100)
+        integerSet.insert(99)
+        integerSet.insert(99)
+        integerSet.insert(99) // set는 중복된 데이터는 추가 저장하지 않는다.
 
-            ```swift
-            // key가 String 타입이고, value가 Any 타입인 빈 Dictionary 생성
-            // *마찬가지로 축약 리터럴로 Dictionary<String,Any>와 [String: Any]는 동일한 표현이다. 
+        integerSet // -> {100,99,1}
+        integerSet.contains(1) // -> true
+        integerSet.contains(2) // -> false
 
-            var anyDictionary: Dictionary<String,Any> = [String: Any]()
-            anyDictionary["someKey"] = "value" // "someKey"라는 key에 할당한 값이 "value"이다.
-            anyDictionary["anotherKey"] = 100
+        integerSet.remove(100)   // 100 삭제
+        integerSet.removeFirst() // 1 or 99 삭제 (순서가 없으므로 랜덤으로 삭제된다.)
 
-            anyDictionary // ->["someKey": "value", "anotherKey": 100]
+        integerSet.count
 
-            anyDictionary.removeValue(forKey: "anotherKey") // *특정 key:value pair를 제거한다.
-            anyDictionary["someKey"] = nil // 특정 key에 nil을 할당할 수 있다.
-            anyDictionary // -> [:]
+        // 집합 개념으로 접근하기
+        let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} - [Array element]와 {Set elements}를 구분하기 위해 {}로 쓰는듯
+        let setB: Set<Int> = [3,4,5,6,7]  // {6,3,4,5,7}
+        // let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 
+        print(setA)  // [4,1,3,2,5] (순서 랜덤)
 
-            // 선언할 때 값을 할당해줌
-            let initializedDictionary: [String: String] = ["name": "yagom", "gender": "male"]
+        // 합집합
+        let union: Set<Int> = setA.union(setB) // {4,1,3,2,6,7,5}
+        print(union) // [4, 1, 3, 2, 6, 7, 5] 출력 (순서 랜덤)
 
-            let someValue: String = initializedDictionary["name"] // 오류 발생
-            // 원래는 key name에 해당하는 값인 yagom -> someValue 값으로 할당
-            // 사람 입장에서는 이 과정이 가능할 것으로 보이지만, yagom이 없을 수도 있다는 불확실성 때문에 안된다.
-            => optional 개념 배운 이후
-            let someValue: String? = initializedDictionary["name"]  // 이렇게 하면 가능함
-            ```
+        // 합집합 오름차순 정렬 - 동일한 타입의 Array로 변환하는 method
+        // Array 뿐만 아니라 Set도 sorted 메서드가 있다.
+        let sortedUnion: [Int] = union.sorted() // [1,2,3,4,5,6,7] - 오름차순(<, ascending order)으로 정렬된다. descending order로 정렬하려면 sorted(by: >) 메서드를 사용한다.
+        // let sortedUnion: Array<Int> = union.sorted()
+        print(sortedUnion) // [1, 2, 3, 4, 5, 6, 7] 출력 - 순서 고정!
 
-        - 🎃 참고 - 리터럴
+        // 교집합
+        let intersection: Set<Int> = setA.intersection(setB) // {5,3,4}
+        print(intersection) // [5, 4, 3] 출력 (순서 랜덤)
 
-            ```swift
-            동일한 표현
+        // 차집합
+        let subtracting: Set<Int> = setA.subtracting(setB) // {2,1}
+        print(subtracting) // [2, 1] 출력 (순서 랜덤)
+        ```
 
-            var integers: Array<Int> = Array<Int>()
+        ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
 
-            // var integers: Array<Int> = Array<Int>()  // 타입 & 생성
-            // var integers: Array<Int> = [Int]()
-            // var integers: Array<Int> = []  // type을 명시했다면 []으로 빈 배열 생성 가능함
-            // var integers: [Int] = Array<Int>()
-            // var integers: [Int] = [Int]()
-            // var integers: [Int] = []
-            // var integers = Array<Int>()
-            // var integers = [Int]()
-            // var integers = [1,2,3]   
-            // var integers = []  // 불가 (Empty collection literal requires an explicit type)
-            // var integers = [1.1, 2.2, 3.3]  // 불가 (Cannot convert value of type 'Double' to expected element type 'Array<Int>.ArrayLiteralElement' (aka 'Int'))
+        - [ ]  Declaration에 보면 sorted 메서드의 return type이 [Int]인데, Discussion의 상수 sortedStudent를 보면 [String] type으로 return 됨 ???
+- 자주 쓰는 메서드
 
-            var anyDictionary: Dictionary<String, Any> = Dictionary<String, Any>() 
+    ```swift
+    collection1.sort() // collection에 저장된 element의 순서를 정렬한다. (default: 오름차순/A-Z)
+    var var1 = collection1.sorted() // collection에 저장된 element에는 영향이 없다. 변수에 할당해야 사용 가능하다. (Set도 사용 가능-Array를 반환)
 
-            // var anyDictionary: Dictionary <String, Any> = Dictionary<String, Any>() 
-            // var anyDictionary: Dictionary <String, Any> = [String: Any]()
-            // var anyDictionary: Dictionary <String, Any> = [:] 
-            // var anyDictionary: [String: Any] = Dictionary<String, Any>() 
-            // var anyDictionary: [String: Any] = [String: Any]() 
-            // var anyDictionary: [String: Any] = [:] 
-            // var anyDictionary = Dictionary<String, Any>() 
-            // var anyDictionary = [String: Any]()
-            // var anyDictionary = ["HJ": 20, "SB": 23]
-            // var anyDictionary = [:]  // 불가 (Empty collection literal requires an explicit type)
-            ```
+    collection2.shuffle() // collection에 저장된 element의 순서가 바뀐다. (Set는 사용 불가)
+    var var2 = collection2.shuffled() // collection에 저장된 element에는 영향이 없다. 변수에 할당해야 사용 가능하다.
 
-        - Set 설명 {Set}
-
-            ```swift
-            // 빈 Int Set 생성
-            // *축약 리터럴 없음, 순서 (index) 없음
-            var integerSet: Set<Int> = Set<Int>()
-            integerSet.insert(1)  // *요소 추가 method 
-            integerSet.insert(100)
-            integerSet.insert(99)
-            integerSet.insert(99)
-            integerSet.insert(99) // set는 중복된 데이터는 추가 저장하지 않는다.
-
-            integerSet // -> {100,99,1}
-            integerSet.contains(1) // -> true
-            integerSet.contains(2) // -> false
-
-            integerSet.remove(100)   // 100 삭제
-            integerSet.removeFirst() // 1 or 99 삭제 (순서가 없으므로 랜덤으로 삭제된다.)
-
-            integerSet.count
-
-            // 집합 개념으로 접근하기
-            let setA: Set<Int> = [1,2,3,4,5]  // {3,4,2,1,5} - [Array element]와 {Set elements}를 구분하기 위해 {}로 쓰는듯
-            let setB: Set<Int> = [3,4,5,6,7]  // {6,3,4,5,7}
-            // let setC: Set<Int> = {1,2,3,4,5}  // 오류 발생 
-            print(setA)  // [4,1,3,2,5] (순서 랜덤)
-
-            // 합집합
-            let union: Set<Int> = setA.union(setB) // {4,1,3,2,6,7,5}
-            print(union) // [4, 1, 3, 2, 6, 7, 5] 출력 (순서 랜덤)
-
-            // 합집합 오름차순 정렬 - 동일한 타입의 Array로 변환하는 method
-            let sortedUnion: [Int] = union.sorted() // [1,2,3,4,5,6,7] - 오름차순(<, ascending order)으로 정렬된다. descending order로 정렬하려면 sorted(by: >) 메서드를 사용한다.
-            // let sortedUnion: Array<Int> = union.sorted()
-            print(sortedUnion) // [1, 2, 3, 4, 5, 6, 7] 출력 - 순서 고정!
-
-            // 교집합
-            let intersection: Set<Int> = setA.intersection(setB) // {5,3,4}
-            print(intersection) // [5, 4, 3] 출력 (순서 랜덤)
-
-            // 차집합
-            let subtracting: Set<Int> = setA.subtracting(setB) // {2,1}
-            print(subtracting) // [2, 1] 출력 (순서 랜덤)
-            ```
-
-            ![Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png](Swift%20syntax%20db89af547ea44c838a71961695a68c01/Untitled%206.png)
-
-            - [ ]  Declaration에 보면 sorted 메서드의 return type이 [Int]인데, Discussion의 상수 sortedStudent를 보면 [String] type으로 return 됨 ???
+    var array1 = [1,2,3,4,5]
+    var array2 = array1[0...2] // index range에 해당하는 array의 일부분을 꺼낼 수 있다.
+    print(array2) // [1,2,3]
+    ```
 
 # 5. Function
 
@@ -1659,7 +1695,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
 # 8. Optional
 
-- 옵셔널 Syntax
+- Syntax
     - Optional : 값이 있을수도, 없을수도 있다는 의미이다. 즉, nil 의 가능성을 명시적으로 표현해준다. (nil은 옵셔널 type에만 할당 가능하다.)
 
         You use optionals in situations where a value may be absent. 
@@ -1667,86 +1703,14 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
     - 사용 목적 (변수에 nil이 있음을 가정하는 이유)
     - 함수에 전달되는 argument의 값이 잘못된 값일 경우 nil을 반환한다.
-    - argument를 굳이 넘기지 않아도 되는 상황에서 parameter type을 optional로 정의한다.
+    - argument를 굳이 넘기지 않아도 되는 상황 (required parameter가 아닌 상황)에서 parameter type을 optional로 정의한다.
     - 장점 
     - 문서화/주석 작성 시간 절약
-    - 전달받은 값이 옵셔널이 아니라면 nil 체크를 하지 않더라도 안심하고 사용 -> 예외 상황을 최소화하는 안전한 코딩
+    - 전달받은 값이 옵셔널이 아니라면 nil 체크를 하지 않더라도 안심하고 사용 가능하다. 따라서 예외 상황을 최소화하는 안전한 코딩을 할 수 있다.
 
-    ```swift
-    let optionalConstant: Int? = nil  // 옵셔널 -> nil 할당 가능
-
-    let someConstant: Int = nil  // 오류 발생 (nil 할당 불가)
-    ```
-
-    ```swift
-    // The example below uses the initializer to try to convert a String into an Int:
-
-    let possibleNumber = "123"  // -> 이건 상수라서 값의 변경이 불가한데 왜 nil 가능성이 있다고 보는거지? -> 컴파일러 기준에서 nil 가능성이 있다고 판단해서
-    let convertedNumber = Int(possibleNumber)  // convertedNumber is inferred to be of type "Int?"
-
-    // Because the initializer might fail, it returns an optional Int, rather than an Int. 
-    // An optional Int is written as Int?.
-    // The question mark indicates that the value it contains is optional, meaning that it might contain some Int value, or it might contain no value at all.
-    ```
-
-    - [x]  let possibleNumber = "123"  // -> 이 상수는 초기값 변경 불가한데 왜 nil 가능성이 있다고 보는거지?
-    let convertedNumber = Int(possibleNumber)
-        - 우리가 봤을 땐 "123"이라는 상수가 전혀 문제 없는데, 실제로 이 코드를 동작시키기 전까지는 컴퓨터는 모릅니다. 그래서 최대한 방어적 가정을 해야합니다. 
-        단순히 컴퓨터는 Int()라는 곳 안에 "문자열"이 전달되었다고 생각하지 "123"이라는 문자열 값이 전달되었다고 생각하지 않는것입니다. 
-        그래서 컴퓨터에게는 "123"을 전달할 때나 "일이삼"을 전달할 때나 똑같이 문자열이라는 타입의 값을 전달했다는 사실만 있는거죠. - yagom
-
-    ```swift
-    // 참고 - DoitSwift
-
-    var flightCode = [ // Dictionary
-    		"oz" : "아시아나",
-    		"ke" : "대한항공",
-    		"ze" : "이스타항공",
-    		"lj" : "진에어",
-    ]
-
-    var flightNumber = "aa"
-    //
-    if flightCode[flightNumber] != nil {
-    		print ("항공사 코드 \(flightNumber)는 \(flightCode[flightNumber]!) 입니다.")
-    } else {
-    		print("없는 항공사 입니다.") // "aa" key가 없으므로 nil => "없는 항공사 입니다." 출력
-    }
-    		
-    		// or Optional binding
-    		if let flightCodeA = flightCode[flightNumber] {
-    				print("항공사 코드 \(flightNumber)는 \(flightCodeA) 입니다.")
-    		}
-    		
-    //
-    flightNumber = "oz" // 이때 flightNumber을 수정한다면
-    // var flightCompany: String = flightCode[flightNumber] // 에러 발생 - nil 가능성 ("aa" 처럼) 때문에 String? type (옵셔널 변수)으로 수정해야 함
-    var flightCompany: String? = flightCode[flightNumber]	// 옵셔널 변수에 값이 할당되면 "값이 옵셔널에 wrapped 되었다"고 표현함			 																             		
-
-    // 옵셔널 변수 사용 - 1) Forced unwrapping
-    print(flightCompany) // 불가 - 컴파일 에러 발생
-    print(flightCompany!) // Forced unwrapping 해야 값에 접근 가능함 - 아시아나 출력
-
-        // or 옵셔널 변수 사용 - 2) Implicitly unwrapping
-        var flightCompany2: String! = flightCode[flightNumber]	// String? 대신 String!으로 선언하면 
-        print(flightCompany2)  // 가능. 단, Optional("아시아나") 출력 - coercion of implicitly unwrapped value of type String? to Any does not unwrap optional.		
-    		print(flightCompany2!) // 이것도 가능 - 아시아나 출력
-
-    		// *참고
-    		func printName(name: String) {
-    		    print(name)
-    		}
-    		printName(name: flightCompany2)  // 아시아나 출력 -> print(flightCompany2)와 다른 이유인 듯. 왜 다르지?
-    		printName(name: flightCompany2!) // 아시아나 출력 
-    ```
-
-    - [x]  1), 2), 모두 출력결과가 동일함 - Optional("아시아나"), 아시아나 왜지?
-        - 코드가 길어져서 오류 발생한 듯. 다시 돌리면 아님
-    - [ ]  print(flightCompany2)  // 가능. 단, Optional("아시아나") 출력 
-    printName(name: flightCompany2)  // 아시아나 출력 -> print(flightCompany2)와 다른 이유인 듯. 왜 다르지?
-- Optional 정의 / 암시적 추출 옵셔널
-    - 옵셔널 = genericd이 적용된 enum (열거형) ??
     - 옵셔널 정의
+
+        옵셔널은 generic이 적용된 enum (열거형)으로 구현된다. 따라서 switch문을 통해 값이 nil인지 여부를 확인 가능하다.
 
         ```swift
         enum Optional<Wrapped>: ExpressibleByNiliteral {   // 옵셔널 기본형은 enum (열거형)
@@ -1759,54 +1723,137 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         let optionalValue: Int? = nil
         ```
 
-    - 암시적 추출 옵셔널 (Implicitly unwrapped optional)
-        - nil 할당이 가능한, optional이 아닌 변수를 선언할 때 사용한다. (nil을 할당하고 싶지만 optional binding으로 값을 추출하기 귀찮거나, 로직상 nil로 인한 런타임 오류 발생 가능성이 없을 때 사용한다.)
-        - 일반적인 값처럼 연산이 가능하다.
+        ```swift
+        // Int
+        let someConstant: Int = nil  // 오류 발생 (nil 할당 불가)
 
-            ```swift
-            var implicitlyUnwrappedOptionalValue: Int! = 100   // 암시적 추출 옵셔널인 Int type의 변수를 선언하고
+        // 옵셔널 Int
+        let optionalConstant: Int? = nil  // 옵셔널이므로 nil 할당 가능 (연산 불가)
 
-            switch implicitlyUnwrappedOptionalValue {   // Optional의 값이 nil 인지 (첫번째 .none case), 값이 있는지 (두번째 .some case) 확인하는 switch문
-            case .none:
-                print("This Optional variable is nil")
-            case .some(let value):
-                print("Value is \(value)")
-            }
+        // 참고 - 암시적 추출 옵셔널 (비추)
+        var myName: String! = "kevin"	// nil 할당이 가능한 옵셔널이 아닌 변수/상수 (연산 가능)
+        															// 어쨌든 옵셔널이므로 옵셔널 바인딩 및 강제추출이 가능하다. (단, nil일 때 값에 접근하면 런타임 오류 발생)
+          														// 옵셔널 바인딩으로 매번 값을 하기 귀찮거나 로직상 nil 발생 가능성이 없다고 확신할 때 사용한다.
+        print(myName) // Optional("kevin")
+        ```
 
-            // 1. 기존 변수처럼 사용 가능  
-            implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1
+        ```swift
+        // The example below uses the initializer to try to convert a String into an Int:
 
-            // 2. nil 할당 가능
-            implicitlyUnwrappedOptionalValue = nil
-            //implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1  // 참고 - 잘못된 접근으로 인한 런타임 오류 발생 (nil에는 연산을 할 수 없다)
+        let possibleNumber = "123"  // Q. 이건 상수라서 값의 변경이 불가한데 왜 nil 가능성이 있다고 보는거지? -> A. 컴파일러 기준에서 nil 가능성이 있다고 판단해서
+        let convertedNumber = Int(possibleNumber)  // convertedNumber is inferred to be of type "Int?"
 
-            ```
+        // Because the initializer might fail, it returns an optional Int (= Int?), rather than an Int. 
+        // The question mark indicates that the value it contains is optional, meaning that it might contain some Int value, or it might contain no value at all.
+        ```
 
-            ```swift
-            // 일반적인 옵셔널과 비교
+        - [x]  let possibleNumber = "123"  // -> 이 상수는 초기값 변경 불가한데 왜 nil 가능성이 있다고 보는거지?
+        let convertedNumber = Int(possibleNumber)
+            - 우리가 봤을 땐 "123"이라는 상수가 전혀 문제 없는데, 실제로 이 코드를 동작시키기 전까지는 컴퓨터는 모릅니다. 그래서 최대한 방어적 가정을 해야합니다. 
+            단순히 컴퓨터는 Int()라는 곳 안에 "문자열"이 전달되었다고 생각하지 "123"이라는 문자열 값이 전달되었다고 생각하지 않는것입니다. 
+            그래서 컴퓨터에게는 "123"을 전달할 때나 "일이삼"을 전달할 때나 똑같이 문자열이라는 타입의 값을 전달했다는 사실만 있는거죠. - yagom
 
-            var optionalValue: Int? = 100
+        ```swift
+        // 참고 - DoitSwift
 
-            switch optionalValue {   // 위의 암시적 추출 옵셔널과 동일함
-            case .none:
-                print("This Optional variable is nil")
-            case .some(let value):
-                print("Value is \(value)")
-            }
+        var flightCode = [ // Dictionary
+        		"oz" : "아시아나",
+        		"ke" : "대한항공",
+        		"ze" : "이스타항공",
+        		"lj" : "진에어",
+        ]
 
-            // 1. 기존 변수처럼 사용 불가 - 옵셔널과 일반 값 (Int type 등)은 다른 타입이므로 연산불가함
-            //optionalValue = optionalValue + 1
+        var flightNumber = "aa"
 
-            // 2. nil 할당 가능
-            optionalValue = nil
-            ```
+        //
+        if flightCode[flightNumber] != nil {
+        		print ("항공사 코드 \(flightNumber)는 \(flightCode[flightNumber]!) 입니다.")
+        } else {
+        		print("없는 항공사 입니다.") // "aa" key가 없으므로 nil => "없는 항공사 입니다." 출력
+        }
+        		
+        		// or Optional binding
+        		if let flightCodeA = flightCode[flightNumber] {
+        				print("항공사 코드 \(flightNumber)는 \(flightCodeA) 입니다.")
+        		}
+        		
+        //
+        flightNumber = "oz" // 이때 flightNumber을 수정한다면
+
+        // var flightCompany: String = flightCode[flightNumber] // 에러 발생 - nil 가능성 ("aa" 처럼) 때문에 String? type (옵셔널)으로 수정해야 함
+        var flightCompany: String? = flightCode[flightNumber]	// 옵셔널 변수에 값이 할당되면 "값이 옵셔널에 wrapped 되었다"고 표현함			 																             		
+
+        // 옵셔널 변수 사용 - 1) Forced unwrapping
+        print(flightCompany) // 불가 - 컴파일 에러 발생 (옵셔널이 아닌 parameter에 옵셔널 argument를 전달 불가하다!)
+        print(flightCompany!) // Forced unwrapping 해야 값에 접근 가능함 - 아시아나 출력
+
+            // or 옵셔널 변수 사용 - 2) Implicitly unwrapping
+            var flightCompany2: String! = flightCode[flightNumber]	// String? 대신 String!으로 선언
+            print(flightCompany2)  // 가능. 단, Optional("아시아나") 출력 - coercion of implicitly unwrapped value of type String? to Any does not unwrap optional.		
+        		print(flightCompany2!) // 이것도 가능 - 아시아나 출력
+
+        		// *참고
+        		func printName(name: String) {
+        		    print(name)
+        		}
+        		printName(name: flightCompany2)  // 아시아나 출력 -> print(flightCompany2)와 다른 이유인 듯. 왜 다르지?
+        		printName(name: flightCompany2!) // 아시아나 출력 
+        ```
+
+        - [x]  1), 2), 모두 출력결과가 동일함 - Optional("아시아나"), 아시아나 왜지?
+            - 코드가 길어져서 오류 발생한 듯. 다시 돌리면 아님
+        - [ ]  print(flightCompany2)  // 가능. 단, Optional("아시아나") 출력 
+        printName(name: flightCompany2)  // 아시아나 출력 -> print(flightCompany2)와 다른 이유인 듯. 왜 다르지?
+
+- 암시적 추출 옵셔널 (Implicitly unwrapped optional) Int!
+    - nil 할당이 가능하지만, optional이 아닌 변수가 필요할 때 사용한다. 
+    (nil을 할당할 수 있지만 optional binding으로 값을 추출하기 귀찮거나, 로직상 nil로 인한 런타임 오류 발생 가능성이 없을 때 사용한다. ← 비추)
+    - 기존 변수처럼 연산이 가능하다. (단, 현재 nil이 할당되지 않은 경우만)
+    - You can think of an implicitly unwrapped optional as giving permission for the optional to be force-unwrapped if needed.
+
+        ```swift
+        var implicitlyUnwrappedOptionalValue: Int! = 100   // 암시적 추출 옵셔널인 Int type의 변수를 선언하고
+
+        switch implicitlyUnwrappedOptionalValue {   // Optional의 값이 nil 인지 (첫번째 .none case), 값이 있는지 (두번째 .some case) 확인하는 switch문
+        case .none:
+            print("This Optional variable is nil")
+        case .some(let value):
+            print("Value is \(value)")
+        }
+
+        // 1. 기존 변수처럼 사용 가능  
+        implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1
+
+        // 2. nil 할당 가능
+        implicitlyUnwrappedOptionalValue = nil
+        //implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1  // 참고 - 잘못된 접근으로 인한 런타임 오류 발생 (nil에는 연산을 할 수 없다)
+
+        ```
+
+        ```swift
+        // 일반적인 옵셔널과 비교
+        var optionalValue: Int? = 100
+
+        switch optionalValue {   // 위의 암시적 추출 옵셔널과 동일함
+        case .none:
+            print("This Optional variable is nil")
+        case .some(let value):
+            print("Value is \(value)")
+        }
+
+        // 1. 기존 변수처럼 사용 불가 - 옵셔널과 일반 값 (Int type 등)은 다른 타입이므로 연산불가함
+        //optionalValue = optionalValue + 1
+
+        // 2. nil 할당 가능
+        optionalValue = nil
+        ```
 
 - Optional Unwrapping (옵셔널 값 추출)
     - 옵셔널 값을 옵셔널이 아닌 변수/parameter 등에 할당할 때 Unwrapping이 필요하다.
 
         1) Optional binding : nil 체크 후에 값이 있으면 안전하게 추출
 
-        2) Force unwarpping (강제 추출) : nil 값이 없으면 오류 발생하므로 비추함
+        2) Force unwarpping (강제 추출) : nil 값이 없으면 오류 발생하므로 비추
 
     - 설명
         - Optional binding 설명 (if-let을 통한 unwrapping)
@@ -1829,30 +1876,26 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             ```
 
             ```swift
-            // if-let 구문을 활용
-            // 참고 - if문 내에서 활용한다면 if-var도 가능함 (상수 -> 변수)
+            // if-let 또는 if-var 구문을 활용 (상수/변수는 if문 내부에서만 사용 가능하다. else문에서도 사용 불가)
 
             func printName(name: String) {
                 print(name)
             }
-
             var myName: String? = nil 
-            -
 
             if let name: String = myName {   // Optional String (myName)을 일반적인 String (name)으로 unwrapping 해주는 과정
                 printName(name: name)
             } else {
-                print("myName == nil")  // myName은 현재 nil임
+                print("myName == nil")  
             }  // myName == nil - 출력
 
             // printName(name: name)  // 컴파일 오류 발생- name 상수는 if-let 구문 내에서만 사용 가능
-            -
 
             // ,를 사용해 한 번에 여러 옵셔널을 바인딩 할 수 있음. 단, 하나라도 nil이면 실행되지 않음
             myName = "yagom"
             var yourName: String! = nil 
 
-            if let name = myName, let friend = yourName {   // if let name :String = myName, let friend :String = yourName {  *생략했음
+            if let name = myName, let friend = yourName { // if let name :String = myName, let friend :String = yourName { *type 생략 가능
                 print("\(name) and \(friend)")
             } // yourName이 nil이기 때문에 실행되지 않음 (컴파일 에러는 아님)
 
@@ -1883,28 +1926,28 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         - Force unwarpping 설명 (print(!))
             - Sometimes it’s clear from a program’s structure that an optional will always have a value, after that value is first set. 
             In these cases, it’s useful to remove the need to check and unwrap the optional’s value every time.
-            You can think of an implicitly unwrapped optional as giving permission for the optional to be force-unwrapped if needed.
+            - You can think of an implicitly unwrapped optional as giving permission for the optional to be force-unwrapped if needed.
 
             ```swift
             func printName(name: String) {
                 print(name)
             }
 
-            var myName: String? = "yagom" // 
-            printName(name: myName)  // 런타임 에러 발생 - must be unwrapped
-            printName(name: myName!) // yagom 출력. Optional type이라 원래는 바로 못꺼내지만 변수!를 써서 강제 추출함 (일반적인 String type으로 넘겨주는 효과)
+             // 일반 옵셔널
+            var myName: String? = "yagom"
+            //printName(name: myName)  // 런타임 에러 발생 - must be unwrapped
+            printName(name: myName!) // yagom 출력. Optional type이라 원래는 바로 못꺼내지만 !를 써서 강제 추출함 (일반적인 String type으로 넘겨주는 효과)
 
             myName = nil  
             // printName(name: myName!) // 단, 강제 추출 시 값이 없으면 런타임 오류 발생 -> 사용 비추
 
-            -
-
-            var yourName: String! = "kevin" // 암시적 추출 옵셔널
-            printName(name: yourName)  // kevin 출력 - !을 안 붙여도 되는 이유는 String"!" 즉, 선언할 때부터 이미 type 자체에 !가 붙어있는 Implicitly unwrapped optional이기 때문이다.
+            // 암시적 추출 옵셔널
+            var yourName: String! = "kevin" 
+            printName(name: yourName)  // kevin 출력 - !을 안 붙여도 되는 이유는 String! 즉, 선언할 때부터 이미 type 자체에 !가 붙어있는 Implicitly unwrapped optional이기 때문이다.
             printName(name: yourName!) // kevin 출력 (이것도 가능)
 
             yourName = nil
-            //printName(yourName)  // nil 값이 전달되기 때문에 런타임 오류발생
+            //printName(yourName)  // nil 값이 전달되기 때문에 런타임 오류 발생 -> 사용 비추
             ```
 
 # 9. Structure (구조체)
@@ -2014,7 +2057,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
 
         객체 (클래스, 인스턴스)의 필요성
 
-# 10. Class (클래스)
+# 10. Class (클래스) - let 선언 인스턴스 (불변 인스턴스X)
 
 - L/G
     - syntax
@@ -4524,7 +4567,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
             class Student: Person {
                 var major: String
 
-            		override init(nameInput nameInput2: String, ageInput ageInput2: Int) { // 주의 - override한 부모의 init과 argument label (parameter명이 아니라?!)이 일치해야 한다.
+            		override init(nameInput nameInput2: String, ageInput ageInput2: Int) { // 주의 - override한 부모의 init과 argument label이 일치해야 한다. (label을 따로 지정하지 않으면, parameter이름이 label이 된다)
             //  override init(nameInput2: String, ageInput2: Int) {
                 // 오류 발생 - Argument labels for initializer 'init(nameInput2:ageInput2:)' do not match those of overridden initializer 'init(nameInput:ageInput:)'
                 
@@ -6543,7 +6586,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
     - A throwing function propagates errors that are thrown inside of it to the scope from which it’s called. 
       throwing function은 함수 내부에서 에러를 만들어 (throw) 함수가 호출된 곳에 전달함
     2) use a do-catch statement
-    3) return an optional value
+    3) return an optional value (try? / try!)
     4) assert that the error will not occur
     - Do-Catch statement
         - If an error is thrown by the code in the do clause, it’s matched against the catch clauses to determine which one of them can handle the error.
@@ -6583,8 +6626,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             var count: Int
         }
 
-        class VendingMachine {  // 클래서 생성
-            var inventory = [ // 이 프로퍼티의 타입이 dictionary 인가? - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 ?? 
+        class VendingMachine { 
+            var inventory = [ // 이 프로퍼티의 타입이 dictionary - key가 "Candy Bar", value가 Item strtuct로 구성된 형태 맞음
                 "Candy Bar": Item(price: 12, count: 7),
                 "Chips": Item(price: 10, count: 4),
                 "Pretzels": Item(price: 7, count: 11)
@@ -6592,7 +6635,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             var coinsDeposited = 0
             
             func vend(itemNamed name: String) throws {  // 메서드 정의
-                guard let item = inventory[name] else {  // inventory[name] - 프로퍼티 inventory + 메서드 vend의 parameter ?? 이게 name이 <snack의 name>인지 어떻게 알지? 정의 안해줬는데 - String type 이라서 자체 추론?
+                guard let item = inventory[name] else { // inventory[key]
                     throw VendingMachineError.invalidSelection
                 }
                 
@@ -6702,7 +6745,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         ```
 
 - 특징
-    - 오류(Error)는 `Error` 프로토콜을 준수하는 타입의 값을 통해 표현됩니다. `Error` 프로토콜은 사실상 요구사항이 없는 빈 프로토콜일 뿐이지만, 오류를 표현하기 위한 타입 (주로 열거형)은 이 프로토콜을 채택합니다.
+    - 오류는 `Error` 프로토콜을 준수하는 타입의 값을 통해 표현됩니다. `Error` 프로토콜은 사실상 요구사항이 없는 빈 프로토콜일 뿐이지만, 오류를 표현하기 위한 타입 (주로 열거형)은 이 프로토콜을 채택합니다.
 
         ```swift
         enum 오류종류이름: Error { 
@@ -6713,8 +6756,20 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         ```
 
     - 열거형은 에러를 grouping하고, 연관 값 (associated values)을 통해 오류에 관한 부가 정보를 제공 가능합니다.
+    - 함수 내부에서 오류가 발생할 경우, 함수는 즉시 오류를 자신을 호출한 곳에 던지고 (throw), 함수를 종료시킨다. (오류 발생 여지가 있는 함수는 throws로 명시한다.)
     - 오류를 던질 경우 던져진 오류를 처리하기 위한 코드도 작성해야 합니다. (예를 들어 던져진 오류가 무엇인지 판단하여 다시 문제를 해결한다든지, 다른 방법으로 시도해 본다든지, 사용자에게 오류를 알리고 사용자에게 선택 권한을 넘겨주어 다음 동작의 결정을 유도하는 등의 코드)
-    - 오류 발생 여지가 있는 throws 함수는 `try`를 사용하여 호출합니다. `try`와 `do-catch`, `try?`와 `try!` 등을 알아봅니다.
+    - 오류 발생 여지가 있는 throws 함수는 `try`를 사용하여 호출해야 합니다. `try`와 `do-catch`, `try?`와 `try!` 등을 알아봅니다.
+
+        ```swift
+        do {
+            try 오류 발생 가능한 throws 함수  // 1. 만약 여기서 오류가 발생하여 오류가 throw 되면
+        } catch 오류 패턴 1 {  // 2. 여기서 오류를 catch하여 처리한다.
+            처리
+        } catch 오류 패턴 2 {
+            처리
+        }
+        ```
+
         - [ ]  rethrows
         - [x]  defer
             - defer (Specifying Cleanup Actions) /연기하다/
@@ -6746,10 +6801,9 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
 - 예제 - 자판기 작동 시 발생하는 오류상황을 구현
     - Error 표현
-    - 열거형 VendingMachineError, Error 프로토콜으로 Error를 표현
 
         ```swift
-        enum VendingMachineError: Error {
+        enum VendingMachineError: Error {  // 열거형 VendingMachineError, Error 프로토콜으로 Error를 표현
             case invalidInput
             case insufficientFunds(moneyNeeded: Int)
             case outOfStock
@@ -6774,7 +6828,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 }
                 
                 // 오류가 없으면 정상처리를 합니다
-                self.deposited += money   // *self : machine(class 인스턴스).deposited += money
+                self.deposited += money  
                 print("\(money)원 받음")
             }
             
@@ -6783,7 +6837,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 
                 // 원하는 아이템의 수량이 잘못 입력되었으면 오류를 던집니다
                 guard numberOfItemsToVend > 0 else {
-                    throw VendingMachineError.invalidInput
+                    throw VendingMachineError.invalidInput // 원래는 함수의 반환타입인 String을 반환해야 하는데, 오류가 발생하면 throw 하고 함수를 종료시킴
                 }
                 
                 // 구매하려는 수량보다 미리 넣어둔 돈이 적으면 오류를 던집니다
@@ -6808,7 +6862,6 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 return "\(numberOfItemsToVend)개 제공함"
             }
         }
-
         // 자판기 인스턴스
         let machine: VendingMachine = VendingMachine()
 
@@ -6816,29 +6869,23 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         var result: String?
         ```
 
-        - [x]  self.deposited += money   // 왜 self?
-            - machine(class 인스턴스).deposited += money
-
 - 예제 - do-catch, try
     - do-catch
-        - 오류 발생 여지가 있는 throws 함수는 do-catch 구문을 활용하여 오류 발생에 대비합니다.
+        - 오류 발생 여지가 있는 throws 함수는 do-catch 구문을 활용하여 오류 발생에 대비합니다. (오류 발생의 여지가 있는 throws 함수는 try를 사용하여 호출해야 한다.)
 
             1) 모든 오류 케이스 (3가지 catch)에 대응하는 방식 (정석적인 방법)
 
             ```swift
             do {
-                try machine.receiveMoney(0)  // 해당 부분 (입력한 돈이 0 이하 - invalidInput)에서 오류가 발생하여 오류를 throw 했으면
-            } catch VendingMachineError.invalidInput {  // throw 된 오류를 (오류 case에 맞게) 여기서 catch 하여 실행해줌
+                try machine.receiveMoney(0)  // *해당 부분 (입력한 돈이 0 이하)에서 오류가 발생하여 오류를 throw 했을 경우 (receiveMoney는 throws 함수임)
+            } catch VendingMachineError.invalidInput {  // throw 된 오류를 (오류 패턴에 맞게) 여기서 catch 하여 실행해줌
                 print("입력이 잘못되었습니다")
-            } catch VendingMachineError.insufficientFunds(let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
+            } catch VendingMachineError.insufficientFunds(let moneyNeeded) { 
                 print("\(moneyNeeded)원이 부족합니다")
             } catch VendingMachineError.outOfStock {
                 print("수량이 부족합니다")
-            } 
-            // 입력이 잘못되었습니다 - 출력
+            } // 입력이 잘못되었습니다 - 출력
             ```
-
-            - [ ]  (let moneyNeeded) {  // enum 에서 정의해줬는데 왜 또 쓰지?
 
             2) 하나의 catch 블럭에서 switch 구문을 사용하여 오류를 분류해봅니다. 위 코드와 큰 차이가 없습니다.
             - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
@@ -6846,7 +6893,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             ```swift
             do {
                 try machine.receiveMoney(300)
-            } catch /*(let error)*/ {  // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음
+            } catch /*(let error)*/ {  // (let error를 통해 error 변수를 선언하지 않아도) 암시적 선언을 통해 switch문 내에서 사용 가능
                 
                 switch error {
                 case VendingMachineError.invalidInput:
@@ -6858,13 +6905,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 default:
                     print("알수없는 오류 \(error)")   // enum 에서 정의한 3가지 에러 외에 다른 종류의 error가 발생한 경우
                 }
-            } 
-            // 300원 받음 - 출력
+            } // 300원 받음 - 출력
             ```
-
-            - [x]  } catch /*(let errorA)*/ {  
-            // let error를 통해 error 변수를 선언하지 않아도 자동으로 switch 문 내에서 쓸수 있음 (단, errorA 등 다른 이름을 지정하면 let errorA가 없으면 오류 발생) 왜지 ?
-                - L/G - If a catch clause doesn’t have a pattern, the clause matches any error and binds the error to a local constant named error.
 
             3) 케이스별로 오류처리 할 필요가 없으면 catch 구문 내부를 간략화해도 무방합니다.
 
@@ -6954,7 +6996,6 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
     - 고차 함수 (Higher-order Function) : 다른 함수를 전달인자로 받거나, 실행의 결과를 함수로 반환하는 함수
     - Swift의 함수/closure는 일급 시민 (일급 객체)이기 때문에 함수의 전달인자로 전달할 수 있으며, 함수의 결과값으로 반환할 수 있다.
     - Swift 표준라이브러리의 유용한 고차함수 - map, filter, reduce (Array, Set, Dictionary 등 컨테이너 타입에 구현되어 있음)
-- [ ]  flatmap
 - map
     - Array, Set, Dictionary, Optional 등에서 사용 가능하다. (엄밀히는 Sequence, Collection 프로토콜을 따르는 type 및 Optional에서 사용 가능하다.)
     - 컨테이너 내부의 기존 데이터를 변형(transform)하여 새로운 컨테이너를 생성 및 반환한다.
@@ -7210,12 +7251,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 
         // 방법2 - reduce 메서드 사용
         // 초기값이 0 이고 someNumbers 내부의 모든 값을 더합니다.
-        let sum: Int = someNumbers.reduce(0, { (left: Int, right: Int) -> Int in   // reduce()의 parameter 자리에 초기값, closure가 들어간다!
-         // print("\(first) + \(second)")  
-            return left + right
+        let sum: Int = someNumbers.reduce(0, { (result: Int, currentItem: Int) -> Int in   // reduce()의 parameter 자리에 초기값, closure가 들어간다!
+         // print("\(result) + \(currentItem)")  
+            return result + currentItem
         })
-        //0 + 2   // 해당 결과값이 다음 line의 left 값으로 들어간다! (최초 left는 초기값)
-        //2 + 8   // 해당 결과값이 다음 line의 left 값으로 들어간다!
+        //0 + 2   // 해당 결과값이 다음 line의 left(result) 값으로 들어간다! (최초 left는 초기값)
+        //2 + 8   // 해당 결과값이 다음 line의 left(result) 값으로 들어간다!
         //10 + 15 // 최종 값을 return 한다
         print(sum)  // 25
 
@@ -7285,6 +7326,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 - 특징
     - 코드끼리 상호작용할 때 파일 간 또는 모듈 간에 접근을 제한하는 기능이다. 코드의 상세구현은 숨기고, 허용된 기능만 사용하는 interface를 제공한다.
     - 외부에서 접근하면 안되는 코드가 있을 때, 캡슐화 및 은닉화를 구현한다. (객체지향 프로그래밍에서 중요한 개념)
+        - 은닉화 (Hiding) : 중요 사항이 외부로 드러나지 않게 감추는 것
+        - 캡슐화 (Encapsulation) : 중요 사항을 감춘 상태에서 외부에서 그것을 사용할 수 있는 방법을 제공하고 외부와 소통하는 것
     - Swift는 모듈 및 소스파일을 기반으로 접근제어를 설계한다.
         - 모듈 (Module) : 배포할 코드의 묶음 단위이다. 보통 하나의 프레임워크 또는 라이브러리 또는 애플리케이션이 모듈 단위가 된다. (import 키워드로 불러옴)
         - 소스파일 : 하나의 Swift 소스코드 파일이다.
@@ -7298,11 +7341,11 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                 - open의 Class/Class 멤버는 해당 Class/Class 멤버가 정의된 모듈 외부의 다른 모듈에서도 상속, override 가능하다.
             2. public 공개 - 모듈 외부까지
             - 자신이 구현된 소스파일, 해당 소스파일이 소속된 모듈, 해당 모듈을 import한 모듈 등 모든 곳에서 사용 가능하다.
-            - 주로 프레임워크에서 외부와 연결될 interface 구현에 사용한다. (ex. Bool type 등 Swift의 기본 요소)
+            - 주로 프레임워크에서 외부와 연결될 interface 구현에 사용한다. ??? (ex. Bool type 등 Swift의 기본 요소)
             3. internal 내부 - 모듈 내부
             - 모든 요소에 암묵적으로 지정하는 default 접근수준이다.
             - 소스파일이 소속된 모듈 내부에서 사용 가능하다. 단, 해당 모듈을 import한 외부 모듈에서는 접근 불가하다. (모듈 내부에서 광역적으로 사용할 경우 사용한다.)
-            4. fileprivate 파일외부 비공개 - 파일 내부
+            4. fileprivate 파일외부 비공개 - 파일 내부 
             - 해당 요소가 구현된 소스파일 내부에서만 사용 가능하다.
             - 해당 소스파일 외부에서 값이 변경되거나 함수를 호출하면 부작용이 생길 가능성이 있을 때 사용한다.
             5. private 비공개 - 기능 정의 내부
@@ -7397,9 +7440,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             }
             ```
 
-        - 
     - private / fileprivate
-    - 원래 private은 같은 파일 내부에 있어도 해당 기능 구현 내에서만 접근 가능하다. 
+    - 원래 private은 같은 파일 내부에 있어도 해당 기능 정의 내에서만 접근 가능하다. 
        단, 동일한 type의 Extension에서는 private 요소에 접근 가능하다.
 
         ```swift
@@ -7445,8 +7487,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         ```
 
 - 읽기 전용 구현
-    - 설정자 (Setter)만 더 낮은 접근수준을 갖도록 제한할 수 있다. 접근수준 키워드 뒤에 (set)으로 표현한다.
-    - 구조체, 클래스를 사용하여 저장 프로퍼티를 구현할 때 허용된 접근수준에서 프로퍼티 값을 가져갈 수 있는데, 값 변경이 불가하도록 설정된다.
+    - 설정자 (Setter)만 더 낮은 접근수준을 갖도록 제한할 수 있다. 접근수준 키워드 뒤에 (set)으로 표현한다. (ex. private(set))
+    - 구조체, 클래스를 사용하여 저장 프로퍼티를 구현할 때 허용된 접근수준에서 프로퍼티 값을 가져갈 수 있는데 (읽기 get 가능), 값 변경이 불가하도록 (쓰기 set 불가) 설정된다.
     - 서브스크립트가 읽기 전용으로 제한된다.
     - 프로퍼티, 서브스크립트, 변수 등에 적용 가능하다. 해당 요소보다 같거나 낮은 수준으로 접근수준을 제한할 수 있다.
         - [ ]  서브스크립트? 하고나서 다시
