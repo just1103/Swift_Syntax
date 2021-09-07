@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: September 3, 2021 4:00 AM
+Last Edited Time: September 7, 2021 11:43 AM
 Property: Yagom
 Type: 언어
 
@@ -228,6 +228,7 @@ Type: 언어
 
         print([2,3,4,5,11,3].map{ String($0) }) // ["2", "3", "4", "5", "11", "3"]
         print(["2","3","4","5","11","3"].joined(separator: " ")) // 2 3 4 5 11 3 - Array에 든 String을 풀어서 하나의 String으로 만든다.
+
         ```
 
     - <문자열 다루기> 관련 내용은 아래 참고
@@ -978,7 +979,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
     var var1 = collection1.sorted() // collection에 저장된 element에는 영향이 없다. 변수에 할당해야 사용 가능하다. (Set도 사용 가능-Array를 반환)
 
     collection2.shuffle() // collection에 저장된 element의 순서가 바뀐다. (Set는 사용 불가)
-    var var2 = collection2.shuffled() // collection에 저장된 element에는 영향이 없다. 변수에 할당해야 사용 가능하다.
+    var var2 = collection2.shuffled() // collection에 저장된 element에는 영향이 없다. 변수에 할당 가능하다.
 
     var array1 = [1,2,3,4,5]
     var array2 = array1[0...2] // index range에 해당하는 array의 일부분을 꺼낼 수 있다.
