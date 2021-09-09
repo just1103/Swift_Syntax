@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: September 7, 2021 11:43 AM
+Last Edited Time: September 9, 2021 10:47 AM
 Property: Yagom
 Type: 언어
 
@@ -222,14 +222,27 @@ Type: 언어
     - 자주쓰는 메서드
 
         ```swift
-        // .joined() 
+        // (Collection O, String X).joined() 
         // Returns a new string by concatenating the elements of the sequence, adding the given separator between each element.
         set1.map{ String($0) }.joined(separator: "|") // Collection의 element를 [string]으로 변환한 뒤에 사용할 수도 있다. 3|2|1|4|5
 
         print([2,3,4,5,11,3].map{ String($0) }) // ["2", "3", "4", "5", "11", "3"]
         print(["2","3","4","5","11","3"].joined(separator: " ")) // 2 3 4 5 11 3 - Array에 든 String을 풀어서 하나의 String으로 만든다.
 
+        // (Collection O, String O).split()
+        inputString.split(separator: " ") 
         ```
+
+        - `func joined(separator: String = "") -> String`  // Returns a new string by concatenating the elements of the sequence, adding the given separator between each element.
+        - `func components(separatedByseparator: CharacterSet) -> [String]`
+        - `func split(separator: Self.Element, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = true) -> [Substring]` // Returns the longest possible subsequences of the collection, in order, around elements equal to the given element.
+
+            ```swift
+            let line = "BLANCHE:   I don't want realism. I want magic!"
+            print(line.split(separator: " ")) // Prints "["BLANCHE:", "I", "don\'t", "want", "realism.", "I", "want", "magic!"]"
+            print(line.split(separator: " ", maxSplits: 1)) // Prints "["BLANCHE:", "  I don\'t want realism. I want magic!"]" - 1번만 분리한다.
+            print(line.split(separator: " ", omittingEmptySubsequences: false)) // Prints "["BLANCHE:", "", "", "I", "don\'t", "want", "realism.", "I", "want", "magic!"]" - contains empty strings where spaces were repeated.
+            ```
 
     - <문자열 다루기> 관련 내용은 아래 참고
 
@@ -1552,7 +1565,7 @@ ex. (1+2+3+4) 연산은 우선순위가 같으므로 (((1+2)+3)+4) 순으로 왼
         case ("yagom", 40) where 개체 == "인간": // where문을 통해 조건 추가 가능
             print("정확히 맞췄습니다.")
         case ("yagom", _): // *와일드카드 식별자(_) 사용 가능
-            print("이름만 맞았습니다. 나이는 \(tupleValue.age)입니다.") // 값에 접근 방법-1
+            print("이름만 맞았습니다. 나이는 \(tupleValue.age)입니다.") // 값에 접근 방법-1 (tuple의 element name으로 접근)
         case (let name2, 30): // 값에 접근 방법-2 (let으로 binding 가능)
             print("나이만 맞았습니다. 이름은 \(name2)입니다.")
         case _: // "case _"는 default와 동일
