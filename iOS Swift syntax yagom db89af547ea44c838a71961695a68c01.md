@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: September 9, 2021 10:47 AM
+Last Edited Time: September 10, 2021 9:12 PM
 Property: Yagom
 Type: 언어
 
@@ -8262,6 +8262,5 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
 - 중첩타입(Nested Types)
 - 사용자정의 연산자(Custom Operators)
 - 불명확 타입(Opaque Types)
-- 프로토콜 지향 프로그래밍(Protocol Oriented Programming)
 
 - Contents-2
