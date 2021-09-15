@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: August 29, 2021 1:27 PM
+Last Edited Time: September 15, 2021 11:11 PM
 Property: Official
 
 - Contents
@@ -49,10 +49,6 @@ Note: Double has a precision of at least 15 decimal digits, whereas the precisio
 
 ## Numeric Literals
 
-- [ ]  Literal?
-
-    예를 들어 문자열 리터럴(String Literal)은 "HelloSwift", "ABCDE" 등이 있다. 정수형 리터럴은 123, 41234, 52394, 2147483647 등이 있다.
-
 Integer literals can be written as:
 
 - A *decimal* number, with no prefix
@@ -90,7 +86,9 @@ let justOverOneMillion = 1_000_000.000_000_1
 
 ## Numeric Type Conversion
 
-The range of numbers that can be stored in an integer constant or variable is different for each numeric type. - An Int8 variable can store numbers between -128 and 127 (음수는 -128 ~ -1인 128개 (2^7), 나머지는 (0 및 양수) 0 ~ 127인 128개 (2^7)) → 총 256개 (2^8) 즉, 8비트 중에서 1비트는 부호 표현을 위해 사용되고, 남은 7비트로 숫자를 표현
+The range of numbers that can be stored in an integer constant or variable is different for each numeric type. 
+
+- An Int8 variable can store numbers between -128 and 127 (음수는 -128 ~ -1인 128개 (2^7), 나머지는 (0 및 양수) 0 ~ 127인 128개 (2^7)) → 총 256개 (2^8) 즉, 8비트 중에서 1비트는 부호 표현을 위해 사용되고, 남은 7비트로 숫자를 표현
 - Whereas a UInt8 variable can store numbers between 0 and 255 (256개 (2^8)).
 
 Because each numeric type can store a different range of values, you must opt in to numeric type conversion on a case-by-case basis. This opt-in approach prevents hidden conversion errors and helps make type conversion intentions explicit in your code.
@@ -128,9 +126,6 @@ You can’t pass in any type here, however—it has to be a type for which UInt1
     let integerPi = Int(pi) // Floating-point values are always truncated when used to initialize a new integer value in this way. This means that 3.14159 becomes 3.
     // integerPi equals 3, and is inferred to be of type Int
     ```
-
-    Note: The rules for combining numeric constants and variables are different from the rules for numeric literals. The literal value 3 can be added directly to the literal value 0.14159, because number literals don’t have an explicit type in and of themselves. (숫자 리터럴 자체에는 명시적 형식이 없으므로) ???
-    Their type is inferred only at the point that they’re evaluated by the compiler. (컴파일러에 의해 평가되는 시점에서만 type 추론이 가능하다.) 
 
 ## Tuple
 
@@ -615,6 +610,10 @@ str.prefix(100) // "Hello! Swift" - parameter가 maxLength이므로 String lengt
 let index = str.index(str.startIndex, offsetBy: 5) // 첫번째 문자의 위치에서 +5칸 뒤의 index를 상수에 할당한다. (문자 !의 위치)
 str.prefix(through: index) // "Hello!" - 서브스크립트 문법의 str[...index]와 동일하다.
 str.prefix(upTo: index)    // "Hello", not include index specified (!) - str[..<index]와 동일하다.
+
+// Type 확인
+print(type(of: str.prefix(through: index))) // Substring
+print(type(of: str.prefix(upTo: index))) // Substring
 ```
 
 ```swift
@@ -647,7 +646,7 @@ let newString = String(beginning)
         ```
 
 성능 최적화로서 Substring can reuse part of the memory that’s used to store the original string, or part of the memory that’s used to store another substring. 
-(Substring은 original String을 저장하는 메모리의 일부를 재사용하거나, 또는 다른 Substring을 저장하는 메모리의 일부를 재사용한다.
+(Substring은 original String을 저장하는 메모리의 일부를 재사용하거나, 또는 다른 Substring을 저장하는 메모리의 일부를 재사용한다.)
 이러한 성능 최적화를 통해 (String 또는 Substring을 수정하기 전에는) 메모리를 복사해도 성능이 저하되지 않는다. Substring을 사용하는 동안에는 전체 original String이 메모리에 들어있어야 한다.
 
 - 메모리 구조
@@ -663,7 +662,7 @@ var beginning = greeting[..<index] // Hello - Substring 생성 (original String�
 
 // original String의 값을 변경함
 greeting = "12345, 789"
-print(beginning) // Hello -> 왜 12345로 안바뀌지? 변경된 String 값을 다른 메모리 공간에 저장했나?
+print(beginning) // Hello -> 왜 12345로 안바뀌지? 변경된 이후에는 변경된 String 값을 다른 메모리 공간에 저장했나?
 ```
 
 Note: Both String and Substring conform to the StringProtocol protocol, which means it’s often convenient for string-manipulation functions to accept a StringProtocol value. You can call such functions with either a String value or Substring value.
@@ -2582,6 +2581,8 @@ moveNearerToZero가 상수이지만 함수 stepForward의 참조를 할당했으
 
 ***그렇다면, 상수 moveNearerToZero를 초기화할 때, 그 "초기화하는 시점"에서 할당한 함수의 참조를 계속해서 저장하고 있는건가? 변수 currentValue의 값에 상관 없이?
 
+# 7. Closure -
+
 # 8. Enumerations -
 
 # 9. Structures and Classes (90%)
@@ -2815,11 +2816,31 @@ Note that tenEighty and alsoTenEighty are declared as constants, rather than var
 
 # 11. Methods -
 
+# 12. Subscripts -
+
+# 13. Inheritance -
+
 # 14. Initialization -
 
 # 15. Deinitialization -
 
 # 16. Optional Chaining -
+
+# 17. Error Handling
+
+# 18. Concurrency
+
+# 19. Type Casting
+
+# 20. Nested Types
+
+# 21. Extensions
+
+# 22. Protocols
+
+# 23. Generics
+
+# 24. Opaque types
 
 # 25. Automatic Reference Counting -
 
@@ -2849,6 +2870,8 @@ Resolving Strong Reference Cycles for Closures
 ---
 
 # 🦜 Language Reference
+
+# 1. Lexical Structure
 
 # 2. Types -
 
@@ -2998,6 +3021,14 @@ Resolving Strong Reference Cycles for Closures
         Inside a nested type declaration, the Self type refers to the type introduced by the innermost type declaration.
 
         The Self type refers to the same type as the type(of:) function in the Swift standard library. Writing Self.someStaticMember to access a member of the current type is the same as writing type(of: self).someStaticMember. ??????????
+
+# 3. Expressions
+
+# 4. Statements
+
+# 5.Declarations
+
+# 6. Attributes
 
 # 7. Patterns (90%)
 
@@ -3242,6 +3273,7 @@ Swift에는 2가지 기본 패턴이 있다.
 
     An expression pattern represents the value of an expression. (수식의 값을 나타낸다.) switch문의 case label에서만 사용한다.
     *expression (수식, evaluate를 통해 값으로 환원됨)
+    *statement (구문, 실행가능한 독립적인 코드 조각, statement은 expression을 포함할 수 있음)
 
     expression pattern을 통해 나타낸 expression은 Swift 표준 라이브러리의 `~=` operator를 사용하여 input expression의 값과 비교된다. ??? 
     ~= operator가 true를 반환하면, match에 성공한다. Default로 ~= operator는 == operator를 사용하여 동일한 type의 2개 값을 비교한다. 
@@ -3278,6 +3310,10 @@ Swift에는 2가지 기본 패턴이 있다.
         print("The point is at (\(point.0), \(point.1)).")  // Prints "The point is at (1, 2)."
     }
     ```
+
+# 8. Generic Parameters and Arguments
+
+# 9. Summary Of the Grammar
 
 ---
 
