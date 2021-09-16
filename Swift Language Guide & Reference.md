@@ -2,14 +2,18 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: September 16, 2021 9:56 PM
+Last Edited Time: September 17, 2021 5:50 AM
 Property: Official
 
 - Contents
 
 # 🦜 Language Guide
 
-# 1. The Basics (70%)
+# 1. The Basics (90%)
+
+자세한 내용은 블로그에서 확인해주세요.
+
+[https://applecider2020.tistory.com/9](https://applecider2020.tistory.com/9)
 
 ## Integers
 
@@ -188,19 +192,9 @@ let http404Error = (404, "Not Found") // http404Error is of type (Int, String). 
 You use optionals in situations where a value may be absent. 
 An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
 
-Note: 
+## Error Handling
 
-- nil
-- If Statements and Forced Unwrapping
-- Optional Binding
-- Implicitly Unwrapped Optionals
-
-## Error Handling -
-
-## Assertions and Preconditions -
-
-- Debugging with Assertions
-- Enforcing Preconditions
+## Assertions and Preconditions
 
 # 2. Basic Operators -
 
