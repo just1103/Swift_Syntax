@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: September 15, 2021 11:11 PM
+Last Edited Time: September 16, 2021 9:56 PM
 Property: Official
 
 - Contents
@@ -133,8 +133,6 @@ Tuples group multiple values into a single compound value. The values within a t
 
 You can create tuples from any permutation (순열) of types. (Int, Int, Int), or (String, Bool)...
 
-Tuples are useful as the return values of functions.
-
 ```swift
 // a tuple that describes an HTTP status code. (HTTP status code : a special value returned by a web server whenever you request a web page.) - A status code of 404 Not Found is returned if you request a webpage that doesn’t exist.
 let http404Error = (404, "Not Found") // http404Error is of type (Int, String). a tuple of type (Int, String)
@@ -142,7 +140,7 @@ let http404Error = (404, "Not Found") // http404Error is of type (Int, String). 
 
 - Tuple 분해 및 접근
 
-    You can decompose a tuple’s contents into separate constants/variables, which you then access as usual: (Tuple의 콘텐츠를 분해 가능하다.)
+    You can decompose a tuple’s contents into separate constants/variables, which you then access as usual:
 
     ```swift
     // 분해 및 접근-1. 변수/상수이름 지정
@@ -185,7 +183,7 @@ let http404Error = (404, "Not Found") // http404Error is of type (Int, String). 
     typealias CoordinateTuple = (x: Int, y: Int)
     ```
 
-## Optionals -
+## Optionals
 
 You use optionals in situations where a value may be absent. 
 An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
