@@ -2,7 +2,7 @@
 
 Created: January 24, 2021 1:43 PM
 Created By: 손효주
-Last Edited Time: September 10, 2021 9:12 PM
+Last Edited Time: September 19, 2021 9:53 PM
 Property: Yagom
 Type: 언어
 
@@ -105,7 +105,7 @@ Type: 언어
         var variable1: String = "변경 가능"
 
         variable1 = "변경"
-        constant1 = "변경"  // 상수는 다른 값 할당이 불가하므로 오류 발생
+        //constant1 = "변경"  // 상수는 다른 값 할당이 불가하므로 오류 발생
 
         -
         var x = 0.0, y = 0.0, z = 0.0   // You can declare multiple constants or multiple variables on a single line, separated by commas
@@ -117,17 +117,15 @@ Type: 언어
         let sum: Int
         sum = 10
 
-        *참고
-        let sum: Int
-        // print(sum)
-        값 할당 전에 print 하면 오류 발생
-        - initialize 전에 사용했다는 오류창이 뜸
+        // 참고
+        let sumError: Int
+        // print(sum) // 값 할당 전에 사용하면 컴파일 에러 발생 - initialize 전에 사용했다는 오류 메세지가 뜸 (Constant 'sum' used before being initialized)
         ```
 
     - [x]  전역 변수, 지역 변수
         - 유효범위에 따라 구분
-            - 전역변수 (메모리 global에 저장) : 함수 외부에서 선언된 변수로, 프로그램 전체에서 접근할 수 있는 변수입니다.
-            - 지역변수 (메모리 stack에 저장) : 함수 내부에서 선언된 변수로, 함수가 실행되면 만들어지고 함수가 종료되면 소멸하는 변수입니다. 함수 외부에서는 접근할 수 없습니다
+            - 전역변수, global variable (메모리의 global 영역에 저장) : 클래스/구조체/열거형 등의 타입이나 클로저/함수 "외부"에서 선언된 변수로, 프로그램 전체에서 접근할 수 있는 변수이다.
+            - 지역변수, local variable (메모리의 stack 영역에 저장) : 클래스/구조체/열거형 등의 타입이나 클로저/함수 "내부"에서 선언된 변수로, 만약 함수 내부에서 선언된 경우 함수가 실행될 때 메모리에 만들어지고 함수가 종료될 때 메모리에서 소멸되는 변수이다. 함수 외부에서 접근 불가하다.
 
 # 3. Data Type
 
@@ -164,7 +162,6 @@ Type: 언어
         var someUInt: UInt = 100
         // Unsigned Integer (부호가 없는 정수. 즉 양의 정수 또는 0) 
         // *signed (positive, zero, or negative) or unsigned (positive or zero)
-        var red, green, blue: UInt  // define multiple related variables of the same type on a single line, separated by commas, with a single type annotation after the final variable name
 
         *Floating-point numbers are numbers with a fractional component. Swift provides two signed floating-point number types: Float, Double
         // Float (32 Bit 부동소수형)
@@ -5853,6 +5850,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         ```
 
     - cf) type conversion (형 변환)은 타입 캐스팅이 아니라 새로운 인스턴스를 생성하는 것이다.
+        - [ ]  왜 인스턴스라고 하지???????? 🤯🤯🤯
 
         ```swift
         let someInt: Int = 2
@@ -6012,6 +6010,307 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
     doSomething(someone: jenny) // 등교를 합니다
     doSomething(someone: yagom) // 숨을 쉽니다
     ```
+
+- Yagom Textbook
+    - Type Casting (타입 캐스팅)
+        - 1) 인스턴스의 타입을 확인하거나, 2) 자신을 다른 타입의 인스턴스인 양 행세할 수 있는 방법으로 사용한다.
+        - 데이터 타입을 확인하는 방법
+            1. is 연산자를 통해 인스턴스가 어떤 클래스의 인스턴스 인지 (또는 어떤 클래스의 자식클래스의 인스턴스인지) 타입을 확인한다. (is 연산자는 클래스 인스턴스 뿐만 아니라 모든 데이터 타입에 사용 가능하다.)
+            2. 메타 타입 (Meta Type) 타입을 이용한다.
+                - 메타 타입 설명
+
+                    ```swift
+                    // 타입이름.Type -> 메타 타입
+                    // 타입이름.self -> 타입을 값으로 표현한 값을 반환함
+
+                    let intType: Int.Type = Int.self
+                    print(intType)  // Int
+                    print(Int.self) // Int
+                    //print(Int.Type) // 컴파일 에러 - Expected member name or constructor call after type name
+                    print(Int.Type.self) // Int.Type
+
+                    let intType2 = Int.self // 참고
+                    print(intType2) // Int
+                    print(type(of: intType2)) // Int.Type
+
+                    class SomeClass {}
+                    let classType: SomeClass.Type = SomeClass.self
+
+                    print(classType) // SomeClass
+                    print(SomeClass.self) // SomeClass
+                    //print(SomeClass.Type) // 컴파일 에러
+                    print(SomeClass.Type.self) // SomeClass.Type
+
+                    var someType: Any.Type
+                    //print(someType) // 초기화 되지 않은 상태이므로 사용 불가
+                    someType = intType
+                    print(someType) // Int
+
+                    someType = classType
+                    print(someType) // SomeClass
+                    ```
+
+        - 타입 캐스팅은 참조 타입에서 주로 사용한다.
+            - 예시 - Coffee 클래스를 상속받는 Latte 클래스 및 Americano 클래스가 있을 때, Coffee는 Latte나 Americano인 척할 수 없지만, Latte나 Americano는 Coffee인 척할 수 없다.
+
+                ```swift
+                // Coffee 클래스를 상속받는 Latte 클래스 및 Americano 클래스
+                class Coffee {
+                    let name: String
+                    let shot: Int
+                    
+                    var description: String {
+                        return "\(shot) shot(s) \(name)"
+                    }
+                    
+                    init(shot: Int) {
+                        self.shot = shot
+                        self.name = "coffee"
+                    }
+                }
+                class Latte: Coffee {
+                    var flavor: String
+                    
+                    override var description: String {
+                        return "\(shot) shot(s) \(flavor) latte"
+                    }
+                    
+                    init(flavor: String, shot: Int) {
+                        self.flavor = flavor
+                        super.init(shot: shot)
+                    }
+                }
+                class Americano: Coffee {
+                    let iced: Bool
+                    
+                    override var description: String {
+                        return "\(shot) shot(s) \(iced ? "iced" : "hot") americano"
+                    }
+                    
+                    init(shot: Int, iced: Bool) {
+                        self.iced = iced
+                        super.init(shot: shot)
+                    }
+                }
+
+                let myCoffee: Coffee = Coffee(shot: 1)
+                print(myCoffee.description) // 1 shot(s) coffee
+
+                let myAmericano: Americano = Americano(shot: 2, iced: false)
+                print(myAmericano.description) // 2 shot(s) hot americano
+
+                let myLatte: Latte = Latte(flavor: "green tea", shot: 3)
+                print(myLatte.description) // 3 shot(s) green tea latte
+
+                // is 연산자를 통해 타입 확인
+                print(myCoffee is Coffee)         // true
+                print(myCoffee is Americano)      // false
+                print(myCoffee is Latte)          // false
+
+                print(myAmericano is Coffee)    // true - Americano 클래스는 Coffee 클래스의 자식클래스이므로 true
+                print(myAmericano is Americano) // true
+                print(myAmericano is Latte)     // false
+
+                print(myLatte is Coffee)        // true - Latte 클래스는 Coffee 클래스의 자식클래스이므로 true
+                print(myLatte is Americano)     // false
+                print(myLatte is Latte)         // true
+
+                // 메타 타입 타입을 통해 타입 확인
+                print(type(of: myCoffee) == Coffee.self)         // true
+                print(type(of: myCoffee) == Americano.self)      // false
+                print(type(of: myCoffee) == Latte.self)          // false
+
+                print(type(of: myAmericano) == Coffee.self)     // false - is 연산자와 달리 자식클래스이지만 false
+                print(type(of: myAmericano) == Americano.self)  // true
+                print(type(of: myAmericano) == Latte.self)      // false
+
+                print(type(of: myLatte) == Coffee.self)         // false - is 연산자와 달리 자식클래스이지만 false
+                print(type(of: myLatte) == Americano.self)      // false
+                print(type(of: myLatte) == Latte.self)          // true
+                ```
+
+    - 다운캐스팅 (Down Casting)
+        - 어떤 클래스 타입의 상수/변수가 있을 때, 실제로는 해당 클래스 인스턴스를 참조하지 않을 수 있다. 
+        예를 들어 Latte 클래스의 인스턴스가 Coffee 클래스의 인스턴스인양 Coffee 행세를 할 수도 있다.
+            - [ ]  print(type(of: actingConstant) === actingConstant.self) // false - 왜지???????
+            - [ ]  Coffee 인스턴스를 참조하도록 선언했지만, 실제로는 Coffee 타입인 척하는 Lattee 타입의 인스턴스를 참조하고 있다 - 왜 이게 가능하도록 만들었지????
+
+            ```swift
+            let actingConstant: Coffee = Latte(flavor: "vanilla", shot: 2) // Coffee 인스턴스를 참조하도록 선언했지만, 실제로는 Coffee 타입인 척하는 Lattee 타입의 인스턴스를 참조하고 있다
+            print(actingConstant.description) // 2 shot(s) vanilla latte
+
+            print(actingConstant is Coffee) // true
+            print(actingConstant is Latte)  // true
+
+            print(type(of: actingConstant)) // Latte
+            print(actingConstant.self)      // test.Latte (이때 test는 실행중인 command 프로젝트 이름)
+
+            //print(type(of: actingConstant) == actingConstant.self) // 컴파일 에러 - Binary operator '==' cannot be applied to operands of type 'Coffee.Type' and 'Coffee'
+            print(type(of: actingConstant) === actingConstant.self) // false - 왜지???????
+            //print(actingConstant.Type) // 컴파일 에러 - Value of type 'Coffee' has no member 'Type'
+            ```
+
+        - Coffee 인스턴스를 참조하도록 선언했지만, 실제로는 Coffee 타입인 척하는 Lattee 타입의 인스턴스를 참조하고 있다.
+        이러한 상황에서 actingConstant가 참조하는 인스턴스를 진짜 타입인 Latte 타입으로 사용해야 할 때가 있다.
+        예를 들면 Latte 타입에 정의된 메서드/프로퍼티를 사용해야 할 때이다. 이때는 Latte 타입으로 변수의 타입을 변환해줘야 한다. 이것을 다운캐스팅 (Down Casting) 이라고 한다.
+        클래스 상속 모식도에서 부모클래스의 타입 (위)을 자식클래스의 타입 (아래)으로 캐스팅한다고 해서 다운캐스팅이라고 부른다.
+        단, 클래스 인스턴스 뿐만 아니라 Any 타입 등에서도 다운캐스팅을 사용한다.
+        - 타입캐스트 연산자는 `as?` 그리고 `as!` 가 있다. 
+        다운캐스팅은 실패의 여지가 있으므로 ? / ! 두 종류가 있는 것이다.
+
+            as? : 다운캐스팅 실패 시 nil을 반환한다. 성공 시 옵셔널 타입으로 인스턴스를 반환한다. (반환 타입이 옵셔널임)
+            as! : 다운캐스팅을 강제하므로 다운캐스팅 실패 시 런타임 오류가 발생한다. 성공 시 옵셔널이 아닌 인스턴스를 반환한다. (반환 타입이 옵셔널이 아님)
+
+        - 타입캐스팅은 실제로 인스턴스를 수정하는 작업이 아니다. 인스턴스는 메모리에 똑같이 남아있다. 단, 인스턴스 사용 시 어떤 타입으로 다루고/접근할지 판단하도록 컴파일러에게 힌트를 주는 것이다.
+            - [x]  동일한 타입으로 캐스팅하는 것도 다운캐스팅에 속하는건가?
+                - 속한다. 항상 성공하는 다운캐스팅이다. 컴파일러도 알고 있다. (경고 메시지 - Conditional cast from 'Coffee' to 'Coffee' always succeeds)
+
+            ```swift
+            // as?
+            let actingConstant2: Coffee = Latte(flavor: "vanilla", shot: 2) // Coffee 인스턴스를 참조하도록 선언했지만, 실제로는 Coffee 타입인 척하는 Lattee 타입의 인스턴스를 참조하고 있다
+
+            if let actingOne2: Latte = actingConstant2 as? Latte {
+                print("\(actingConstant2) - This looks like Coffee, but actually this is Latte") // Coffee (부모)에서 Latte (자식)으로 캐스팅한 다운캐스팅 성공!
+            } else {
+                print(actingConstant2.description)
+            } // test.Latte - This looks like Coffee, but actually this is Latte
+
+            // 이것들도 다운캐스팅인가?????
+            if let actingOne: Coffee = myCoffee as? Coffee { // myCoffee가 실제 참조하는 게 Coffee 타입의 인스턴스라면 상수 actingOne에 할당한다.
+                print("This is just Coffee") // 항상 성공하는 다운캐스팅이다. (동일한 타입으로 캐스팅하는 것도 다운캐스팅에 속하긴 한다.) - Conditional cast from 'Coffee' to 'Coffee' always succeeds
+            } else {
+                print(myCoffee.description)
+            } // This is just Coffee
+
+            if let actingOne: Latte = myCoffee as? Latte { // myCoffee가 실제 참조하는 게 Latte 타입의 인스턴스라면 상수 actingOne에 할당한다.
+                print("This is Latte")
+            } else {
+                print(myCoffee.description) // *다운캐스팅 실패 - Latte는 Coffee인 척 할수있지만, 그 반대는 불가하므로 else문이 실행된다. 
+            } // 1 shot(s) coffee
+
+            if let actingOne: Latte = myLatte as? Latte { // myLatte가 실제 참조하는 게 Latte 타입의 인스턴스라면 상수 actingOne에 할당한다.
+                print("This is Latte") // 다운캐스팅 성공
+            } else {
+                print(myLatte.description)
+            } // This is Latte
+
+            if let actingOne: Coffee = myLatte as? Coffee { // myLatte가 실제 참조하는 게 Coffee 타입의 인스턴스라면 상수 actingOne에 할당한다.
+                print("This is just Coffee") // 다운캐스팅 성공 - Latte는 Coffee인 척 할 수 있으므로
+            } else {
+                print(myLatte.description)
+            }
+
+            // as!
+            let castedCoffee: Coffee = myLatte as! Coffee // 강제 다운캐스팅 성공
+            //let castedLatte: Latte = myCoffee as! Latte // 강제 다운캐스팅 실패로 런타임 오류 발생 - Could not cast value of type 'test.Coffee' (0x10000c4c0) to 'test.Latte'
+            ```
+
+    - Any / AnyObject의 타입캐스팅
+        - Swift 표준 라이브러리에는 거의 없지만, 기업이 만들어 제공하는 프레임워크의 API에는 Any / AnyObject가 사용된 것을 종종 볼 수 있다.
+        어떤 타입의 데이터라도 전달 가능하다라는 의미로 해석할 수 있다.
+        문제는 반환 타입이 Any / AnyObject라면 전달받은 데이터가 어떤 타입인지 확인하고 사용해야 한다는 것이다. (Swift는 암시적 타입 변환을 허용하지 않기 때문)
+        - AnyObject의 타입 확인 및 타입캐스팅
+
+            AnyObject는 클래스 인스턴스를 수용할 수 있다.
+
+            ```swift
+            func checkType(of item: AnyObject) { // AnyObject의 타입 확인
+                if item is Latte {
+                    print("item is Latte")
+                } else if item is Americano {
+                    print("item is Americano")
+                } else if item is Coffee {
+                    print("item is Coffee")
+                } else {
+                    print("Unknwon Type")
+                }
+            }
+            checkType(of: myCoffee) // item is Coffee
+            checkType(of: myLatte)  // item is Latte
+            checkType(of: actingConstant) // item is Latte - if문에서 "is Coffee"를 먼저 만났다면, "item is Coffee"를 출력
+
+            func castTypeToAppropriate(item: AnyObject) { // AnyObject의 타입캐스팅
+                if let castedItem: Latte = item as? Latte {
+                    print(castedItem.description)
+                } else if let castedItem: Americano = item as? Americano {
+                    print(castedItem.description)
+                } else if let castedItem: Coffee = item as? Coffee {
+                    print(castedItem.description)
+                } else {
+                    print("Unknwon Type")
+                }
+            }
+            castTypeToAppropriate(item: myCoffee) // 1 shot(s) coffee
+            castTypeToAppropriate(item: myLatte)  // 3 shot(s) green tea latte
+            castTypeToAppropriate(item: myAmericano) // 2 shot(s) hot americano
+            castTypeToAppropriate(item: actingConstant) // 2 shot(s) vanilla latte
+            ```
+
+        - Any의 타입캐스팅
+
+            Any는 모든 타입의 인스턴스를 수용할 수 있다. (함수/구조체/클래스/열거형 등 모든 타입의 인스턴스를 의미할 수 있다.)
+
+            - [ ]  함수/클로저가 왜 인스턴스가 있지????????????????????
+
+            ```swift
+            func checkAnyType(of item: Any) {
+                switch item {
+                case 0 as Int:
+                    print("Zero as an Int")
+                case 0 as Double:
+                    print("Zero as an Double")
+                case let someInt as Int:
+                    print("an Int value of \(someInt)")
+                case let someDouble as Double where someDouble > 0:
+                    print("a positive Double value of \(someDouble)")
+                case is Double:  // 바로 윗 case에 해당하지 않는 Double이 들어온다.
+                    print("Some other double value that I don't want to print")
+                case let someString as String:
+                    print("a String value of \"\(someString)\"")
+                case let (x, y) as (Double, Double):
+                    print("an (x, y) point at \(x), \(y)")
+                case let someLatte as Latte:
+                    print(someLatte.description)
+                case let stringConverter as (String) -> String:  // (String) -> String는 일급객체인 함수 타입이다. 클로저가 전달될 수 있다.
+                    print(stringConverter("yagom"))
+                default:
+                    print("something else: \(type(of: item))")
+                }
+            }
+            checkAnyType(of: 0)           // Zero as an Int
+            checkAnyType(of: 0.0)         // Zero as an Double
+            checkAnyType(of: 42)          // an Int value of 42
+            checkAnyType(of: 3.14)        // a positive Double value of 3.14
+            checkAnyType(of: -0.5)        // Some other double value that I don't want to print
+            checkAnyType(of: "Hello")     // a String value of "Hello"
+            checkAnyType(of: (3.0, 5.0))  // an (x, y) point at 3.0, 5.0
+            checkAnyType(of: myLatte)     // 3 shot(s) green tea latte
+            checkAnyType(of: myCoffee)    // something else: Coffee
+            checkAnyType(of: { (name: String) -> String in
+                return "Hello, \(name)!!!"
+            })                            // Hello, yagom!!!
+            // 어차피 switch문에서 타입을 명시했으므로 생략 가능...하지 않다. 컴파일 에러 - Unable to infer type of a closure parameter 'name' in the current context
+            //checkAnyType(of: { (name) in
+            //    return "Hello, \(name)!!!"
+            //})
+            ```
+
+    - 옵셔널 및 Any
+
+        Any 타입은 옵셔널 타입을 포함하여 ??????? 모든 값 타입을 표현한다. 단, Any 타입의 값이 들어올 자리에 옵셔널 값이 들어오면, 컴파일러는 경고를 한다.
+        이때 as 연산자로 명시적 타입캐스팅을 하면, 경고 메세지가 사라진다.
+
+        - [ ]  Any 타입 상수에 nil 할당 가능이 불가능 <=> 타입은 옵셔널 타입을 포함하여 모든 값 타입을 표현한다. - 다른 얘긴가 왜지???????
+
+        ```swift
+        let optionalValue: Int? = 100
+        print(optionalValue) // Optional(100). 경고 메세지 - Expression implicitly coerced from 'Int?' to 'Any' - 기본값을 지정하거나 강제 추출하라고 권함
+        print(optionalValue as Any) // Optional(100). 경고 메세지 없음 (as 연산자로 명시적 타입캐스팅을 했음)
+        //print(optionalValue as Int) // 컴파일 에러 발생 - Value of optional type 'Int?' must be unwrapped to a value of type 'Int' - 병합연산자 ??를 사용하거나, 강제 추출하라고 권함
+
+        //let someAny: Any = nil // 컴파일 에러 - nil은 옵셔널에만 할당 가능하다.
+        // Any 타입 상수에 nil 할당 가능이 불가능 <=> 타입은 옵셔널 타입을 포함하여 모든 값 타입을 표현한다. - 다른 얘긴가 왜지???????
+        ```
 
 # 18. assert / guard
 
@@ -6196,9 +6495,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         - get은 '읽기가 가능해야 한다'는 뜻이며 (읽기 전용 또는 읽기쓰기 모두 가능), get과 set을 모두 명시하면 '읽기쓰기 모두 가능'한 프로퍼티여야 합니다.
         - 타입 프로퍼티는 static 키워드로 선언합니다.
     - 메서드 - 필수 메소드 지정시 함수명과 반환값을 지정할 수 있다. parameter는 명시할 수 없다.
-        - mutating 키워드를 사용해 인스턴스에서 변경 가능하다는 것을 표시할 수 있습니다. (이 mutating 키워드는 값타입 형에만 사용합니다. → 클래스는 불가하다는 뜻???)
-            - [ ]  mutating 없는 경우랑 뭐가 다르지?
-            - [ ]  toggle() 함수가 인스턴스를 modify 한다는 게 무슨 뜻이지?
+        - mutating 키워드를 사용해 인스턴스에서 변경 가능하다는 것을 표시할 수 있습니다. 
+        (이 mutating 키워드는 값타입 형에만 사용합니다. → 클래스는 불가함)
 
             ```swift
             protocol Togglable {
@@ -6265,8 +6563,6 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
     protocol 프로토콜 이름 {
         /* statements */
     }
-
-    -
 
     protocol Talkable {  // talk 기능을 구현하기 위한 프로토콜을 생성하겠다. 이를 위해 프로퍼티, 메서드, 이니셜라이즈를 요구 사항으로 정의하겠다.
         
