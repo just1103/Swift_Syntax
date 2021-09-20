@@ -2,7 +2,7 @@
 
 Created: August 8, 2021 3:14 PM
 Created By: 손효주
-Last Edited Time: September 17, 2021 5:50 AM
+Last Edited Time: September 21, 2021 2:01 AM
 Property: Official
 
 - Contents
@@ -196,9 +196,7 @@ An optional represents two possibilities: Either there is a value, and you can u
 
 ## Assertions and Preconditions
 
-# 2. Basic Operators -
-
-## Nil-Coalescing Operator -
+# 2. Basic Operators (100%, 블로그)
 
 # 3. Strings and Characters (90%)
 
