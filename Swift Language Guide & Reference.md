@@ -1,8 +1,7 @@
 # Swift Language Guide & Reference
 
 Created: August 8, 2021 3:14 PM
-Created By: 손효주
-Last Edited Time: September 21, 2021 2:01 AM
+Last Edited Time: September 23, 2021 5:04 AM
 Property: Official
 
 - Contents
@@ -14,79 +13,6 @@ Property: Official
 자세한 내용은 블로그에서 확인해주세요.
 
 [https://applecider2020.tistory.com/9](https://applecider2020.tistory.com/9)
-
-## Integers
-
-Integers are whole numbers with no fractional component, such as 42 and -23. Integers are either signed (positive, zero, or negative) or unsigned (positive or zero).
-
-Swift provides signed and unsigned integers in 8, 16, 32, and 64 bit forms. 
-These integers follow a naming convention similar to C (~라는 점에서 C와 유사한 명명 규칙을 따른다.), in that an 8-bit unsigned integer is of type `UInt8`, and a 32-bit signed integer is of type `Int32`.
-
-- Integer Bounds
-
-    You can access the minimum/maximum values of each integer type with its min/max properties:
-
-    ```swift
-    let minValue = UInt8.min  // minValue is equal to 0, and is of type UInt8
-    let maxValue = UInt8.max  // maxValue is equal to 255, and is of type UInt8
-    ```
-
-- Int
-
-    In most cases, you don’t need to pick a specific size of integer to use in your code. Swift provides an additional integer type, `Int`, which has the same size as the current platform’s native word size (CPU architecture 32-bit/64-bit):
-
-    - On a 32-bit platform, `Int` is the same size as `Int32`.
-    - On a 64-bit platform, `Int` is the same size as `Int64`.
-
-    Even on 32-bit platforms, Int can store any value between -2,147,483,648 and 2,147,483,647, and is large enough for many integer ranges.
-
-## Floating-Point Numbers
-
-Floating-point numbers are numbers with a fractional component, such as 3.14159, 0.1, and -273.15.
-
-Swift provides two signed floating-point number types:
-
-- `Double` represents a 64-bit floating-point number.
-- `Float` represents a 32-bit floating-point number.
-
-Note: Double has a precision of at least 15 decimal digits, whereas the precision of Float can be as little as 6 decimal digits. The appropriate floating-point type to use depends on the nature and range of values you need to work with in your code. In situations where either type would be appropriate, Double is preferred.
-
-## Numeric Literals
-
-Integer literals can be written as:
-
-- A *decimal* number, with no prefix
-- A *binary* number, with a `0b` prefix
-- An *octal* number, with a `0o` prefix
-- A *hexadecimal* number, with a `0x` prefix
-
-Decimal floats can also have an optional exponent (지수가 있거나 없음), indicated by an uppercase/lowercase e; 
-hexadecimal floats must have an exponent, indicated by an uppercase/lowercase p.
-
-For decimal numbers with an exponent of `exp`, the base number is multiplied by 10^exp:
-
-- `1.25e2` means 1.25 x 10^2, or `125.0`.
-- `1.25e-2` means 1.25 x 10^(-2), or `0.0125`.
-
-For hexadecimal numbers with an exponent of `exp`, the base number is multiplied by 2^exp:
-
-- `0xFp2` means 15 x 2^2, or `60.0`.
-- `0xFp-2` means 15 x 2^(-2), or `3.75`.
-
-```swift
-// All of these floating-point literals have a decimal value of 12.1875:
-let decimalDouble = 12.1875
-let exponentDouble = 1.21875e1
-```
-
-Numeric literals can contain extra formatting to make them easier to read. 
-Both integers and floats can be padded with extra zeros (0을 추가로 채움) and can contain underscores to help with readability. Neither type of formatting affects the underlying value of the literal (리터럴의 기본 값에 영향을 미치지 않는다.):
-
-```swift
-let paddedDouble = 000123.456
-let oneMillion = 1_000_000
-let justOverOneMillion = 1_000_000.000_000_1
-```
 
 ## Numeric Type Conversion
 
@@ -115,92 +41,19 @@ You can’t pass in any type here, however—it has to be a type for which UInt1
 
     ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled.png)
 
-- Integer and Floating-Point Conversion
+블로그에 정리함
 
-    Conversions between integer and floating-point numeric types must be made explicit:
+# 2. Basic Operators (100%)
 
-    ```swift
-    // Int -> Double
-    let three = 3
-    let pointOneFourOneFiveNine = 0.14159
-    let pi = Double(three) + pointOneFourOneFiveNine // create a new value of type Double
-    // pi equals 3.14159, and is inferred to be of type Double
+자세한 내용은 블로그에서 확인해주세요.
 
-    // Double -> Int
-    let integerPi = Int(pi) // Floating-point values are always truncated when used to initialize a new integer value in this way. This means that 3.14159 becomes 3.
-    // integerPi equals 3, and is inferred to be of type Int
-    ```
-
-## Tuple
-
-Tuples group multiple values into a single compound value. The values within a tuple can be of any type and don’t have to be of the same type as each other.
-
-You can create tuples from any permutation (순열) of types. (Int, Int, Int), or (String, Bool)...
-
-```swift
-// a tuple that describes an HTTP status code. (HTTP status code : a special value returned by a web server whenever you request a web page.) - A status code of 404 Not Found is returned if you request a webpage that doesn’t exist.
-let http404Error = (404, "Not Found") // http404Error is of type (Int, String). a tuple of type (Int, String)
-```
-
-- Tuple 분해 및 접근
-
-    You can decompose a tuple’s contents into separate constants/variables, which you then access as usual:
-
-    ```swift
-    // 분해 및 접근-1. 변수/상수이름 지정
-    let (statusCode, statusMessage) = http404Error // (Int, String) type의 tuple을 분해하여 각각의 콘텐츠에 대한 상수이름을 지정한다.
-    print("The status code is \(statusCode)") // Prints "The status code is 404"
-    print("The status message is \(statusMessage)") // Prints "The status message is Not Found"
-    ```
-
-    If you only need some of the tuple’s values, ignore parts of the tuple with an underscore (_):
-
-    ```swift
-    // 분해 및 접근-2. 일부 지정 및 _ 처리
-    let (justTheStatusCode, _) = http404Error // 접근이 필요 없는 부분은 _ 처리한다.
-    print("The status code is \(justTheStatusCode)") // Prints "The status code is 404"
-    ```
-
-    Alternatively, access the individual element values in a tuple using index numbers starting at zero:
-
-    ```swift
-    // 분해 및 접근-3. index
-    print("The status code is \(http404Error.0)") // Prints "The status code is 404"
-    print("The status message is \(http404Error.1)") // Prints "The status message is Not Found"
-    ```
-
-    You can name the individual elements in a tuple when the tuple is defined:
-
-    ```swift
-    // 분해 및 접근-4. 선언 시 개별 element에 변수/상수이름 지정
-    let http200Status = (statusCode: 200, description: "OK")
-
-    print("The status code is \(http200Status.statusCode)")
-    // Prints "The status code is 200"
-    print("The status message is \(http200Status.description)")
-    // Prints "The status message is OK"
-    ```
-
-    *참고 - Tuple은 Type Alias와 함께 사용하면 좋다.
-
-    ```swift
-    typealias CoordinateTuple = (x: Int, y: Int)
-    ```
-
-## Optionals
-
-You use optionals in situations where a value may be absent. 
-An optional represents two possibilities: Either there is a value, and you can unwrap the optional to access that value, or there isn’t a value at all.
-
-## Error Handling
-
-## Assertions and Preconditions
-
-# 2. Basic Operators (100%, 블로그)
+[https://applecider2020.tistory.com/11](https://applecider2020.tistory.com/11)
 
 # 3. Strings and Characters (90%)
 
 Note: Swift’s String type is bridged with Foundation’s NSString class. Foundation also extends String to expose methods defined by NSString. This means, if you import Foundation, you can access those NSString methods on String without casting.
+
+- [ ]  bridged
 
 ## String Literals
 
@@ -210,57 +63,6 @@ You can include predefined String values within your code as *string literals*. 
 // Use a string literal as an initial value for a constant/variable:
 let someString = "Some string literal value"
 ```
-
-- Multiline String Literals
-
-    If you need a string that spans several lines, use a multiline string literal—a sequence of characters surrounded by three double quotation marks (""") :
-    - neither of the strings below start or end with a line break: (아래의 String은 줄 바꿈으로 시작하거나 끝나지 않는다.)
-
-    ```swift
-    let singleLineString = "These are the same."
-    let multilineString = """
-    These are the same.
-    """
-
-    print(singleLineString + multilineString) // These are the same.These are the same.
-    print(singleLineString, multilineString)  // These are the same. These are the same.
-    ```
-
-    ```swift
-    // If you want to use line breaks to make your source code easier to read, but you don’t want the line breaks to be part of the string’s value, 
-    // write a backslash (\) at the end (즉, \를 사용하면 소스코드 내에서 line breaks처럼 나타낼 수 있지만 (가독성을 위해 사용), String의 값에는 반영시키지 않을 수 있다.)
-
-    let softWrappedQuotation = """
-    The White Rabbit put on his spectacles.  "Where shall I begin, \
-    please your Majesty?" he asked.
-
-    "Begin at the beginning," the King said gravely, "and go on \
-    till you come to the end; then stop."
-    """
-
-    print(softWrappedQuotation)
-    // The White Rabbit put on his spectacles.  "Where shall I begin, please your Majesty?" he asked.
-    //
-    // "Begin at the beginning," the King said gravely, "and go on till you come to the end; then stop."
-    ```
-
-    A multiline string can be indented to match the surrounding code. (multiline string이 주변 코드와 일치하도록 들여쓰기 가능하다.)
-    - The whitespace before the closing quotation marks tells Swift what whitespace to ignore before all of the other lines. (닫는 따옴표 앞에 공백이 있으면 다른 모든 행 앞에 무시해야 할 공백이 표시된다.)
-    - However, if you write whitespace at the beginning of a line in addition to what’s before the closing quotation marks, that whitespace is included. (닫힘 따옴표 앞의 공백에 추가하여 줄의 시작 부분에 공백이 있으면 해당 공백은 string value에 포함된다.)
-
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png)
-
-    ```swift
-    let linesWithIndentation = """
-    		This line doesn't begin with whitespace.    
-    				This line begins with four space.
-    		This line doesn't begin with whitespace.
-    		"""
-
-    //This line doesn't begin with whitespace.
-    //    This line begins with four space.
-    //This line doesn't begin with whitespace.
-    ```
 
 - Special Characters in String Literals
 
@@ -306,115 +108,18 @@ let someString = "Some string literal value"
 
 빈 String을 생성하는 방법은 1) assign an empty string literal to a variable, 또는 2) initialize a new String instance with initializer syntax:
 
+- [ ]  왜 String instance 라고 하지?????????????????
+
 ```swift
 var emptyString = ""               // 1) empty string literal
 var anotherEmptyString = String()  // 2) initializer syntax - empty 상태의 string type 이다.
 ```
 
-## String Mutability / Strings Are Value Types
-
-You indicate whether a particular String can be modified (or mutated) by assigning it to a variable
-
-```swift
-var variableString = "Horse"
-variableString += " and carriage" // variableString is now "Horse and carriage"
-```
-
-Note: This approach is different from string mutation in Objective-C and Cocoa, where you choose between two classes (NSString and NSMutableString) to indicate whether a string can be mutated. - Objective-C의 NSString Class는 immutable 하다. (string mutation이 불가하다.)
-
-함수에 전달되거나 변수에 할당될 때, String의 복사 값이 생성되어 전달된다.
-
-cf. C에서 String은 Char의 Array이며, "참조 type"이다.
-
-## Working with Characters
-
-You can access the individual Character values for a String by iterating over the string with a for-in loop:
-
-```swift
-for character in "Dog!🐶" {
-    print(character)
-}
-// D  -> 실제로 String으로 for-in loop를 실행하면, Character type이 하나씩 출력된다!
-// o
-// g
-// !
-// 🐶
-```
-
-- String values can be constructed by passing an array of Character values as an argument to its initializer:
-
-```swift
-let catCharacters: [Character] = ["C", "a", "t", "!", "🐱"]
-let catString = String(catCharacters) // String initializer에 Character type Array를 전달한다. -> String이 생성된다.
-print(catString) // Prints "Cat!🐱"
-```
-
-- Concatenating Strings and Characters
-
-    String values can be added together (or concatenated) with +/+= operators, append method.
-
-    ```swift
-    let string1 = "hello"
-    let string2 = " there"
-    var welcome = string1 + string2 // "hello there"
-
-    var instruction = "look over"
-    instruction += string2 // "look over there"
-
-    let exclamationMark: Character = "!"
-    welcome.append(exclamationMark) // "hello there!"
-    ```
-
-- String Interpolation
-
-    String interpolation is a way to construct a new String value from a mix of variables, literals, and expressions by including their values inside a string literal.
-    You can use string interpolation in both single-line and multiline string literals.
-
-    ```swift
-    let multiplier = 3
-    let message = "\(multiplier) times 2.5 is \(Double(multiplier) * 2.5)" // \() 내부에서 type 변환도 가능하다.
-    // message is "3 times 2.5 is 7.5"
-
-    // The value of multiplier is inserted into a string literal as \(multiplier). 
-    // This placeholder is replaced with the actual value of multiplier when the string interpolation is evaluated to create an actual string. 
-    // 즉, \() 내부를 evaluate 하여 구한 결과값을 String으로 생성하여 대체한다.
-    ```
-
-    ```swift
-    // extended string delimiters(##)
-    print(#"Write an interpolated string in Swift using \(multiplier)."#) // Prints "Write an interpolated string in Swift using \(multiplier)."
-    ```
-
-    To use string interpolation inside a string that uses extended delimiters, match the number of number signs after the backslash to the number of number signs at the beginning and end of the string. ## 내부에 \()를 사용하려면, String 앞뒤에 붙인 #의 개수와 \() 사이의 # 개수를 일치시킨다.
-
-    ```swift
-    print(#"6 times 7 is \#(6 * 7)."#)       // 6 times 7 is 42.
-    print(##"6 times 7 is \##(6 * 7)."##)    // 6 times 7 is 42.
-    print(###"6 times 7 is \###(6 * 7)."###) // 6 times 7 is 42.
-
-    print(##"6 times 7 is \#(6 * 7)."##)     // 6 times 7 is \#(6 * 7). - 참고
-    print(###"6 times 7 is \##(6 * 7)."###)  // 6 times 7 is \##(6 * 7). - 참고
-    ```
-
-## Unicode ???
-
-Unicode is an international standard for encoding, representing, and processing text in different writing systems.
-Swift’s String and Character types are fully Unicode-compliant. (유니코드-호환)
-
-### Unicode Scalar Values
-
-Behind the scenes, Swift’s native String type is built from Unicode scalar values. A Unicode scalar value is a unique 21-bit number for a character or modifier, such as U+0061 for LATIN SMALL LETTER A ("a"), or U+1F425 for FRONT-FACING BABY CHICK ("🐥"). 
-
-Note that not all 21-bit Unicode scalar values are assigned to a character—some scalars are reserved for future assignment or for use in UTF-16 encoding. (일부 Unicode scalar value는 나중에 할당하거나 UTF-16 인코딩에 사용된다.) Scalar values that have been assigned to a character typically also have a name, such as LATIN SMALL LETTER A and FRONT-FACING BABY CHICK in the examples above.
+## Unicode
 
 ### Extended Grapheme Clusters
 
 *grapheme : 문자소 (의미를 나타내는 최소 문자 단위)
-
-Every instance of Character type represents a single extended grapheme cluster. (문자 유형의 모든 인스턴스는 단일 확장 그래픽 클러스터를 나타낸다.) 
-An extended grapheme cluster is a sequence of one or more Unicode scalars that (when combined) produce a single human-readable character. (사람이 읽을 수 있는 단일 문자를 생성하는 하나 이상의 Unicode scalars 시퀀스이다.) ????
-
-- [ ]  ?
 
 The letter é can be represented as the single Unicode scalar é (LATIN SMALL LETTER E WITH ACUTE, or U+00E9). However, the same letter can also be represented as a pair of scalars—a standard letter e (LATIN SMALL LETTER E, or U+0065), followed by the COMBINING ACUTE ACCENT scalar (U+0301). The COMBINING ACUTE ACCENT scalar is graphically applied to the scalar that precedes it, turning an e into an é when it’s rendered by a Unicode-aware text-rendering system. (Accent scalar가 그 앞의 scalar e에 적용되어 é로 변경된다.)
 
@@ -423,32 +128,6 @@ In both cases, the letter é is represented as a single Swift Character value th
 ```swift
 let eAcute: Character = "\u{E9}"                // é
 let combinedEAcute: Character = "\u{65}\u{301}" // e followed by ́ => é
-```
-
-Extended grapheme clusters are a flexible way to represent many complex script characters as a single Character value. (여러 복잡한 스크립트 문자를 하나의 문자 값으로 유연하게 나타낼 수 있는 방법이다.) For example, Hangul syllables (음절) from the Korean alphabet can be represented as either a precomposed or decomposed sequence. Both of these representations qualify as a single Character value in Swift: 
-즉, '한' 및 'ㅎ', 'ㅏ', 'ㄴ'은 모두 a single Character value 이다.
-
-```swift
-let precomposed: Character = "\u{D55C}"                  // 한
-let decomposed: Character = "\u{1112}\u{1161}\u{11AB}"   // ᄒ, ᅡ, ᆫ => 한
-```
-
-Extended grapheme clusters enable scalars for enclosing marks (such as COMBINING ENCLOSING CIRCLE, or U+20DD) to enclose other Unicode scalars as part of a single Character value:
-
-```swift
-let enclosedEAcute: Character = "\u{E9}\u{20DD}" // enclosedEAcute is é⃝  <- é가 원 안에 들어있는 형태임
-```
-
-Unicode scalars for regional indicator symbols can be combined in pairs to make a single Character value, such as this combination of REGIONAL INDICATOR SYMBOL LETTER U (U+1F1FA) and REGIONAL INDICATOR SYMBOL LETTER S (U+1F1F8):
-
-```swift
-let regionalIndicatorForUS1: Character = "\u{1F1FA}"
-let regionalIndicatorForUS2: Character = "\u{1F1F8}"
-print(regionalIndicatorForUS1) // 🇺
-print(regionalIndicatorForUS2) // 🇸
-
-let regionalIndicatorForUS: Character = "\u{1F1FA}\u{1F1F8}"
-print(regionalIndicatorForUS)  // 🇺🇸  <- 2개의 regional indicator symbols를 합치면, 국기 모양의 1개 character value가 된다.
 ```
 
 ## Counting Characters
@@ -465,6 +144,16 @@ print("the number of characters in \(word) is \(word.count)") // Prints "the num
 word += "\u{301}"    // COMBINING ACUTE ACCENT, U+0301
 
 print("the number of characters in \(word) is \(word.count)") // Prints "the number of characters in café is 4" - counting 값에 변화가 없다.
+```
+
+- [ ]  NSString
+
+```swift
+var word = "cafe"
+let nsStringLength1 = NSString(string: word).length // 이것도 가능
+
+print("the number of characters in \(word) is \(word.count) and \(nsStringLength1)")
+// Prints "the number of characters in cafe is 4 and 4"
 ```
 
 Note: 
@@ -641,7 +330,7 @@ let newString = String(beginning)
 
 - 메모리 구조
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png)
 
 - [ ]  왜 12345로 안바뀌지? 변경된 String 값을 다른 메모리 공간에 저장했나?
 
@@ -762,7 +451,7 @@ let dogString = "Dog‼🐶"
 
     `utf8` 프로퍼티를 iterate 하여 String의 UTF-8 표현에 접근한다. ??? 이 프로퍼티는 `String.UTF8View` type이다. `String.UTF8View` type은 UInt8 (unsigned 8-bit) 값의 collection이다.
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png)
 
     ```swift
     let dogString = "Dog‼🐶"
@@ -779,7 +468,7 @@ let dogString = "Dog‼🐶"
 
     `utf16` 프로퍼티를 iterate 하여 String의 UTF-16 표현에 접근한다. ??? 이 프로퍼티는 `String.UTF16View` type이다. `String.UTF16View` type은 UInt16 (unsigned 16-bit) 값의 collection이다.
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png)
 
     ```swift
     for codeUnit in dogString.utf16 {
@@ -797,7 +486,7 @@ let dogString = "Dog‼🐶"
 
     Each `UnicodeScalar` has a `value` property that returns the scalar’s 21-bit value, represented within a UInt32 value:
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png)
 
     ```swift
     for scalar in dogString.unicodeScalars {
@@ -827,7 +516,7 @@ let dogString = "Dog‼🐶"
 Swift의 3가지 primary collection types은 arrays, sets, and dictionaries 이다.
 Arrays are ordered collections of values. Sets are unordered collections of unique values. Dictionaries are unordered collections of key-value associations.
 
-![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png)
+![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png)
 
 Note: array, set, and dictionary types are implemented as generic collections.
 
@@ -1151,7 +840,7 @@ Set는 순서가 없으므로 parameter at: index가 필요없다.
 
         The illustration below depicts two sets. 여러 Set 연산의 결과를 그림자 영역으로 나타낸다.
 
-        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png)
+        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png)
 
         - Use the `intersection(_:)` method to create a new set with only the values common to both sets. - 교집합
         - Use the `symmetricDifference(_:)` method to create a new set with values in either set, but not both. - (합집합-교집합)
@@ -1176,7 +865,7 @@ Set는 순서가 없으므로 parameter at: index가 필요없다.
         Set a is a superset of set b, because a contains all elements in b. (a가 b를 감싼다.) Conversely, set b is a subset of set a, because all elements in b are also contained by a. 
         Set b and set c are disjoint with one another, because they share no elements in common. (공통 부분이 없다.)
 
-        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png)
+        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png)
 
         - Use the “is equal” operator (`==`) to determine whether two sets contain all of the same values.
         - Use the `isSubset(of:)` method to determine whether all of the values of a set are contained in the specified set.
@@ -1532,7 +1221,7 @@ while condition {
 
 구현 - This example plays a simple game of Snakes and Ladders.
 
-![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png)
+![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png)
 
 ```swift
 let finalSquare = 25 // constant finalSquare is used to initialize the array and also to check for a win condition later in the example.
@@ -1766,7 +1455,7 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     }
     ```
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png)
 
 - Value Bindings
 
@@ -1800,7 +1489,7 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     }
     ```
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png)
 
 - Compound Cases
 
@@ -2052,7 +1741,7 @@ if #available(iOS 10, macOS 10.12, *) {
 
 - general form
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2012.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2012.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png)
 
     - The availability condition takes a list of platform names and versions.
     - You use platform names such as iOS, macOS, watchOS, and tvOS—for the full list, see Declaration Attributes.
@@ -2704,7 +2393,7 @@ var cinema = hd // declares a variable called cinema, sets it to the current val
 When cinema was given the current value of hd, the values stored in hd were copied into the new cinema instance.
 Even though hd and cinema have the same width/height, they’re two completely different instances.
 
-![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2013.png)
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2012.png)
 
 cinema는 변수이므로 Resolution 프로퍼티를 변경 가능하다. cinema는 값이 복사되면서 생성된 새로운 인스턴스를 담고 있으므로 hd의 인스턴스에 아무 영향을 미치지 않는다.
 (참고 - hd는 상수이므로 변경 불가하다.)
@@ -2763,7 +2452,7 @@ let hd = Resolution() // declares a constant called hd, sets it to a Resolution 
 
 Because classes are reference types, tenEighty and alsoTenEighty actually both refer to the same VideoMode instance. Effectively, they’re just two different names for the same single instance.
 
-![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2014.png)
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2013.png)
 
 This example also shows how reference types can be harder to reason about. Wherever you use tenEighty, you also have to think about the code that uses alsoTenEighty, and vice versa. 
 (참조 type은 추론하기 어렵다. Class instance tenEighty를 쓸 때마다, (참조를 공유하고 있는) alsoTenEighty를 사용하는 코드에 대해서도 생각해야 하고, 그 반대도 동일하다.)
