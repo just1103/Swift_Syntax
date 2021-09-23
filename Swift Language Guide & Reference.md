@@ -1,7 +1,7 @@
 # Swift Language Guide & Reference
 
 Created: August 8, 2021 3:14 PM
-Last Edited Time: September 23, 2021 5:04 AM
+Last Edited Time: September 24, 2021 12:52 AM
 Property: Official
 
 - Contents
@@ -156,11 +156,15 @@ print("the number of characters in \(word) is \(word.count) and \(nsStringLength
 // Prints "the number of characters in cafe is 4 and 4"
 ```
 
-Note: 
+Note: Extended grapheme clusters can be composed of multiple Unicode scalars. This means that different characters—and different representations of the same character—can require different amounts of memory to store. Because of this, characters in Swift don’t each take up the same amount of memory within a string’s representation. As a result, the number of characters in a string can’t be calculated without iterating through the string to determine its extended grapheme cluster boundaries.
 
-Extended grapheme clusters can be composed of multiple Unicode scalars. This means that different characters—and different representations of the same character—can require different amounts of memory to store. (다른 방법을 통해 동일한 문자를 나타낼 수 있다. 따라서 두 방법은 메모리 소모량이 다를 수 있다.) Because of this, characters in Swift don’t each take up the same amount of memory within a string’s representation. (Swift의 문자는 문자열 표현 내에서 각각 동일한 양의 메모리를 차지하지 않는다.) As a result, the number of characters in a string can’t be calculated without iterating through the string to determine its extended grapheme cluster boundaries. (문자열 iterate를 통해 extended grapheme cluster의 경계를 결정해야 String의 문자 수를 계산할 수 있다.) ?????? If you are working with particularly long string values, be aware that the count property must iterate over the Unicode scalars in the entire string in order to determine the characters for that string. 
+If you are working with particularly long string values, be aware that the count property must iterate over the Unicode scalars in the entire string in order to determine the characters for that string.
+
+- [ ]  ????
 
 The count of the characters returned by the count property isn’t always the same as the length property of an NSString that contains the same characters. The length of an NSString is based on the number of 16-bit code units within the string’s UTF-16 representation and not the number of Unicode extended grapheme clusters within the string.
+
+- [ ]  NSString의 length는 UTF-16 표현 방식으로 16bit 단위의 개수를 기반으로 하기 때문이다. (String의 count는 유니코드의 extended grapheme cluster의 개수를 기반으로 한다.) ???
 
 ## *Accessing and Modifying a String
 
@@ -168,8 +172,11 @@ The count of the characters returned by the count property isn’t always the sa
 
     Each String value has an associated *Index type,* String.Index, which corresponds to the position of each Character in the string. 즉, String.Index도 하나의 type이다. 그 type은 Index type이다.
 
+    - [ ]  ????
+
     As mentioned above, different characters can require different amounts of memory to store, so in order to determine which Character is at a particular position, you must iterate over each Unicode scalar from the start or end of that String. For this reason, Swift strings can’t be indexed by integer values. 즉, Swift에서는 int type으로 indexing이 불가하다.
 
+    - [ ]  ?????????
     - `startIndex` property 는 String 첫번째 문자의 위치에 접근한다.
     - `endIndex` property 는 String 마지막 문자의 다음 위치에 접근한다. (따라서 endIndex는 Sting 서브스크립트에 대한 invalid argument이다.)
     단, 빈 문자열이면 startIndex 및 endIndex는 동일하다.
@@ -187,11 +194,11 @@ The count of the characters returned by the count property isn’t always the sa
         var first = greeting.startIndex
         print(type(of: first)) // Index - 확인용
 
-        greeting[greeting.startIndex] // G - 첫번째 문자 G의 위치에 접근하고, 해당 index를 통해 서브스크립트 문법을 사용 -> 첫번째 문자 G
-        greeting[greeting.index(before: greeting.endIndex)] // ! - 마지막 문자 !의 다음 위치에 접근하고, 해당 index를 메서드 argument로 전달하여 해당 위치의 1칸 앞에 접근, 해당 index를 통해 서브스크립트 문법을 사용 -> !
+        greeting[greeting.startIndex] // G - 1) 첫번째 문자 G의 위치에 접근하고, 2) 해당 index를 통해 서브스크립트 문법을 사용 -> 첫번째 문자 G
+        greeting[greeting.index(before: greeting.endIndex)] // ! - 1) 마지막 문자 !의 다음 위치에 접근하고, 2) 해당 index를 메서드의 argument로 전달하여 해당 위치의 1칸 앞에 접근, 3) 해당 index를 통해 서브스크립트 문법을 사용 -> !
         greeting[greeting.index(after: greeting.startIndex)] // u - 첫번째 문자 G의 위치에 접근하고, 해당 index를 메서드 argument로 전달하여 해당 위치의 1칸 뒤에 접근, 해당 index를 통해 서브스크립트 문법을 사용 -> u 
 
-        greeting[greeting.index(greeting.startIndex, offsetBy: 7)] // a - 첫번째 문자 G의 위치에 접근하고, 해당 index를 메서드 argument로 전달하여 해당 위치의 +7칸 뒤에 접근, 해당 index를 통해 서브스크립트 문법을 사용 -> a 
+        greeting[greeting.index(greeting.startIndex, offsetBy: 7)] // a - 1) 첫번째 문자 G의 위치에 접근하고, 2) 해당 index를 메서드 argument로 전달하여 해당 위치의 +7칸 뒤에 접근, 3) 해당 index를 통해 서브스크립트 문법을 사용 -> a 
 
         let index = greeting.index(greeting.startIndex, offsetBy: 7) // 바로 위와 동일
         greeting[index] // a
@@ -228,48 +235,20 @@ The count of the characters returned by the count property isn’t always the sa
         breezing[greeting.index(after: greeting.startIndex)] // 2
         ```
 
-    - `.indices` 프로퍼티를 통해 String 내부 문자의 모든 index에 접근한다.
-
-        ```swift
-        for index in greeting.indices {
-            print("\(greeting[index]) ", terminator: "") // greeting[greeting.startIndex] 형태
-        } // Prints "G u t e n   T a g ! "
-        ```
-
     Note: startIndex/endIndex 프로토콜 및 index(before:)/index(after:)/index(_:offsetBy:) 메서드는 Collection protocol을 준수하는 모든 Type에 사용 가능하다. (String 포함 Array/Dictionary/Set 등)
 
 - Inserting and Removing
     - `insert(_:at:)` 메서드를 통해 1개 문자를 String의 특정 index에 삽입한다.
     - `insert(contentsOf:at:)` 메서드를 통해 다른 String 콘텐츠를 String의 특정 index에 삽입한다.
-
-        ```swift
-        var welcome = "hello"
-
-        welcome.insert("!", at: welcome.endIndex) // welcome now equals "hello!" - 마지막 문자의 다음 위치에 "!"를 삽입
-        welcome.insert(contentsOf: " there", at: welcome.index(before: welcome.endIndex)) // welcome now equals "hello there!" - 마지막 문자의 다음 위치의 1칸 앞에 "there"를 삽입
-        ```
-
     - `remove(at:)` 메서드를 통해 1개 문자를 String의 특정 index에서 삭제한다.
     - `removeSubrange(_:)` 메서드를 통해 Substring을 String의 특정 index range에서 삭제한다.
-
-        ```swift
-        var welcome = "hello there!"
-
-        welcome.remove(at: welcome.index(before: welcome.endIndex)) // "hello there" - 마지막 문자의 다음 위치에서 1칸 앞에 있는 !를 삭제
-
-        let range = welcome.index(welcome.endIndex, offsetBy: -6)..<welcome.endIndex // 범위 (마지막 문자의 다음 위치에서 -6칸 앞에 있는 빈칸의 index ..< 마지막 문자의 다음 위치의 index)
-        //let range = welcome.index(welcome.endIndex, offsetBy: -6)...welcome.index(before: welcome.endIndex) // 위와 동일 
-        welcome.removeSubrange(range) // "hello" - 해당 range의 Substring을 삭제
-        ```
 
     Note: insert(_:at:)/insert(contentsOf:at:)/remove(at:)/removeSubrange(_:) 메서드는 RangeReplaceableCollection protocol을 준수하는 모든 Type에 사용 가능하다. (String 포함 Array/Dictionary/Set 등)
 
 ## Substrings
 
 (서브스크립트 또는 prefix 메서드를 통해) String에서 Substring을 가져오면 다른 String이 아니라 새로운 Substring 인스턴스가 생성된다. (참조 type)
-Substring의 메서드는 String의 메서드와 대부분 동일하므로 String처럼 사용 가능하다.
-
-You use substrings for only a short amount of time while performing actions on a string. When you’re ready to store the substring for a longer time, you convert the substring to an instance of String. (장기간 저장하여 사용하려면 Substring을 String으로 type 변환해야 한다.)
+장기간 저장하여 사용하려면 Substring을 String으로 type 변환해야 한다.
 
 ```swift
 // Substring 생성 방법-1. 서브스크립트
@@ -324,8 +303,7 @@ let newString = String(beginning)
         } // "Hel"
         ```
 
-성능 최적화로서 Substring can reuse part of the memory that’s used to store the original string, or part of the memory that’s used to store another substring. 
-(Substring은 original String을 저장하는 메모리의 일부를 재사용하거나, 또는 다른 Substring을 저장하는 메모리의 일부를 재사용한다.)
+성능 최적화로서 Substring은 original String을 저장하는 메모리의 일부를 재사용하거나, 또는 다른 Substring을 저장하는 메모리의 일부를 재사용한다.
 이러한 성능 최적화를 통해 (String 또는 Substring을 수정하기 전에는) 메모리를 복사해도 성능이 저하되지 않는다. Substring을 사용하는 동안에는 전체 original String이 메모리에 들어있어야 한다.
 
 - 메모리 구조
@@ -333,6 +311,7 @@ let newString = String(beginning)
     ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%201.png)
 
 - [ ]  왜 12345로 안바뀌지? 변경된 String 값을 다른 메모리 공간에 저장했나?
+    - String 또는 Substring을 수정한 직후에 메모리를 새롭게 할당하기 때문? 하지만 새로운 메모리를 할당받아도 여전히 String이 아니라 Substring인건가?
 
 ```swift
 var greeting = "Hello, world!"
@@ -347,176 +326,12 @@ print(beginning) // Hello -> 왜 12345로 안바뀌지? 변경된 이후에는 �
 Note: Both String and Substring conform to the StringProtocol protocol, which means it’s often convenient for string-manipulation functions to accept a StringProtocol value. You can call such functions with either a String value or Substring value.
 String 및 Substring 모두 StringProtocol protocol을 준수한다. 따라서 Stirng을 다루는 함수를 사용할 때 StringProtocol의 값을 수용하는 것이 편리하다. ???? String 값 또는 Substring 값으로 이러한 함수를 호출한다.
 
-## Comparing Strings
-
-Swift에서 String을 비교하는 방법은 3가지이다. 1) string and character equality, 2) prefix equality, 3) suffix equality
-
-- 1) String and Character Equality
-
-    "equal to" operator (==) 및 “not equal to” operator (!=)를 통해 체크한다.
-
-    ```swift
-    let quotation = "We're a lot alike, you and I."
-    let sameQuotation = "We're a lot alike, you and I."
-    if quotation == sameQuotation {
-        print("These two strings are considered equal")
-    } // Prints "These two strings are considered equal"
-    ```
-
-    Two String values are considered equal if their extended grapheme clusters are *canonically equivalent.* ??? Extended grapheme clusters are canonically equivalent if they have the same linguistic meaning and appearance, even if they’re composed from different Unicode scalars behind the scenes. 다른 Unicode scalars을 통해 표현된 동일한 문자 (*단, 의미/모양이 동일해야 함)는 String 비교에서 동일하다고 판단한다.
-
-    ```swift
-    // \u{E9} 및 \u{65}\u{301}는 다른 Unicode scalars 값을 가지지만, 동일한 문자 é를 나타내므로 String 비교에서 같다고 판단한다.
-    let eAcuteQuestion = "Voulez-vous un caf\u{E9}?" // "Voulez-vous un café?" using LATIN SMALL LETTER E WITH ACUTE
-    let combinedEAcuteQuestion = "Voulez-vous un caf\u{65}\u{301}?" // "Voulez-vous un café?" using LATIN SMALL LETTER E and COMBINING ACUTE ACCENT
-
-    if eAcuteQuestion == combinedEAcuteQuestion {
-        print("These two strings are considered equal")
-    } // Prints "These two strings are considered equal"
-    ```
-
-    *참고 - 모양은 동일하나 의미가 다른 문자이므로 String 비교에서 동일하지 않다고 판단한 예시
-
-    ```swift
-    let latinCapitalLetterA: Character = "\u{41}" // 영어의 A
-    let cyrillicCapitalLetterA: Character = "\u{0410}" // 러시아어의 A -> The characters are visually similar, but don’t have the same linguistic meaning
-
-    if latinCapitalLetterA != cyrillicCapitalLetterA {
-        print("These two characters aren't equivalent.")
-    } // Prints "These two characters aren't equivalent."
-    ```
-
-- 2) prefix equality & 3) suffix equality
-
-    hasPrefix(*:) 및 hasSuffix(*:) 메서드를 통해 String에 특정 prefix/suffix의 포함 여부를 알 수 있다. (parameter: String, return type: Bool)
-
-    ```swift
-    let romeoAndJuliet = [ // Array of String
-        "Act 1 Scene 1: Verona, A public place",
-        "Act 1 Scene 2: Capulet's mansion",
-        "Act 1 Scene 3: A room in Capulet's mansion",
-        "Act 1 Scene 4: A street outside Capulet's mansion",
-        "Act 1 Scene 5: The Great Hall in Capulet's mansion",
-        "Act 2 Scene 1: Outside Capulet's mansion",
-        "Act 2 Scene 2: Capulet's orchard",
-        "Act 2 Scene 3: Outside Friar Lawrence's cell",
-        "Act 2 Scene 4: A street in Verona",
-        "Act 2 Scene 5: Capulet's mansion",
-        "Act 2 Scene 6: Friar Lawrence's cell"
-    ]
-
-    var act1SceneCount = 0
-    for scene in romeoAndJuliet {
-        if scene.hasPrefix("Act 1 ") { // Array 내부 String에 Prefix "Act 1 "가 몇 개 있는지 확인한다.
-            act1SceneCount += 1
-        }
-    }
-    print("There are \(act1SceneCount) scenes in Act 1") // Prints "There are 5 scenes in Act 1"
-
-    var mansionCount = 0
-    var cellCount = 0
-    for scene in romeoAndJuliet {
-        if scene.hasSuffix("Capulet's mansion") { // Array 내부 String에 Suffix "Capulet's mansion"가 몇 개 있는지 확인한다.
-            mansionCount += 1
-        } else if scene.hasSuffix("Friar Lawrence's cell") {
-            cellCount += 1
-        }
-    }
-    print("\(mansionCount) mansion scenes; \(cellCount) cell scenes") // Prints "6 mansion scenes; 2 cell scenes"
-    ```
-
-    Note: hasPrefix/hasSuffix methods perform a character-by-character canonical equivalence comparison between the extended grapheme clusters in each string.
-    hasPrefix/hasSuffix 메서드는 extended grapheme clusters를 비교할 때 개별 문자에 대한 canonical equivalence 비교를 수행한다. 
-
-## Unicode Representations of Strings ???
-
-When a Unicode string is written to a text file or some other storage, the Unicode scalars in that string are encoded in one of several Unicode-defined encoding forms.
-(유니코드 String이 텍스트 파일이나 다른 저장공간에 기록되면, String의 유니코드 scalar는 여러 가지 유니코드-정의 인코딩 양식 중 하나에 인코딩된다.) Each form encodes the string in small chunks known as code units. These include the UTF-8/16/32 encoding form (which encodes a string as 8/16/32-bit code units)
-
-for-in loop를 통해 Unicode extended grapheme clusters 형태의 Character 값에 접근한다.
-또는 3가지 유니코드-호환 표현 중 하나를 통해 String 값에 접근한다.
-
-- A collection of UTF-8 code units (accessed with the string’s `utf8` property)
-- A collection of UTF-16 code units (accessed with the string’s `utf16` property)
-- A collection of 21-bit Unicode scalar values, equivalent to the string’s UTF-32 encoding form (accessed with the string’s `unicodeScalars` property)
-
-```swift
-// 아래 예시를 통해 동일한 String에 대한 다른 표현 (different representation)을 확인한다.
-let dogString = "Dog‼🐶"
-    // ‼ (DOUBLE EXCLAMATION MARK, or Unicode scalar U+203C)
-		// 🐶 (DOG FACE, or Unicode scalar U+1F436):
-```
-
-- UTF-8 Representation
-
-    `utf8` 프로퍼티를 iterate 하여 String의 UTF-8 표현에 접근한다. ??? 이 프로퍼티는 `String.UTF8View` type이다. `String.UTF8View` type은 UInt8 (unsigned 8-bit) 값의 collection이다.
-
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png)
-
-    ```swift
-    let dogString = "Dog‼🐶"
-
-    for codeUnit in dogString.utf8 {
-        print("\(codeUnit) ", terminator: "")
-    } // Prints "68 111 103 226 128 188 240 159 144 182 "
-    ```
-
-    - The first three decimal codeUnit values (68, 111, 103) represent the characters D, o, and g, whose UTF-8 representation is the same as their ASCII representation.
-    - The next three decimal codeUnit values (226, 128, 188) are a three-byte UTF-8 representation of the DOUBLE EXCLAMATION MARK character.
-    - The last four codeUnit values (240, 159, 144, 182) are a four-byte UTF-8 representation of the DOG FACE character.
-- UTF-16 Representation
-
-    `utf16` 프로퍼티를 iterate 하여 String의 UTF-16 표현에 접근한다. ??? 이 프로퍼티는 `String.UTF16View` type이다. `String.UTF16View` type은 UInt16 (unsigned 16-bit) 값의 collection이다.
-
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png)
-
-    ```swift
-    for codeUnit in dogString.utf16 {
-        print("\(codeUnit) ", terminator: "")
-    } // Prints "68 111 103 8252 55357 56374 "
-    ```
-
-    - 마찬가지로, the first three codeUnit values (68, 111, 103) represent the characters D, o, and g, whose UTF-16 code units have the same values as in the string’s UTF-8 representation (because these Unicode scalars represent ASCII characters).
-    - The fourth codeUnit value (8252) is a decimal equivalent of the hexadecimal value 203C, which represents the Unicode scalar U+203C for the DOUBLE EXCLAMATION MARK character. This character can be represented as a single code unit in UTF-16.
-    - The fifth and sixth codeUnit values (55357 and 56374) are a UTF-16 surrogate (대리인) pair representation of the DOG FACE character. 
-    These values are a high-surrogate value of U+D83D (decimal value 55357) and a low-surrogate value of U+DC36 (decimal value 56374). ???
-- Unicode Scalar Representation
-
-    `unicodeScalars` 프로퍼티를 iterate 하여 String의 Unicode scalar 표현에 접근한다. ??? 이 프로퍼티는 `UnicodeScalarView` type이다. `UnicodeScalarView` type은 UnicodeScalar type 값의 collection이다.
-
-    Each `UnicodeScalar` has a `value` property that returns the scalar’s 21-bit value, represented within a UInt32 value:
-
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png)
-
-    ```swift
-    for scalar in dogString.unicodeScalars {
-        print("\(scalar.value) ", terminator: "")
-    } // Prints "68 111 103 8252 128054 "
-    ```
-
-    - The value properties for the first three UnicodeScalar values (68, 111, 103) once again represent the characters D, o, and g.
-    - The fourth codeUnit value (8252) is again a decimal equivalent of the hexadecimal value 203C, which represents the Unicode scalar U+203C for the DOUBLE EXCLAMATION MARK character. ???
-    - The value property of the fifth UnicodeScalar (128054), is a decimal equivalent of the hexadecimal value 1F436, which represents the Unicode scalar U+1F436 for the DOG FACE character.
-
-    As an alternative to querying their value properties, each UnicodeScalar value can also be used to construct a new String value, such as with string interpolation: ???
-
-    ```swift
-    for scalar in dogString.unicodeScalars {
-        print("\(scalar) ") 
-    }
-    // D
-    // o
-    // g
-    // ‼
-    // 🐶
-    ```
-
 # 4. Collection Types  (90%)
 
 Swift의 3가지 primary collection types은 arrays, sets, and dictionaries 이다.
 Arrays are ordered collections of values. Sets are unordered collections of unique values. Dictionaries are unordered collections of key-value associations.
 
-![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png)
+![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png)
 
 Note: array, set, and dictionary types are implemented as generic collections.
 
@@ -840,7 +655,7 @@ Set는 순서가 없으므로 parameter at: index가 필요없다.
 
         The illustration below depicts two sets. 여러 Set 연산의 결과를 그림자 영역으로 나타낸다.
 
-        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png)
+        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%203.png)
 
         - Use the `intersection(_:)` method to create a new set with only the values common to both sets. - 교집합
         - Use the `symmetricDifference(_:)` method to create a new set with values in either set, but not both. - (합집합-교집합)
@@ -865,7 +680,7 @@ Set는 순서가 없으므로 parameter at: index가 필요없다.
         Set a is a superset of set b, because a contains all elements in b. (a가 b를 감싼다.) Conversely, set b is a subset of set a, because all elements in b are also contained by a. 
         Set b and set c are disjoint with one another, because they share no elements in common. (공통 부분이 없다.)
 
-        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png)
+        ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%204.png)
 
         - Use the “is equal” operator (`==`) to determine whether two sets contain all of the same values.
         - Use the `isSubset(of:)` method to determine whether all of the values of a set are contained in the specified set.
@@ -1221,7 +1036,7 @@ while condition {
 
 구현 - This example plays a simple game of Snakes and Ladders.
 
-![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png)
+![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%205.png)
 
 ```swift
 let finalSquare = 25 // constant finalSquare is used to initialize the array and also to check for a win condition later in the example.
@@ -1455,7 +1270,7 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     }
     ```
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%206.png)
 
 - Value Bindings
 
@@ -1489,7 +1304,7 @@ default:  // defalut가 없으면 컴파일 에러 발생 - Switch must be exhau
     }
     ```
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%207.png)
 
 - Compound Cases
 
@@ -1741,7 +1556,7 @@ if #available(iOS 10, macOS 10.12, *) {
 
 - general form
 
-    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2011.png)
+    ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%208.png)
 
     - The availability condition takes a list of platform names and versions.
     - You use platform names such as iOS, macOS, watchOS, and tvOS—for the full list, see Declaration Attributes.
@@ -2393,7 +2208,7 @@ var cinema = hd // declares a variable called cinema, sets it to the current val
 When cinema was given the current value of hd, the values stored in hd were copied into the new cinema instance.
 Even though hd and cinema have the same width/height, they’re two completely different instances.
 
-![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2012.png)
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%209.png)
 
 cinema는 변수이므로 Resolution 프로퍼티를 변경 가능하다. cinema는 값이 복사되면서 생성된 새로운 인스턴스를 담고 있으므로 hd의 인스턴스에 아무 영향을 미치지 않는다.
 (참고 - hd는 상수이므로 변경 불가하다.)
@@ -2452,7 +2267,7 @@ let hd = Resolution() // declares a constant called hd, sets it to a Resolution 
 
 Because classes are reference types, tenEighty and alsoTenEighty actually both refer to the same VideoMode instance. Effectively, they’re just two different names for the same single instance.
 
-![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2013.png)
+![Untitled](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%2010.png)
 
 This example also shows how reference types can be harder to reason about. Wherever you use tenEighty, you also have to think about the code that uses alsoTenEighty, and vice versa. 
 (참조 type은 추론하기 어렵다. Class instance tenEighty를 쓸 때마다, (참조를 공유하고 있는) alsoTenEighty를 사용하는 코드에 대해서도 생각해야 하고, 그 반대도 동일하다.)
