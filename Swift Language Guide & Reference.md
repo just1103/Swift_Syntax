@@ -1,7 +1,7 @@
 # Swift Language Guide & Reference
 
 Created: August 8, 2021 3:14 PM
-Last Edited Time: September 24, 2021 12:52 AM
+Last Edited Time: September 26, 2021 2:51 AM
 Property: Official
 
 - Contents
@@ -362,54 +362,6 @@ An array stores values of the same type in an ordered list.
 Note: Swift’s `Array` type is bridged to Foundation’s `NSArray` class.
 
 - [ ]  [https://developer.apple.com/documentation/swift/array#2846730](https://developer.apple.com/documentation/swift/array#2846730)
-- Array Type Shorthand Syntax (축약 문법)
-
-    1) array is written in full as `Array<Element>`
-    2) an array in shorthand form as `[Element]`
-
-    두 형식은 기능적으로 동일하지만, 축약형이 선호된다.
-
-- Creating an Empty Array
-
-    initializer syntax를 사용하여 특정 type의 empty Array를 생성 가능하다.
-
-    ```swift
-    var someInts: [Int] = []
-    print("someInts is of type [Int] with \(someInts.count) items.")  // Prints "someInts is of type [Int] with 0 items."
-    ```
-
-    Note that the type of the `someInts` variable is inferred to be `[Int]` from the type of the initializer. ??? 왜 inferred? 선언 시 : [Int]로 type 명시해뒀는데...?
-
-    ```swift
-    someInts.append(3)  // someInts now contains 1 value of type Int
-    someInts = []  // someInts is now an empty array, but is still of type [Int] - 변수 선언 시 이미 type을 명시했으므로 []만으로 할당 가능하다.
-    ```
-
-    Alternatively, if the context already provides type information, such as a function argument or an already typed variable/constant, you can create an empty array with an empty array literal, which is written as `[]` 
-
-- Creating an Array with a Default Value
-
-    Array type provides an initializer for creating an array of 'a certain size' with all of its values 'set to the same default value'. ('동일한 기본값'을 '특정 size 만큼 반복'하는 Array를 생성하는 initializer를 제공한다.)
-    You pass this initializer a default value of the appropriate type (called `repeating`): and the number of times that value is repeated in the new array (called `count`):
-
-    ```swift
-    var threeDoubles = Array(repeating: 0.0, count: 3)  
-    // threeDoubles is of type [Double], and equals [0.0, 0.0, 0.0] - Array(repeating:count:) initializer를 사용하여 생성했다. (Array<>가 아님)
-    ```
-
-- Creating an Array by Adding Two Arrays Together
-
-    You can create a new array by adding together two existing arrays with compatible types with the addition operator (+).  (연산자 +와 호환되는 type의 array)
-    The new array’s type is inferred from the type of the two arrays you add together:
-
-    ```swift
-    var anotherThreeDoubles = Array(repeating: 2.5, count: 3)
-    // anotherThreeDoubles is of type [Double], and equals [2.5, 2.5, 2.5]
-
-    var sixDoubles = threeDoubles + anotherThreeDoubles
-    // sixDoubles is inferred as [Double], and equals [0.0, 0.0, 0.0, 2.5, 2.5, 2.5]
-    ```
-
 - Creating an Array with an Array Literal
 
     You can also initialize an array with an array literal, which is a shorthand way to write one or more values as an array collection. 
@@ -471,8 +423,6 @@ You access/modify an array through 1) its methods and properties, or by 2) using
     Dictionary와 달리 Array는 invalid index를 넣는 경우, 새로운 item이 추가되지 않는다.
     `shoppingList[100]= "new item"` // 런타임 에러 발생
 
-Note: The first item in the array has an index of 0, not 1. Arrays in Swift are always zero-indexed.
-
 - You can also use subscript syntax to change a range of values at once, even if the replacement set of values has a different length than the range you are replacing. 
 (서브스크립트 문법을 통해 특정 범위의 값을 변경 가능하다. 이때 변경하려는 값과 변경할 값의 item의 개수가 달라도 가능하다.)
 The following example replaces "Chocolate Spread", "Cheese", and "Butter" with "Bananas" and "Apples":
@@ -501,152 +451,19 @@ Use the removeLast() method rather than the remove(at:) method to avoid the need
     // the apples constant is now equal to the removed "Apples" string - 삭제된 item이 return 됨
     ```
 
-- Iterating Over an Array
-    - `for-in` loop 사용
-
-        ```swift
-        for item in shoppingList {
-            print(item)
-        } // Six eggs, Milk, Flour, Baking Powder, Bananas
-        ```
-
-    - `enumerated` 메서드를 통해 array를 interate하면, 각 item의 int type index 및 value를 얻을 수 있다.
-    - enumerated 정의 : Returns a sequence of pairs (n, x), where n represents a consecutive integer starting at zero and x represents an element of the sequence.
-
-        ```swift
-        for (index, value) in shoppingList.enumerated() { // Enumerated() method returns a tuple composed of an integer and the item. Integers start at zero and count up by one for each item
-            print("Item \(index + 1): \(value)") // You can decompose the tuple into temporary constants/variables as part of the iteration
-        } 
-        // Item 1: Six eggs, Item 2: Milk, Item 3: Flour, Item 4: Baking Powder, Item 5: Bananas
-        ```
-
 ## Sets
-
-A set stores distinct values (고유의 값) of the same type in a collection with no defined ordering.
-You can use a set instead of an array when the order of items isn’t important, or when you need to ensure that an item only appears once.
 
 Note: Swift’s Set type is bridged to Foundation’s NSSet class.
 
+- [ ]  ???
 - Hash Values for Set Types
 
-    A type must be hashable in order to be stored in a set—that is, the type must provide a way to compute a hash value for itself. A hash value is an Int value that’s the same for all objects that compare equally, such that if `a == b`, the hash value of a is equal to the hash value of b.
-    (Set에 저장하려면 type이 hashable 해야 한다. 즉, type이 hash value를 연산하는 방법을 제공해야 한다는 뜻이다. hash Value는 동일하게 비교되는 모든 객체의 int 값이다. ??? 
-    예를 들어 a == b 인 경우, a의 hash value는 b의 hash value와 동일하다.)
+    Note: 사용자 정의 타입 (custom types)이 Hashable Protocol을 준수하도록 설정하면, Set의 값, 그리고 Dictionary의 키로 사용할 수 있다. 단, 이 경우 직접 1) hash(into:) 메서드 및 2) == 연산자 함수를 구현 (implement)해야 한다.
 
-    Swift의 기본 type (String, Int, Double, Bool 등)은 default로 hashable 하다. 따라서 Set의 value type 또는 Dictionary의 key type으로 사용 가능하다. 
-    Set 또한 default로 hashable 하다. 
-    Enumeration의 case value (연관값이 없는 경우) 또한 default로 hashable이다.
+    Hashable protocol - [https://developer.apple.com/documentation/swift/hashable](https://developer.apple.com/documentation/swift/hashable)
 
-    Note: 사용자 정의 type이 Hashable protocol을 준수한다면, Set의 value type 또는 Dictionary의 key type으로 사용 가능하다.
-
-    - [ ]  Hashable protocol - [https://developer.apple.com/documentation/swift/hashable](https://developer.apple.com/documentation/swift/hashable)
-        - A type that can be hashed into a Hasher to produce an integer hash value. (Hasher로 hash 하여 int hash value를 생성할 수 있는 type이다.)
-        - 내용
-
-            You can use any type that conforms to the Hashable protocol in a set or as a dictionary key. Many types in the standard library conform to Hashable: Strings, integers, floating-point and Boolean values, and even sets are hashable by default. Some other types, such as optionals, arrays and ranges automatically become hashable when their type arguments implement the same.
-
-            Your own custom types can be hashable as well. When you define an enumeration without associated values, it gains Hashable conformance automatically (자동으로 Hashable 준수 상태가 되며), and you can add Hashable conformance to your other custom types by implementing the `hash(into:)` method. For structs whose stored properties are all Hashable, and for enum types that have all-Hashable associated values, the compiler is able to provide an implementation of hash(into:) automatically.
-
-            'Hashing a value' means feeding its essential components into a hash function, represented by the Hasher type. Essential components are those that contribute to the type’s implementation of Equatable. Two instances that are equal must feed the same values to Hasher in hash(into:), in the same order. ???
-
-            - [x]  Equatable
-                - A type that can be compared for value equality.
-- Set Type Syntax
-
-    The type of set is written as `Set<Element>`, where Element is the type that the set is allowed to store. Unlike arrays, sets don’t have an equivalent shorthand form. (Set는 축약형이 없다.)
-
-- Creating and Initializing an Empty Set
-
-    initializer syntax를 사용하여 특정 type의 empty set을 생성한다.
-
-    ```swift
-    var letters = Set<Character>()
-    print("letters is of type Set<Character> with \(letters.count) items.") // Prints "letters is of type Set<Character> with 0 items."
-    ```
-
-    Note: The type of the letters variable is inferred to be Set<Character>, from the type of the initializer.
-
-    Alternatively, if the context already provides type information (such as a function argument or an already typed variable/constant), you can create an empty set with an empty array literal:
-
-    ```swift
-    letters.insert("a") // letters now contains 1 value of type Character
-    letters = [] // letters is now an empty set, but is still of type Set<Character> - {}이 아님!
-    ```
-
-- Creating a Set with an Array Literal
-
-    You can also initialize a set with an array literal, as a shorthand way to write one or more values as a set collection.
-
-    ```swift
-    var favoriteGenres: Set<String> = ["Rock", "Classical", "Hip hop"] // initialized with three initial items
-    // The favoriteGenres variable is declared as “a set of String values”
-    // Because this set has specified a value type of String, it’s only allowed to store String values.
-    ```
-
-    Note: The favoriteGenres set is declared as a variable (with the `var` introducer) and not a constant (with the `let` introducer)
-
-    이때, `: Set<String>`로 type을 명시하지 않으면 Set가 아니라 Array가 된다. 단, 값 type이 1가지인 array literal로 initialize하는 경우, type inference 기능을 통해 Set element의 type을 명시하지 않는 것은 가능하다. 
-
-    ```swift
-    var favoriteGenres: Set = ["Rock", "Classical", "Hip hop"] // array literal의 모든 값의 type이 동일하므로 Set<String>로 명시하지 않아도 type inference 된다.
-    ```
-
-### Accessing and Modifying a Set
-
-메서드 및 프로퍼티를 통해 Set를 접근 및 수정한다.
-
-- read-only `count` property를 통해 item의 개수를 확인한다.
-- Boolean `isEmpty` property를 통해 count 프로퍼티가 0인지 축약으로 확인한다.
-- Set의 `insert(_:)` method를 통해 item을 추가한다.
-- Set의 `remove(_:)` method를 통해 item을 삭제한다. 해당 item이 set의 member가 맞으면 item을 삭제 및 반환하고, member에 속하지 않으면 nil을 반환한다.
-Set는 순서가 없으므로 parameter at: index가 필요없다.
-- Set의 `removeAll()` method를 통해 모든 item을 삭제한다.
-- `contains(_:)` method를 통해 특정 item이 있는지 확인한다. (return type Bool)
-
-    ```swift
-    print("I have \(favoriteGenres.count) favorite music genres.") // Prints "I have 3 favorite music genres."
-
-    if favoriteGenres.isEmpty {
-        print("As far as music goes, I'm not picky.")
-    } else {
-        print("I have particular music preferences.") // Prints "I have particular music preferences."
-    }
-
-    favoriteGenres.insert("Jazz") // favoriteGenres now contains 4 items
-
-    if let removedGenre = favoriteGenres.remove("Rock") {
-        print("\(removedGenre)? I'm over it.") // Prints "Rock? I'm over it." - member에 속하므로 삭제 및 반환된다.
-    } else {
-        print("I never much cared for that.")
-    }
-
-    if favoriteGenres.contains("Funk") {
-        print("I get up on the good foot.")
-    } else {
-        print("It's too funky in here.") // Prints "It's too funky in here." - 해당 item이 없으므로 false를 반환한다.
-    }
-
-    ```
-
-- Iterating Over a Set
-
-    for-in loop 사용
-
-    ```swift
-    for genre in favoriteGenres {
-        print("\(genre)")
-    } // Classical, Jazz, Hip hop
-    ```
-
-    Set type은 순서가 없다. Set의 값을 특정 순서대로 iterate 하려면, `sort()` 메서드를 사용한다. (sort 메서드는 Set의 element를 < 연산자를 사용하여 정렬한 Array로 바꾸어 반환한다.) 
-    Use the sorted() method, which returns the set’s elements as an array sorted using the < operator.
-
-    ```swift
-    for genre in favoriteGenres.sorted() {
-        print("\(genre)")
-    } // Classical, Hip hop, Jazz - < operator로 sorted 된 상태이다. (A-Z 순 또는 1-9 순으로 정렬됨)
-    ```
-
+    - 예시는 이해가 된다. hasher의 기능에 대해서 찾아보자
+        - [ ]  'Hashing a value' means feeding its essential components into a hash function, represented by the Hasher type. Essential components are those that contribute to the type’s implementation of Equatable. Two instances that are equal must feed the same values to Hasher in hash(into:), in the same order. ???
 - Performing Set Operations
 
     You can efficiently perform fundamental set operations, such as combining two sets together, determining which values two sets have in common (2개 Set가 공통적으로 갖는 값을 확인하거나), or determining whether two sets contain all/some/none of the same values.
