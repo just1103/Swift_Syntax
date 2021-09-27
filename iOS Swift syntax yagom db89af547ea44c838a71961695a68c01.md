@@ -1,7 +1,7 @@
 # Swift syntax
 
 Created: January 24, 2021 1:43 PM
-Last Edited Time: September 27, 2021 11:31 PM
+Last Edited Time: September 28, 2021 12:31 AM
 Property: Yagom
 Type: 언어
 
@@ -6951,7 +6951,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             print(2.isOdd)  // false 출력
             ```
 
-    - 이어서) 메서드 추가
+    - 메서드 추가
         - data type인 Int에 인스턴스 메서드 multiply(by:) 를 추가했습니다. 
         여러 기능을 여러 익스텐션 블록으로 나눠서 구현해도 전혀 문제가 없습니다.
 
@@ -6971,48 +6971,28 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         ```
 
     - 이니셜라이저 추가
-        - 인스턴스를 초기화(이니셜라이즈)할 때 인스턴스 초기화에 필요한 다양한 데이터를 전달받을 수 있도록 여러 종류의 이니셜라이저를 만들 수 있습니다. 타입의 정의부에 이니셜라이저를 추가하지 않더라도 익스텐션을 통해 이니셜라이저를 추가할 수 있습니다. 
-        익스텐션으로 클래스 타입에 편의 이니셜라이저 (convenience initializer)는 추가 가능하지만, 지정 이니셜라이저 (designated initializer) 및 디이니셜라이저는 추가 불가합니다.
-        - [ ]  값 타입 = Struct ?
-        - [ ]  var int, var double 안해도 되나?
-            - 저장 프로퍼티를 생성하면 에러 발생함
+        - 인스턴스를 초기화(이니셜라이즈)할 때 인스턴스 초기화에 필요한 다양한 데이터를 전달받을 수 있도록 여러 종류의 이니셜라이저를 만들 수 있습니다. 타입의 정의부에 이니셜라이저를 추가하지 않더라도 익스텐션을 통해 이니셜라이저를 추가할 수 있습니다.
+        - 익스텐션으로 클래스 타입에 편의 이니셜라이저는 추가 가능하지만, 지정 이니셜라이저 (designated initializer) 및 디이니셜라이저는 추가 불가합니다.
 
-                ```c
-                extension String {
-
-                //    var intTypeNumber: Int = 0
-                //    var doubleTypeNumber: Double = 0.0
-                // 에러 메세지 - Extensions must not contain stored properties.
-
-                    init(intTypeNumber: Int) {
-                        self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
-                    }
-                    
-                    init(doubleTypeNumber: Double) {
-                        self = "\(doubleTypeNumber)"
-                    }
+            ```swift
+            extension String { // Swift의 기본 데이터 타입인 String은 struct로 구현되어 있다
+                init(intTypeNumber: Int) {
+                    self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
                 }
-                ```
-
-        ```c
-        extension String {
-            init(intTypeNumber: Int) {
-                self = "\(intTypeNumber)"   // Int type의 입력값 (intTypeNumber)을 "String 타입"으로 변경해주는 기능
+                
+                init(doubleTypeNumber: Double) {
+                    self = "\(doubleTypeNumber)"
+                }
             }
-            
-            init(doubleTypeNumber: Double) {
-                self = "\(doubleTypeNumber)"
-            }
-        }
 
-        let stringFromInt: String = String(intTypeNumber: 100)  // let선언 인스턴스를 생성하고, 이니셜라이저 intTypeNumber의 초기값으로 100을 할당한다.
-        print(stringFromInt) // "100" 출력
+            let stringFromInt: String = String(intTypeNumber: 100)  // let선언 인스턴스를 생성하고, 이니셜라이저 intTypeNumber의 초기값으로 100을 할당한다.
+            print(stringFromInt) // "100" 출력
 
-        let stringFromDouble: String = String(doubleTypeNumber: 100.0)    
-        print(stringFromDouble) // "100.0" 출력
-        ```
+            let stringFromDouble: String = String(doubleTypeNumber: 100.0)    
+            print(stringFromDouble) // "100.0" 출력
+            ```
 
-    퀴즈2 앞부분 틀린것들 다시 풀기
+    - [ ]  퀴즈2 앞부분 틀린것들 다시 풀기
 
 # 21. Error Handling
 
