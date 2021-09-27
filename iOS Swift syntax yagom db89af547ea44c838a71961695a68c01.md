@@ -1,8 +1,7 @@
 # Swift syntax
 
 Created: January 24, 2021 1:43 PM
-Created By: 손효주
-Last Edited Time: September 19, 2021 9:53 PM
+Last Edited Time: September 27, 2021 11:31 PM
 Property: Yagom
 Type: 언어
 
@@ -6495,8 +6494,8 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         - get은 '읽기가 가능해야 한다'는 뜻이며 (읽기 전용 또는 읽기쓰기 모두 가능), get과 set을 모두 명시하면 '읽기쓰기 모두 가능'한 프로퍼티여야 합니다.
         - 타입 프로퍼티는 static 키워드로 선언합니다.
     - 메서드 - 필수 메소드 지정시 함수명과 반환값을 지정할 수 있다. parameter는 명시할 수 없다.
-        - mutating 키워드를 사용해 인스턴스에서 변경 가능하다는 것을 표시할 수 있습니다. 
-        (이 mutating 키워드는 값타입 형에만 사용합니다. → 클래스는 불가함)
+        - mutating 키워드를 사용해 인스턴스 메서드에서 "자신의 내부 값을 변경 가능하다"ㅇ          는 것을 표시할 수 있습니다. 
+        (mutating 키워드는 값 타입 (구조체, 열거형)에만 사용한다. 클래스는 필요 없음)
 
             ```swift
             protocol Togglable {
@@ -6705,6 +6704,132 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
     } // speak 기능 실행 (SubClass는 ReadSpeakable 프로토콜을 conform 하므로)
     ```
 
+- 야곰 textbook
+    - 메서드 요구
+        - "프로토콜 타입의 인스턴스"는 해당 프로토콜을 준수하는 타입의 인스턴스라는 의미이다.
+
+        ```swift
+        protocol Receivable { // 무언가를 수신받을 수 있는 기능
+            func received(data: Any, from: Sendable)
+        }
+
+        protocol Sendable { // 무언가를 발신할 수 있는 기능
+            var from: Sendable { get }   // *Sendable 프로토콜을 준수하는 타입의 인스턴스여야 한다.
+            var to: Receivable? { get }  // *Receivable 프로토콜을 준수하는 타입의 인스턴스여야 한다.
+            
+            func send(data: Any)
+            
+            static func isSendableInstance(_ instance: Any) -> Bool
+        }
+
+        // 수신/발신이 가능한 클래스
+        class Message: Sendable, Receivable { // 프로토콜은 다중상속 가능 (클래스는 단일상속)
+            var from: Sendable { // 발신자는 발신 가능해야 한다.
+                return self
+            }
+            
+            var to: Receivable? // 수신자는 수신 가능해야 한다.
+            
+            func send(data: Any) { // 메시지를 발신한다. - 왜 to를 parameter로 지정을 안하고????
+                guard let receiver: Receivable = self.to else { // 수신자가 있으면 receiver 상수에 담는다. - 프로퍼티 to를 초기화하지 않으면 guard문이 실패함
+                    print("Message has no receiver")
+                    return
+                }
+                receiver.received(data: data, from: self.from) // 상수 receiver의 received 메서드를 호출한다. (수신자가 있으면 메시지 받았다고 출력)
+            }
+            
+            func received(data: Any, from: Sendable) { // 메시지를 수신한다.
+                print("Message received \(data) from \(from)")
+            }
+
+            class func isSendableInstance(_ instance: Any) -> Bool {
+                if let sendableInstance: Sendable = instance as? Sendable { // 1) 전달인자가 Any 이므로 as? 를 통해 Sendable를 준수하는지 확인
+                    return sendableInstance.to != nil  // return true가 아님 - 2) 프로퍼티 to가 지정되었는지 확인
+                }
+                return false
+            }
+        }
+
+        // 수신/발신이 가능한 클래스
+        class Mail: Sendable, Receivable {
+            var from: Sendable {
+                return self
+            }
+            
+            var to: Receivable?
+            
+            func send(data: Any) {
+                guard let receiver: Receivable = self.to else {
+                    print("Mail has no receiver")
+                    return
+                }
+                receiver.received(data: data, from: self.from)
+            }
+            
+            func received(data: Any, from: Sendable) {
+                print("Mail received \(data) from \(from)")
+            }
+            
+            static func isSendableInstance(_ instance: Any) -> Bool {
+                if let sendableInstance: Sendable = instance as? Sendable {
+                    return sendableInstance.to != nil
+                }
+                return false
+            }
+        }
+
+        let myPhoneMessage: Message = Message()
+        let yourPhoneMessage: Message = Message()
+
+        // from/to 프로퍼티가 초기화되지 않았으므로 아무것도 안들어있음
+        print(myPhoneMessage.from) // test.Message (test: 프로젝트 이름)
+        print(myPhoneMessage.to)   // nil
+
+        // 아직 수신받을 인스턴스가 없음
+        myPhoneMessage.send(data: "Hello") // Message has no receiver - 수신자가 없음
+
+        myPhoneMessage.to = yourPhoneMessage // 수신자 지정
+        myPhoneMessage.send(data: "Hello") // Message received Hello from test.Message (test: 프로젝트 이름) - 수신자가 있으므로 메시지 받았다고 출력
+
+        let myMail: Mail = Mail()
+        let yourMail: Mail = Mail()
+
+        myMail.send(data: "Hi") // Mail has no receiver
+
+        myMail.to = yourMail
+        myMail.send(data: "Hi") // Mail received Hi from test.Mail
+
+        myMail.to = myPhoneMessage
+        myMail.send(data: "ByeToPhone") // Message received ByeToPhone from test.Mail
+
+        print(Message.isSendableInstance("Hello")) // false - String은 Sendable 프로토콜을 준수하지 않기 떄문
+        print(Message.isSendableInstance(myPhoneMessage)) // true - myPhoneMessage는 Message 클래스 인스턴스이며, 1) Sendable 프로토콜을 준수하며, 2) 프로퍼티 to가 nil이 아니기 때문
+
+        print(Message.isSendableInstance(yourPhoneMessage)) // false - 1) Sendable 프로토콜은 준수하지만, 2) 프로퍼티 to가 초기화되기 전이므로
+        print(Mail.isSendableInstance(myPhoneMessage)) // true
+        print(Mail.isSendableInstance(myMail)) // true
+        ```
+
+    (다른 내용 생략)
+
+    - 위임 (Delegation)을 위한 프로토콜
+        - 위임
+
+            클래스, 구조체가 자신의 책무를 다른 타입의 인스턴스에게 위임하는 디자인 패턴이다.
+
+            책무를 위임하기 위해 프로토콜을 정의할 수 있다. 해당 프로토콜을 준수하는 타입은 자신에게 위임될 일정 책무를 수행할 수 있음을 보장한다. 따라서 다른 인스턴스에게 자신이 해야할 일을 믿고 맡길 수 있다.
+
+            위임은 사용자의 특정 행동에 반응하기 위해 사용하기도 하고, 비동기 처리에도 사용한다.
+
+        - 위임 패턴
+
+            애플의 프레임워크에서 사용하는 주요 패턴 중 하나이다. (언어 자체의 기능이 아니라 디자인 패턴임)
+
+            "0000Delegate"라는 이름의 프로토콜이 위임 패턴을 사용한다.
+
+            ex) UITableView 타입의 인스턴스가 해야할 일을 위임받아 처리하는 인스턴스는 UITableViewDelegate 프로토콜을 준수하면 된다.
+            = 위임받은 인스턴스 (즉, UITableViewDelegate 프로토콜을 준수하는 인스턴스)는 UITableView 타입의 인스턴스가 해야할 일을 대신 처리해준다.
+
 # 20. Extension
 
 - 특징
@@ -6765,7 +6890,6 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
         익스텐션으로 Int 타입에 추가해준 연산 프로퍼티는 Int 타입의 어떤 인스턴스에도 사용이 가능합니다. 
         인스턴스 연산 프로퍼티를 추가 가능하며, static 키워드를 사용하여 타입 연산 프로퍼티도 추가 가능합니다. 
         저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.
-            - [ ]  (저장 프로퍼티 및 프로퍼티 옵저버는 추가 불가합니다.) → 왜지?
             - [x]  소스 코드가 이해가 안감
                 - 아하! 연산 프로퍼티의 syntax구나!
 
@@ -6796,7 +6920,12 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
                     }
                     ```
 
-            - [ ]  // 1: Int type의 정수를 나타내는 리터럴 문법이다 ????
+            - [x]  // 1: Int type의 정수를 나타내는 리터럴 문법이다 → 리터럴 문법 무슨 뜻?
+                - 상수/변수에 저장되어 있는 값을 사용하지 않고 (간접적인 사용), 값을 직접 코드에 나타낸 것이 리터럴이다. (직접적인 사용)
+
+                    ex) 숫자 1 등을 코드에 직접 나타내면, 정수 리터럴이라고 한다. 
+                    ex) "이건 문자열 리터럴" 등 "" 내부에 텍스트를 적은 형태의 문자열을 코드에 직접 나타낸 것을 문자열 리터럴이라고 한다.
+                    ex) [1, 2, 3] 등 [] 내부에 데이터를 적은 형태의 Array를 코드에 직접 나타낸 것을 Array 리터럴이라고 한다.
 
             ```c
             extension Int {
@@ -6823,7 +6952,7 @@ cf. Class의 이니셜라이저는 <Notion 14. 상속> 파트 참고
             ```
 
     - 이어서) 메서드 추가
-        - data type인 Int에 인스턴스 메서드인 multiply(by:) 를 추가했습니다. 
+        - data type인 Int에 인스턴스 메서드 multiply(by:) 를 추가했습니다. 
         여러 기능을 여러 익스텐션 블록으로 나눠서 구현해도 전혀 문제가 없습니다.
 
         ```c
