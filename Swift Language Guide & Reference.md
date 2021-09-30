@@ -1,7 +1,7 @@
 # Swift Language Guide & Reference
 
 Created: August 8, 2021 3:14 PM
-Last Edited Time: September 28, 2021 6:38 PM
+Last Edited Time: October 1, 2021 4:55 AM
 Property: Official
 
 - Contents
@@ -467,6 +467,8 @@ Dictionary에 request한 key의 value가 있으면 subscript는 그 value를 Opt
 
 # 5. Control Flows (95%)
 
+자세한 내용은 블로그에서 확인해주세요. [https://applecider2020.tistory.com/11](https://applecider2020.tistory.com/11)
+
 ### For-In Loops
 
 You use the `for-in` loop to iterate over a sequence, such as items in an array, ranges of numbers, or characters in a string.
@@ -534,14 +536,6 @@ for tickMark in stride(from: 3, through: hours, by: hourInterval) { // Closed ra
 
 While 
 
-A while loop starts by evaluating a single condition. If the condition is true, a set of statements is repeated until the condition becomes false.
-
-```swift
-while condition {
-    statements
-}
-```
-
 구현 - This example plays a simple game of Snakes and Ladders.
 
 ![Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png](Swift%20Language%20Guide%20&%20Reference%2032caab2bf40d4b56a0697807c398d9ae/Untitled%202.png)
@@ -580,8 +574,6 @@ print("Game over!")
     - if문 내부의 board[square]이 런타임 에러를 발생시키지 않을 조건만 체크한 것이라서 인듯 (note 부분 참고)
 
 Repeat-While
-
-구현 - Snakes and Ladders example again
 
 ```swift
 // while loop와 동일함
@@ -646,9 +638,6 @@ each case is a separate branch of code execution. The switch statement determine
     - 원하면 Xcode setting을 변경 가능함 - [https://stackoverflow.com/questions/42376988/xcode-changing-the-indentation-rules-for-switch-statements](https://stackoverflow.com/questions/42376988/xcode-changing-the-indentation-rules-for-switch-statements)
 
 ## Control Transfer Statements
-
-Control transfer statements change the order in which your code is executed, by transferring control from one piece of code to another.
-Swift has five control transfer statements:
 
 - continue
     
