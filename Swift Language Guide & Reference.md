@@ -1,7 +1,7 @@
 # Swift Language Guide & Reference
 
 Created: August 8, 2021 3:14 PM
-Last Edited Time: October 1, 2021 4:55 AM
+Last Edited Time: October 2, 2021 6:39 AM
 Property: Official
 
 - Contents
@@ -812,36 +812,7 @@ if #available(iOS 10, macOS 10.12, *) {
 
 # 6. Functions (95%)
 
-Functions are self-contained chunks of code that perform a specific task. You give a function a name that identifies what it does (함수의 기능을 식별하는 이름을 지정한다), and this name is used to “call” the function to perform its task when needed. (함수를 호출할 때 함수이름을 사용한다.)
-
-Swift’s unified function syntax is flexible enough to express anything from a simple C-style function (with no parameter names) to a complex Objective-C-style method (with names and argument labels for each parameter). Parameters can provide default values to simplify function calls and can be passed as in-out parameters, which modify a passed variable once the function has completed its execution.
-
-Every function has a type, consisting of the function’s parameter types and return type. You can use this type like any other type in Swift, which makes it easy to 1) pass functions as parameters to other functions, and to 2) return functions from functions. Functions can also be 3) written within other functions to encapsulate useful functionality within a nested function scope. (내포된 함수 범위 내에서 유용하게 기능한다.) 내포된 함수 범위 내에서 ????
-
-- [ ]  
 - Defining and Calling Functions
-    
-    When you define a function, you can optionally define one or more named, typed values that the function takes as input, known as `parameters.` You can also optionally define a type of value that the function will pass back as output when it’s done, known as its `return type`.
-    
-    Every function has a function name, which describes the task that the function performs. To use a function, you “call” that function with its name and pass it input values (known as `arguments`) that match the types of the function’s parameters. A function’s arguments must always be provided in the same order as the function’s parameter list.
-    
-    ```swift
-    func greet(person: String) -> String { // define one input parameter—a String value called person
-        let greeting = "Hello, " + person + "!"
-        return greeting
-    }
-    ```
-    
-    ```swift
-    // 축약형 
-    func greetAgain(person: String) -> String {
-        return "Hello again, " + person + "!"  // you can combine the message creation and the return statement into one line
-    }
-    ```
-    
-    In the line of code that says `return greeting`, the function finishes its execution and returns the current value of `greeting`.
-    
-    All of this information is rolled up into the `function’s definition`, which is prefixed with the `func` keyword. You indicate the function’s return type with the `return arrow` -> (a hyphen followed by a right angle bracket), which is followed by the name of the type to return. 
     
     ```swift
     print(greet(person: "Anna")) // Prints "Hello, Anna!" - You call the greet(person:) function by passing it a String value after the person argument label
@@ -853,9 +824,6 @@ Every function has a type, consisting of the function’s parameter types and re
     - [x]  함수 정의에서 parameter를 정의할 때 argument label을 추가로 붙이지 않아도, 함수호출 시 parameter name이 argument label이라고 불린다!
     즉, 함수 호출 시점에서 argument가 전달되는 부분의 앞쪽은 무조건 'argument label'인건가?
         - 함수 호출 시점에서 argument가 전달되는 부분의 앞쪽은 무조건 'argument label'이 맞다. 선언 시 argument label을 따로 지정해주지 않으면 자동으로 parameter name이 argument label이 된다.
-    
-    Note: print(_:separator:terminator:) function doesn’t have a label for its first argument, and its other arguments are optional because they have a default value.
-    
 
 ### Function Parameters and Return Values
 
@@ -866,35 +834,7 @@ You can define anything from a simple utility function (with a single unnamed pa
         
         [https://www.quora.com/What-is-a-utility-method](https://www.quora.com/What-is-a-utility-method)
         
-- Functions Without Parameters
-    
-    Functions aren’t required to define input parameters.
-    
-    ```swift
-    func sayHelloWorld() -> String { // parameter를 정의하지 않더라도 함수 정의 시 ()가 필요하다.
-        return "hello, world"
-    }
-    print(sayHelloWorld()) // Prints "hello, world" - 마찬가지로 함수 호출 시 ()가 필요하다. 
-    ```
-    
-- Functions With Multiple Parameters
-    
-    ```swift
-    func greet(person: String, alreadyGreeted: Bool) -> String {
-        if alreadyGreeted {
-            return greetAgain(person: person)
-        } else {
-            return greet(person: person)
-        }
-    }
-    print(greet(person: "Tim", alreadyGreeted: true)) // Prints "Hello again, Tim!" - passing the function both a String argument value labeled person and a Bool argument value labeled alreadyGreeted.
-    ```
-    
-    Note that this function `greet(person:alreadyGreeted)` is distinct (별개의 함수이다) from the `greet(person:)` function. (Although both functions have names that begin with greet, the greet(person:alreadyGreeted:) function takes two arguments but the greet(person:) function takes only one.)
-    
 - Functions Without Return Values
-    
-    Functions aren’t required to define a return type.
     
     ```swift
     func greet(person: String) {
@@ -902,16 +842,15 @@ You can define anything from a simple utility function (with a single unnamed pa
     }
     greet(person: "Dave") // Prints "Hello, Dave!"
     
-    var specialValueOfTypeVoid: Void = greet(person: "test") // Hello, test! 출력 - 함수가 할당됨과 동시에 호출된다. ????
+    var specialValueOfTypeVoid: Void = greet(person: "test") // Hello, test! 출력 - 함수가 할당됨과 동시에 호출된다.
     //print(specialValueOfTypeVoid)  // ()
     ```
     
     Note: Strictly speaking, this version of the greet(person:) function does still return a value, even though no return value is defined. Functions without a defined return type return a special value of type `Void`. This is simply an empty tuple, written as `()`.
     (엄밀히는 return type을 정의하지 않은 함수도 return value를 가진다. 그것은 Void type이고, empty tuple () 이다.)
     
-    - [ ]  var specialValueOfTypeVoid: Void = greet(person: "test") // Hello, test! 출력 - 함수가 할당됨과 동시에 호출된다. ????
-    
-    The return value of a function can be ignored when it’s called:
+    - [x]  var specialValueOfTypeVoid: Void = greet(person: "test") // Hello, test! 출력?
+        - 함수가 할당됨과 동시에 호출된다.
     
     ```swift
     func printAndCount(string: String) -> Int {
@@ -925,14 +864,15 @@ You can define anything from a simple utility function (with a single unnamed pa
     printWithoutCounting(string: "hello, world") // prints "hello, world" - The message is still printed by the first function, but the returned value isn’t used.
     ```
     
-    Note: Return values can be ignored, but a function that says it will return a value must always do so. A function with a defined return type can’t allow control to fall out of the bottom of the function without returning a value, and attempting to do so will result in a compile-time error. 
-    (함수 정의 시 return type이 Void가 아닌 경우, 항상 특정 값을 return 해야 한다. (반환값은 꼭 사용하지 않아도 된다.) 아니면 런타임 에러가 발생한다.)
+    - [ ]  let _ = printAndCount(string: string) // calls the first function, but ignores its return value. 이것도 그냥 와일드카드 패턴이라고 보면되나???
     
-    - [ ]  let _ = printAndCount(string: string) // calls the first function, but ignores its return value.
+    Note: Return values can be ignored, but a function that says it will return a value must always do so. A function with a defined return type can’t allow control to fall out of the bottom of the function without returning a value, and attempting to do so will result in a compile-time error. 
+    
+    반환값은 무시될 수 있지만, 반환 타입이 있는 함수는 항상 값을 반환한다.❗️반환 타입을 정의한 함수는 반환값을 반환하기 전에 함수에서 빠져나갈 수 없다. 반환값을 반환하기 전에 함수를 종료하면, 컴파일 에러가 발생한다.
+    
+    - [ ]  중요 - 예를 들면????
     
 - Functions with Multiple Return Values
-    
-    You can use a tuple type as the return type for a function to return multiple values as part of one compound return value.
     
     ```swift
     // a function, which finds the smallest and largest numbers in an array
@@ -949,7 +889,6 @@ You can define anything from a simple utility function (with a single unnamed pa
         }
         return (currentMin, currentMax) // 이미 return type을 정의할 때 tuple element의 name을 지정했으므로 return (min: currentMin, max: currentMax)으로 다시 명시하지 않아도 된다.
     }
-    
     // Because the tuple’s member values are named as part of the function’s return type, they can be accessed with dot syntax to retrieve the values:
     let bounds = minMax(array: [8, -6, 2, 109, 3, 71])
     print("min is \(bounds.min) and max is \(bounds.max)") // Prints "min is -6 and max is 109"
@@ -957,7 +896,6 @@ You can define anything from a simple utility function (with a single unnamed pa
     
     The function returns a tuple containing two values. These values are labeled min/max so that they can be accessed by name when querying the function’s return value.
     
-    - [ ]  단순히 labeled 라는 표현을 named와 동일하게 사용하는건가?
     - [x]  Query?
         - 특정데이터베이스에서 원하는 조건의 데이터를 조작하기 위한 문장 덩어리이다.
         - 데이터베이스에 보내는 요청(request) 또는 질문이다.
@@ -971,13 +909,6 @@ You can define anything from a simple utility function (with a single unnamed pa
     함수의 return type이 tuple인 경우, tuple 전체가 nil 일 가능성이 있다. 이때 return type을 Optional tuple type 으로 명시한다. 예를 들면 `(Int, Int)?`  이다.
     
     Note: `(Int?, Int?)`와 다르다. (Int?, Int?)은 a tuple that contains values of optional types 이다. 반면, optional tuple type `(Int, Int)?`은 the entire tuple is optional 이라는 의미이다.
-    
-    ```swift
-    //minMax(array: []) // 런타임 에러 발생 - Fatal error: Index out of range (empty array의 index 0의 값은 없으므로)
-    ```
-    
-    minMax 함수는 argument로 전달하는 array에 대해 safety checks를 하지 않았다. 만약 argument로 empty array를 전달하면, array[0]에 접근하는 과정에서 런타임 에러가 발생한다.
-    safety checks를 거쳐서 함수를 안전하게 사용하려면, return type을 optional tuple로 수정하고, argument에 empty array가 전달되면 nil을 반환해야 한다.
     
     ```swift
     func minMax(array: [Int]) -> (min: Int, max: Int)? {
@@ -999,90 +930,17 @@ You can define anything from a simple utility function (with a single unnamed pa
     } // Prints "min is -6 and max is 109"
     ```
     
-- Functions With an Implicit Return
-    
-    If the entire body of the function is a single expression, the function implicitly returns that expression. 
-    Any function that you write as just one return line can omit the return. (함수 구현부가 1줄이면 `return` 키워드를 생략 가능하다.) 
-    
-    참고 - property `getter` can also use an implicit return.
-    
-    ```swift
-    func greeting(for person: String) -> String {
-        "Hello, " + person + "!"  // 함수 구현부가 1줄이므로 return 키워드를 생략 가능하다.
-    }
-    print(greeting(for: "Dave")) // Prints "Hello, Dave!"
-    
-    func anotherGreeting(for person: String) -> String {
-        return "Hello, " + person + "!"
-    }
-    print(anotherGreeting(for: "Dave")) // Prints "Hello, Dave!"
-    ```
-    
-    Note: return type을 명시했으므로 반드시 return value가 있어야 한다. 따라서 You can’t use `fatalError("Oh no!")` or `print(13)` as an implicit return value.
-    
 
 ### Function Argument Labels and Parameter Names
-
-Each function parameter has both an argument label and a parameter name. The argument label is used when calling the function; each argument is written in the function call with its argument label before it. (함수 호출 시, argument 앞에 있는 것이 무조건 argument label이다!) The parameter name is used in the implementation of the function. (parameter name은 함수를 실행하는 과정에서 사용된다. 함수 구현부에서 언급됨) 
-By default, parameters use their parameter name as their argument label. (함수 선언 시 argument label을 따로 정의하지 않으면, default로 parameter name을 argument label로 사용한다!)
 
 함수 호출 시, argument 앞에 있는 것이 무조건 argument label이다!
 함수 선언 시, argument label을 따로 정의하지 않으면, default로 parameter name을 argument label로 사용한다!
 
 parameter가 여러 개인 경우, parameter name과 달리 argument label은 동일하게 중복사용이 가능하다. 단, 가독성을 위해 argument label을 중복하지 않는 것이 좋다.
 
-```swift
-func someFunction(sameLabel firstParameterName: Int, sameLabel secondParameterName: Int) {
-    // In the function body, firstParameterName/secondParameterName refer to the argument values for the first/second parameters.
-    print(firstParameterName + secondParameterName)
-}
-someFunction(sameLabel: 1, sameLabel: 2) // 3 출력
-```
-
-- Specifying Argument Labels
-    
-    The use of argument labels can allow a function to be called in an expressive, sentence-like manner, while still providing a function body that’s readable and clear in intent.
-    (argument label의 장점은 함수 호출부는 표현이 쉽고, 문장과 같은 표현방식으로 사용이 가능하며, 동시에 함수 구현부는 가독성 있고 의도에 맞게 구성할 수 있다는 것이다.)
-    
-    ```swift
-    func someFunction(argumentLabel parameterName: Int) {
-        // ...
-    }
-    ```
-    
-- Omitting Argument Labels
-    
-    parameter에 argument label를 지정하고 싶지 않다면, `_` (underscore) 를 사용한다.
-    단, parameter에 argument label가 있다면, 반드시 함수 호출 시 argument label을 사용해야 한다.
-    
-    ```swift
-    func someFunction(_ firstParameterName: Int, secondParameterName: Int) {
-        // ...
-    }
-    someFunction(1, secondParameterName: 2)
-    ```
-    
-- Default Parameter Values (매개변수 기본값)
-    
-    You can define a default value for any parameter by assigning a value to the parameter. default value를 정의하면, 함수 호출 시 parameter를 생략 가능하다.
-    
-    함수 정의 시, default value가 있는 parameter를 list의 뒷쪽에 배치한다. default value가 없는 parameter가 더 중요할 가능성이 높기 때문이다. (중요한 parameter를 앞에 배치하면 가독성이 좋다.)
-    
-    ```swift
-    func someFunction(parameterWithoutDefault: Int, parameterWithDefault: Int = 12) {
-        // If you omit the second argument when calling this function, then the value of parameterWithDefault is 12 inside the function body.
-    }
-    someFunction(parameterWithoutDefault: 3, parameterWithDefault: 6) // parameterWithDefault is 6
-    someFunction(parameterWithoutDefault: 4) // parameterWithDefault is 12 - parameter 생략 가능
-    ```
-    
 - Variadic Parameters (가변 매개변수)
     
     *Variadic : (CS용어) Taking a arbitrarily many arguments.
-    
-    A variadic parameter accepts zero or more values of a specified type. A variadic parameter specifies that the parameter can be passed a varying number of input values when the function is called. Write variadic parameters by inserting `...` (three period characters) after the parameter’s type name.
-    
-    The values passed to a variadic parameter are made available (within the function’s body) as an array.
     
     ```swift
     func arithmeticMean(_ numbers: Double...) -> Double {
@@ -1136,33 +994,8 @@ someFunction(sameLabel: 1, sameLabel: 2) // 3 출력
             print(y.isNaN) // Prints "true"
             ```
             
-    
-    A function can have multiple variadic parameters. The first parameter that comes after a variadic parameter must have an argument label. (가변 매개변수 바로 뒤에오는 매개변수는 반드시 argument label이 있어야 한다. 함수 호출 시 arguments가 어떤 parameter로 전달될지 구분해야 하기 때문이다.)
-    
-    ```swift
-    func arithmeticMean(label1 numbers1: Double..., label2 numbers2: Double...) -> Double {
-    //func arithmeticMean(label1 numbers1: Double..., _ numbers2: Double...) -> Double { // 컴파일 에러 발생 - A parameter following a variadic parameter requires a label.
-        var total1: Double = 0
-        var total2: Double = 0
-        
-        for number1 in numbers1 {
-            total1 += number1
-        }
-        for number2 in numbers2 {
-            total2 += number2
-        }
-        
-        return total1 + total2
-    }
-    
-    print(arithmeticMean(label1: 1,2,3, label2: 7,8,9)) // 30.0 출력
-    ```
-    
+            - [ ]  ?????????????
 - In-Out Parameters
-    
-    Function parameters are constants by default. Trying to change the value of a function parameter from within the body of that function results in a compile-time error. 
-    If you want a function to modify a parameter’s value, and you want those changes to persist after the function call has ended, define that parameter as an *in-out parameter* instead.
-    (함수가 parameter의 값을 수정하고, 함수가 종료된 이후에도 해당 값을 유지하려면 해당 parameter를 in-out parameter로 정의해야 한다.)
     
     An in-out parameter has a value that’s passed *in* to the function, is modified by the function, and is passed back *out* of the function to replace the original value.
     (in-out parameter는 값을 함수에 전달 (in)하고, 함수 내부에서 값을 수정한 이후에 함수 밖으로 다시 전달 (out)하여 기존의 값을 대체한다.
@@ -1173,54 +1006,10 @@ someFunction(sameLabel: 1, sameLabel: 2) // 3 출력
             2. In the body of the function, the copy is modified.
             3. When the function returns, the copy’s value is assigned to the original argument.
         - This behavior is known as copy-in copy-out or call by value result.
-    
-    You can only pass a variable as the argument for an in-out parameter. You can’t pass a constant or a literal value as the argument, because constants and literals can’t be modified. You place an `&` (ampersand) directly before a variable’s name when you pass it as an argument to an in-out parameter, to indicate that it can be modified by the function.
-    
-    Note: In-out parameters는 매개변수 기본값을 가질 수 없다. 가변 매개변수 (variadic parameters)는 in-out parameter가 될 수 없다.
-    
-    ```swift
-    func swapTwoInts(_ a: inout Int, _ b: inout Int) { // in-out parameter가 아니라면, 함수 종료 시 argument 및 로컬변수가 Stack에서 pop되므로 함수 외부에 영향을 미치지 않는다.
-        let temporaryA = a  // 임시 상수 temporaryA를 통해 in-out parameter인 a와 b의 값을 swap 한다.
-        a = b
-        b = temporaryA
-    }
-    
-    var someInt = 3
-    var anotherInt = 107
-    
-    swapTwoInts(&someInt, &anotherInt) // in-out parameter로 전달되는 argument는 &로 표시한다. (각 변수의 주소를 함수에 전달하므로 함수 외부에도 영향을 미친다. CS50 swap 참고)
-    print("someInt is now \(someInt), and anotherInt is now \(anotherInt)") // Prints "someInt is now 107, and anotherInt is now 3" - 함수 실행 이후 swap 된 상태이다.
-    ```
-    
-    Note: In-out parameters는 어떤 값을 return 하는 것 외에 함수 외부에 영향을 미치는 또 다른 방법이다.
-    
 
 ### Function Types
 
-함수의 type은 parameter type 및 return type으로 구성된다.
-
-```swift
-func addTwoInts(_ a: Int, _ b: Int) -> Int {
-    return a + b
-}
-func multiplyTwoInts(_ a: Int, _ b: Int) -> Int {
-    return a * b
-}
-```
-
-두 함수의 type은 `(Int, Int) -> Int` 이다. “A function that has two parameters, both of type Int, and that returns a value of type Int.” 라는 뜻이다.
-
-```swift
-func printHelloWorld() {
-    print("hello, world")
-}
-```
-
-이 함수의 type은 `() -> Void` 이다. “a function that has no parameters, and returns Void.”라는 뜻이다.
-
 - Using Function Types
-    
-    함수 type을 Swift의 다른 type과 동일하게 사용 가능하다. 1) 상수/변수의 type을 함수로 정의 가능하다. 또한 해당 상수/변수에 함수를 할당 가능하다.
     
     ```swift
     var mathFunction: (Int, Int) -> Int = addTwoInts
@@ -1230,67 +1019,13 @@ func printHelloWorld() {
     
     변수 mathFuntion을 함수 type으로 정의한다. 그리고 Set this variable to refer to the addTwoInts function. (함수 addTwoInts를 참조하도록 이 변수를 설정한다.)” 라는 뜻이다. *함수는 참조 type 이므로
     
-    A different function with the same matching type can be assigned to the same variable, in the same way as for nonfunction types: (해당 변수에 동일한 type의 함수를 할당 가능하다.)
-    
-    ```swift
-    mathFunction = multiplyTwoInts
-    print("Result: \(mathFunction(2, 3))") // Prints "Result: 6"
-    ```
-    
-    Swift의 다른 type과 마찬가지로 type inference 기능을 통해 이미 type 정보가 있는 함수는 상수/변수에 할당할 때, 상수/변수의 type 정의를 생략 가능하다.
-    
-    ```swift
-    let anotherMathFunction = addTwoInts
-    // anotherMathFunction is inferred to be of type (Int, Int) -> Int 
-    ```
-    
-
 - Function Types as Parameter Types
     
     2) 함수 type을 다른 함수의 parameter type으로 사용 가능하다. This enables you to leave some aspects of a function’s implementation for the function’s caller to provide when the function is called. (이렇게 하면 함수 호출자가 함수를 호출할 때 제공할 수 있도록 함수 구현의 일부 측면을 남겨둘 수 있다.) 
     = This enables `printMathResult` to hand off some of its functionality to the caller of the function.
     
-    ```swift
-    func printMathResult(_ mathFunction: (Int, Int) -> Int, _ a: Int, _ b: Int) {
-        print("Result: \(mathFunction(a, b))") // \()를 이렇게도 사용 가능하다.
-    }
-    printMathResult(addTwoInts, 3, 5) // Prints "Result: 8"
-    // printMathResult 함수가 호출되면, addTwoInts 함수 및 3,5 가 argument로 전달되고, 전달받은 함수를 3,5로 호출하여 결과적으로 8을 출력한다.
-    ```
-    
-- Function Types as Return Types
-    
-    3) 함수 type을 다른 함수의 return type으로 사용 가능하다. Write a complete function type immediately after the  `->` `(return arrow)` of the returning function.
-    
-    ```swift
-    func stepForward(_ input: Int) -> Int {  // 함수의 type은 (Int) -> Int 이다.
-        return input + 1
-    }
-    func stepBackward(_ input: Int) -> Int {
-        return input - 1
-    }
-    
-    func chooseStepFunction(backward: Bool) -> (Int) -> Int {  // 쉽게 표현하면 -> (Int) -> Int (즉, 함수의 return type이 (Int) -> Int 이다.)
-        return backward ? stepBackward : stepForward 
-    }
-    
-    var currentValue = 3
-    let moveNearerToZero = chooseStepFunction(backward: currentValue > 0)  // arugument가 true이므로 -> moveNearerToZero now refers to the stepBackward() function.
-    
-    // Now that moveNearerToZero refers to the correct function, it can be used to count to zero:
-    while currentValue != 0 {
-        print("\(currentValue)... ")
-        currentValue = moveNearerToZero(currentValue)
-    }
-    print("zero!") 
-    // 3... 2... 1... zero!
-    ```
-    
 
 ### Nested Functions
-
-지금까지 Functions Chapter에서 다룬 함수는 모두 `global functions` 이다. global function은 global scope에서 정의된다. 
-이외에도 다른 함수의 내부에 함수를 정의할 수 있다. 이것은 `nested functions`이다.
 
 Nested functions are hidden from the outside world by default, but can still be called and used by their enclosing function. An enclosing function can also return its nested function to allow the nested function to be used in another scope. (Nested Function은 return 되어 Enclosing function 외부에서 사용될 수 있다!) Enclosing Function 내부에서만 사용할 수 있는 게 아니다!
 
@@ -1303,7 +1038,7 @@ func chooseStepFunction(backward: Bool) -> (Int) -> Int {
 }
 
 var currentValue = -4
-let moveNearerToZero = chooseStepFunction(backward: currentValue > 0) // (초기화 시점) arugument가 false이므로 -> moveNearerToZero now refers to the nested stepForward() function.
+let moveNearerToZero = chooseStepFunction(backward: currentValue > 0) // (초기화 시점) arugument가 false이므로 -> moveNearerToZero now refers to the nested stepForward().
 
 while currentValue != 0 {
     print("\(currentValue)... ")
